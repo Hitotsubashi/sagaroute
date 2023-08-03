@@ -53,7 +53,7 @@
     "vscode:prepublish": "yarn compile",
     "compile": "npx tsc -b",
     "watch": "npx tsc -b -w",
-    "lint": "eslint --cache ./client/src ./server/src --ext .ts,.tsx",
+    "lint:eslint": "eslint --cache ./client/src ./server/src --ext .ts,.tsx",
     "lint:prettier": "prettier --check . --end-of-line auto"
   },
   "devDependencies": {
