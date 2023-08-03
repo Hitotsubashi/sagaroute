@@ -1,0 +1,93 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`use cmd 1`] = `
+"// @ts-nocheck
+/* sagaroute-inject:imports */
+/* injected by sagaroute: start */
+import LayoutsIndex from "./layouts/index.tsx";
+import PagesIndex from "./pages/index.tsx";
+import Pages404 from "./pages/404.tsx";
+/* injected by sagaroute: end */
+
+// sagaroute-inject: routes
+const routes = [
+  {
+    "path": "/",
+    "element": <LayoutsIndex/>,
+    "children": [
+      {
+        "index": true,
+        "element": <PagesIndex/>
+      }
+    ]
+  },
+  {
+    "path": "*",
+    "element": <Pages404/>
+  }
+];
+export default routes;"
+`;
+
+exports[`use cmd with specified dirpath and layoutDirPath  1`] = `
+"// @ts-nocheck
+/* sagaroute-inject:imports */
+/* injected by sagaroute: start */
+import DashboardIndex from "./dashboard/index.tsx";
+import ViewsIndex from "./views/index.tsx";
+/* injected by sagaroute: end */
+
+// sagaroute-inject: routes
+const routes = [
+  {
+    "path": "/",
+    "element": <DashboardIndex/>,
+    "children": [
+      {
+        "index": true,
+        "element": <ViewsIndex/>
+      }
+    ]
+  }
+];
+export default routes;"
+`;
+
+exports[`use cmd with specified routeFilePath and lazy  1`] = `
+"// @ts-nocheck
+/* sagaroute-inject:imports */
+
+// sagaroute-inject: routes
+const routes = [
+  {
+    "path": "/",
+    "lazy": async function() {
+    const {default : LayoutsIndex}  = await import("./layouts/index.tsx");
+    return {
+  "Component": LayoutsIndex
+};
+  },
+    "children": [
+      {
+        "index": true,
+        "lazy": async function() {
+    const {default : PagesIndex}  = await import("./pages/index.tsx");
+    return {
+  "Component": PagesIndex
+};
+  }
+      }
+    ]
+  },
+  {
+    "path": "*",
+    "lazy": async function() {
+    const {default : Pages404}  = await import("./pages/404.tsx");
+    return {
+  "Component": Pages404
+};
+  }
+  }
+];
+export default routes;"
+`;

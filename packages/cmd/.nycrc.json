@@ -1,0 +1,5 @@
+{
+  "check-coverage": true,
+  "include": ["lib/**.js", "bin/**.js"],
+  "reporter": ["html", "text"]
+}

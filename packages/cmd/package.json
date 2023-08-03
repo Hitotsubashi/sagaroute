@@ -1,0 +1,38 @@
+{
+  "name": "@sagaroute/cmd",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "",
+  "homepage": "",
+  "license": "ISC",
+  "main": "lib/index.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">= 16.10.0"
+  },
+  "bin": {
+    "sagaroute": "bin/index.js"
+  },
+  "files": [
+    "bin"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmmirror.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/Hitotsubashi/sagaroute"
+  },
+  "scripts": {
+    "build": "tsc  && tsc-alias",
+    "test": "npx nyc yarn jest"
+  },
+  "dependencies": {
+    "@sagaroute/react": "^0.0.0",
+    "colorette": "^2.0.20",
+    "jest": "^29.5.0",
+    "nyc": "^15.1.0",
+    "single-line-log": "^1.1.2",
+    "yargs": "^17.7.1"
+  }
+}

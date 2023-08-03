@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./lib",
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"],
+      "～/*": ["./*"],
+      "#/*": ["__tests__/*"]
+    }
+  },
+  "include": ["src", "__tests__"],
+  "ts-node": {
+    "files": true,
+    "require": ["tsconfig-paths/register"]
+  }
+}

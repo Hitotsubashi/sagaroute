@@ -1,0 +1,75 @@
+{
+  "name": "@sagaroute/vscode-extension",
+  "displayName": "Sagaroute",
+  "license": "MIT",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.55.2",
+    "node": ">= 16.10.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:javascript",
+    "onLanguage:javascriptreact",
+    "onLanguage:typescript",
+    "onLanguage:typescriptreact"
+  ],
+  "main": "./client/out/extension",
+  "contributes": {
+    "configuration": {
+      "title": "Sagaroute",
+      "type": "object",
+      "properties": {
+        "sagaroute.working": {
+          "type": "boolean",
+          "default": false,
+          "description": "Status decide Sagaroute to watching or not."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "sagaroute.toggle",
+        "title": "Sagaroute: toggle"
+      },
+      {
+        "command": "sagaroute.routing",
+        "title": "Sagaroute: routing"
+      },
+      {
+        "command": "sagaroute.rebuild",
+        "title": "Sagaroute: rebuild"
+      },
+      {
+        "command": "sagaroute.show",
+        "title": "Sagaroute: show"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "yarn compile",
+    "compile": "npx tsc -b",
+    "watch": "npx tsc -b -w",
+    "lint": "eslint ./client/src ./server/src --ext .ts,.tsx"
+  },
+  "devDependencies": {
+    "@types/node": "16.x",
+    "@typescript-eslint/eslint-plugin": "^5.59.1",
+    "@typescript-eslint/parser": "^5.59.1",
+    "@types/lodash": "^4.14.194",
+    "@types/vscode": "^1.55.2",
+    "@vscode/test-electron": "^2.3.0",
+    "eslint": "^8.39.0",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "chokidar": "^3.5.3",
+    "lodash": "^4.17.21",
+    "vscode-languageclient": "^8.1.0",
+    "vscode-languageserver": "^8.1.0",
+    "vscode-languageserver-textdocument": "^1.0.8"
+  }
+}

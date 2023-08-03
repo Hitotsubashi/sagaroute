@@ -1,0 +1,13 @@
+{
+  "name": "sagaroute",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">= 16.10.0"
+  },
+  "devDependencies": {
+    "lerna": "^6.5.1"
+  }
+}
