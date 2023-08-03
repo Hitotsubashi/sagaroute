@@ -4,7 +4,7 @@ const PageNormal = () => {
 };
 
 PageNormal.routeProps = {
-  path: "*",
+  path: '*',
 };
 
 PageNormal.routeOptions = {

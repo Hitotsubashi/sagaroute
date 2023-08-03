@@ -1,12 +1,12 @@
-import { FileNode } from "@/gather";
-import hookCompose from "@/utils/hookCompose";
-import path from "path";
+import { FileNode } from '@/gather';
+import hookCompose from '@/utils/hookCompose';
+import path from 'path';
 
-test("test hookCompose", () => {
+test('test hookCompose', () => {
   const fileNode: FileNode = {
-    name: "1.tsx",
-    type: "file",
-    path: path.join("project", "src", "pages", "1.tsx"),
+    name: '1.tsx',
+    type: 'file',
+    path: path.join('project', 'src', 'pages', '1.tsx'),
     props: {
       routeProps: {
         caseSensitive: true,
@@ -26,25 +26,25 @@ test("test hookCompose", () => {
       },
       function (node: FileNode, dirpath: string) {
         if (node.props?.routeProps && !node.props.routeProps?.access) {
-          node.props.routeProps.access = { admin: "true" };
+          node.props.routeProps.access = { admin: 'true' };
         }
       },
     ],
     fileNode,
-    "src/pages/1.tsx"
+    'src/pages/1.tsx',
   );
   expect(fileNode).toStrictEqual({
-    name: "1.tsx",
-    type: "file",
-    path: path.join("project", "src", "pages", "1.tsx"),
+    name: '1.tsx',
+    type: 'file',
+    path: path.join('project', 'src', 'pages', '1.tsx'),
     props: {
       routeProps: {
         caseSensitive: true,
         meta: {
-          title: "1.tsx",
-          origin: "src/pages/1.tsx",
+          title: '1.tsx',
+          origin: 'src/pages/1.tsx',
         },
-        access: { admin: "true" },
+        access: { admin: 'true' },
       },
       routeOptions: {
         layout: false,
@@ -54,10 +54,10 @@ test("test hookCompose", () => {
   });
 });
 
-test("test hookCompose with none", () => {
+test('test hookCompose with none', () => {
   const fileNode = {
-    name: "1.tsx",
-    type: "file",
+    name: '1.tsx',
+    type: 'file',
     props: {
       routeProps: {
         caseSensitive: true,
@@ -68,10 +68,10 @@ test("test hookCompose with none", () => {
       },
     },
   };
-  hookCompose(undefined, fileNode, "src/pages/1.tsx");
+  hookCompose(undefined, fileNode, 'src/pages/1.tsx');
   expect(fileNode).toStrictEqual({
-    name: "1.tsx",
-    type: "file",
+    name: '1.tsx',
+    type: 'file',
     props: {
       routeProps: {
         caseSensitive: true,

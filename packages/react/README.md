@@ -17,7 +17,7 @@ npm install @sagaroute/react
 例如存在**路由模板文件**，其内容如下：
 
 ```js
-import React from "react";
+import React from 'react';
 
 const routes = [];
 const router = createBrowserRouter(routes);
@@ -27,8 +27,8 @@ export default router;
 我们需要对上述文件用注释进行标记，标记后如下所示：
 
 ```js
-import React from "react";
-import { createBrowserRouter } from "react-router-dom";
+import React from 'react';
+import { createBrowserRouter } from 'react-router-dom';
 /* sagaroute-inject:imports */
 
 /* sagaroute-inject:routes */
@@ -42,13 +42,13 @@ export default router;
 ### 3. 生成且注入路由
 
 ```js
-import SagaRoute from "@sagaroute/react";
+import SagaRoute from '@sagaroute/react';
 
 const sagaRoute = new SagaRoute({
   // 指定页面文件目录，默认为src/pages
-  dirpath: "src/views",
+  dirpath: 'src/views',
   // 指定路由模板文件，默认为src/routes.tsx
-  routeFilePath: "src/router/index.jsx",
+  routeFilePath: 'src/router/index.jsx',
 });
 
 // 调用routing后，sagaroute会扫描页面文件目录且生成路由列表，把路由列表注入到路由文件中
@@ -58,17 +58,17 @@ sagaRoute.routing();
 最后经注入后的`"src/router/index.js"`的内容如下所示：
 
 ```jsx
-import React from "react";
-import { createBrowserRouter } from "react-router-dom";
+import React from 'react';
+import { createBrowserRouter } from 'react-router-dom';
 /* sagaroute-inject:imports */
 /* injected by sagaroute: start */
-import PagesIndex from "../pages/index.jsx";
+import PagesIndex from '../pages/index.jsx';
 /* injected by sagaroute: end */
 
 /* sagaroute-inject:routes */
 const routes = [
   {
-    path: "/",
+    path: '/',
     element: <PagesIndex />,
   },
 ];
@@ -85,10 +85,10 @@ export default router;
 可以在初始化`@sagaroute/react`实例时，传入配置项，如下所示：
 
 ```js
-import SagaRoute from "@sagaroute/react";
+import SagaRoute from '@sagaroute/react';
 
 const sagaroute = new Sagaroute({
-  dirpath: "src/views",
+  dirpath: 'src/views',
 });
 ```
 
@@ -140,16 +140,16 @@ interface RoutingOption {
 
 配置项中所有参数的简要说明如下所示：
 
-| 名称                                        | 说明                             | 类型                              | 默认值          |
-| ------------------------------------------- | -------------------------------- | --------------------------------- | --------------- |
-| [dirpath](./doc/API.md#dirpath)             | **页面文件目录**路径             | string                            | 'src/pages'     |
-| [layoutDirPath](./doc/API.md#layoutdirpath) | 全局路由目录路径                 | string                            | 'src/layouts'   |
-| [routeFilePath](./doc/API.md#routeFilePath) | 指定路由模板文件的路径           | string                            | 'src/route.tsx' |
-| [lazy](./doc/API.md#lazy)                   | 路由是否懒加载                   | boolean/Function(string): boolean | false           |
-| [hooks](./doc/API.md#hooks)                 | 执行周期的钩子函数               | object                            | --              |
-| [pathRewrite](./doc/API.md#pathRewrite)     | 用于对 import 语句的路径进行替换 | Object{string: string}            | --              |
-| [rootPath](./doc/API.md#rootPath)           | 项目路径                         | string                            | process.cwd()   |
-| [onWarning](./doc/API.md#onwarning)         | 触发警告时的回调函数             | function(message: string): void   | --              |
+| 名称 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| [dirpath](./doc/API.md#dirpath) | **页面文件目录**路径 | string | 'src/pages' |
+| [layoutDirPath](./doc/API.md#layoutdirpath) | 全局路由目录路径 | string | 'src/layouts' |
+| [routeFilePath](./doc/API.md#routeFilePath) | 指定路由模板文件的路径 | string | 'src/route.tsx' |
+| [lazy](./doc/API.md#lazy) | 路由是否懒加载 | boolean/Function(string): boolean | false |
+| [hooks](./doc/API.md#hooks) | 执行周期的钩子函数 | object | -- |
+| [pathRewrite](./doc/API.md#pathRewrite) | 用于对 import 语句的路径进行替换 | Object{string: string} | -- |
+| [rootPath](./doc/API.md#rootPath) | 项目路径 | string | process.cwd() |
+| [onWarning](./doc/API.md#onwarning) | 触发警告时的回调函数 | function(message: string): void | -- |
 
 对上述配置参数中更详细的说明可看[API](./doc/API.md)
 
@@ -160,7 +160,7 @@ interface RoutingOption {
 ```js
 module.exports = {
   lazy: function (filepath) {
-    return filepath.includes("charts");
+    return filepath.includes('charts');
   },
 };
 ```
@@ -183,7 +183,7 @@ module.exports = {
 interface FileNode {
   name: string;
   children?: FileNode[];
-  type: "dir" | "file";
+  type: 'dir' | 'file';
   layoutNode?: boolean;
   props?: {
     routeProps?: Record<string, any>;
@@ -226,7 +226,7 @@ interface RouteObject {
   Component?: React.ComponentType | null;
   errorElement?: React.ReactNode | null;
   ErrorBoundary?: React.ComponentType | null;
-  handle?: RouteObject["handle"];
+  handle?: RouteObject['handle'];
   shouldRevalidate?: ShouldRevalidateFunction;
   lazy?: LazyRouteFunction<RouteObject>;
 }

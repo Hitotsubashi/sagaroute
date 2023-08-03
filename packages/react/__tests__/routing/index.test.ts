@@ -1,8 +1,8 @@
-import fs from "fs";
-import path from "path";
-import SagaRoute from "@/index";
+import fs from 'fs';
+import path from 'path';
+import SagaRoute from '@/index';
 
-test("test routing in normal", () => {
+test('test routing in normal', () => {
   const buildHooksBefore = jest.fn();
   const buildHooksAfter = jest.fn();
   const gatherHooksBefore = jest.fn();
@@ -19,17 +19,13 @@ test("test routing in normal", () => {
   const printHooksInjectAfter = jest.fn();
   const printHooksWriteBefore = jest.fn();
   const printHooksWriteAfter = jest.fn();
-  const outputFile = path.join(
-    __dirname,
-    "ignore-test-normal-src",
-    "route.tsx"
-  );
+  const outputFile = path.join(__dirname, 'ignore-test-normal-src', 'route.tsx');
   const option = {
-    dirpath: path.join(__dirname, "ignore-test-normal-src/pages"),
-    layoutDirPath: path.join(__dirname, "ignore-test-normal-src/layouts"),
+    dirpath: path.join(__dirname, 'ignore-test-normal-src/pages'),
+    layoutDirPath: path.join(__dirname, 'ignore-test-normal-src/layouts'),
     routeFilePath: outputFile,
     pathRewrite: {
-      "^./": "@/",
+      '^./': '@/',
     },
     hooks: {
       build: {
@@ -66,7 +62,7 @@ test("test routing in normal", () => {
   };
   const sagaRoute = new SagaRoute(option);
   sagaRoute.routing();
-  const context = fs.readFileSync(outputFile, "utf-8");
+  const context = fs.readFileSync(outputFile, 'utf-8');
   expect(context).toMatchSnapshot();
   expect(buildHooksBefore.mock.calls).toHaveLength(1);
   expect(buildHooksBefore.mock.calls[0]).toStrictEqual([option]);
@@ -74,9 +70,9 @@ test("test routing in normal", () => {
   expect(buildHooksAfter.mock.calls[0]).toStrictEqual([
     {
       ...option,
-      pathRewrite: [[new RegExp("^./"), "@/"]],
-      relativeDirpath: path.join("..", "pages"),
-      relativeLayoutDirPath: path.join("..", "layouts"),
+      pathRewrite: [[new RegExp('^./'), '@/']],
+      relativeDirpath: path.join('..', 'pages'),
+      relativeLayoutDirPath: path.join('..', 'layouts'),
       hooks: {
         build: {
           before: [buildHooksBefore],
@@ -130,7 +126,7 @@ test("test routing in normal", () => {
   expect(printHooksWriteAfter.mock.calls).toHaveLength(1);
 });
 
-test("test skip gather,weave and print", () => {
+test('test skip gather,weave and print', () => {
   const buildHooksBefore = jest.fn();
   const buildHooksAfter = jest.fn();
   const gatherHooksBefore = jest.fn(() => null);
@@ -143,17 +139,13 @@ test("test skip gather,weave and print", () => {
   const printHooksInjectAfter = jest.fn();
   const printHooksWriteBefore = jest.fn();
   const printHooksWriteAfter = jest.fn();
-  const outputFile = path.join(
-    __dirname,
-    "ignore-test-normal-src",
-    "route.tsx"
-  );
+  const outputFile = path.join(__dirname, 'ignore-test-normal-src', 'route.tsx');
   const option = {
-    dirpath: path.join(__dirname, "ignore-test-normal-src/pages"),
-    layoutDirPath: path.join(__dirname, "ignore-test-normal-src/layouts"),
+    dirpath: path.join(__dirname, 'ignore-test-normal-src/pages'),
+    layoutDirPath: path.join(__dirname, 'ignore-test-normal-src/layouts'),
     routeFilePath: outputFile,
     pathRewrite: {
-      "^./": "@/",
+      '^./': '@/',
     },
     hooks: {
       build: {
@@ -186,7 +178,7 @@ test("test skip gather,weave and print", () => {
   };
   const sagaRoute = new SagaRoute(option);
   sagaRoute.routing();
-  const context = fs.readFileSync(outputFile, "utf-8");
+  const context = fs.readFileSync(outputFile, 'utf-8');
   expect(context).toMatchSnapshot();
   expect(buildHooksBefore.mock.calls).toHaveLength(1);
   expect(buildHooksAfter.mock.calls).toHaveLength(1);
@@ -205,7 +197,7 @@ test("test skip gather,weave and print", () => {
   expect(printHooksWriteAfter.mock.calls).toHaveLength(0);
 });
 
-test("test skip weave and print", () => {
+test('test skip weave and print', () => {
   const buildHooksBefore = jest.fn();
   const buildHooksAfter = jest.fn();
   const gatherHooksBefore = jest.fn();
@@ -218,17 +210,13 @@ test("test skip weave and print", () => {
   const printHooksInjectAfter = jest.fn();
   const printHooksWriteBefore = jest.fn();
   const printHooksWriteAfter = jest.fn();
-  const outputFile = path.join(
-    __dirname,
-    "ignore-test-normal-src",
-    "route.tsx"
-  );
+  const outputFile = path.join(__dirname, 'ignore-test-normal-src', 'route.tsx');
   const option = {
-    dirpath: path.join(__dirname, "ignore-test-normal-src/pages"),
-    layoutDirPath: path.join(__dirname, "ignore-test-normal-src/layouts"),
+    dirpath: path.join(__dirname, 'ignore-test-normal-src/pages'),
+    layoutDirPath: path.join(__dirname, 'ignore-test-normal-src/layouts'),
     routeFilePath: outputFile,
     pathRewrite: {
-      "^./": "@/",
+      '^./': '@/',
     },
     hooks: {
       build: {
@@ -261,7 +249,7 @@ test("test skip weave and print", () => {
   };
   const sagaRoute = new SagaRoute(option);
   sagaRoute.routing();
-  const context = fs.readFileSync(outputFile, "utf-8");
+  const context = fs.readFileSync(outputFile, 'utf-8');
   expect(context).toMatchSnapshot();
   expect(buildHooksBefore.mock.calls).toHaveLength(1);
   expect(buildHooksAfter.mock.calls).toHaveLength(1);
@@ -280,24 +268,20 @@ test("test skip weave and print", () => {
   expect(printHooksWriteAfter.mock.calls).toHaveLength(0);
 });
 
-test("test skip print.parse", () => {
+test('test skip print.parse', () => {
   const printHooksParseBefore = jest.fn(() => null);
   const printHooksParseAfter = jest.fn();
   const printHooksInjectBefore = jest.fn();
   const printHooksInjectAfter = jest.fn();
   const printHooksWriteBefore = jest.fn();
   const printHooksWriteAfter = jest.fn();
-  const outputFile = path.join(
-    __dirname,
-    "ignore-test-normal-src",
-    "route.tsx"
-  );
+  const outputFile = path.join(__dirname, 'ignore-test-normal-src', 'route.tsx');
   const option = {
-    dirpath: path.join(__dirname, "ignore-test-normal-src/pages"),
-    layoutDirPath: path.join(__dirname, "ignore-test-normal-src/layouts"),
+    dirpath: path.join(__dirname, 'ignore-test-normal-src/pages'),
+    layoutDirPath: path.join(__dirname, 'ignore-test-normal-src/layouts'),
     routeFilePath: outputFile,
     pathRewrite: {
-      "^./": "@/",
+      '^./': '@/',
     },
     hooks: {
       print: {
@@ -318,7 +302,7 @@ test("test skip print.parse", () => {
   };
   const sagaRoute = new SagaRoute(option);
   sagaRoute.routing();
-  const context = fs.readFileSync(outputFile, "utf-8");
+  const context = fs.readFileSync(outputFile, 'utf-8');
   expect(context).toMatchSnapshot();
   expect(printHooksParseBefore.mock.calls).toHaveLength(1);
   expect(printHooksParseAfter.mock.calls).toHaveLength(0);
@@ -328,24 +312,20 @@ test("test skip print.parse", () => {
   expect(printHooksWriteAfter.mock.calls).toHaveLength(0);
 });
 
-test("test skip print.inject", () => {
+test('test skip print.inject', () => {
   const printHooksParseBefore = jest.fn();
   const printHooksParseAfter = jest.fn();
   const printHooksInjectBefore = jest.fn(() => null);
   const printHooksInjectAfter = jest.fn();
   const printHooksWriteBefore = jest.fn();
   const printHooksWriteAfter = jest.fn();
-  const outputFile = path.join(
-    __dirname,
-    "ignore-test-normal-src",
-    "route.tsx"
-  );
+  const outputFile = path.join(__dirname, 'ignore-test-normal-src', 'route.tsx');
   const option = {
-    dirpath: path.join(__dirname, "ignore-test-normal-src/pages"),
-    layoutDirPath: path.join(__dirname, "ignore-test-normal-src/layouts"),
+    dirpath: path.join(__dirname, 'ignore-test-normal-src/pages'),
+    layoutDirPath: path.join(__dirname, 'ignore-test-normal-src/layouts'),
     routeFilePath: outputFile,
     pathRewrite: {
-      "^./": "@/",
+      '^./': '@/',
     },
     hooks: {
       print: {
@@ -366,7 +346,7 @@ test("test skip print.inject", () => {
   };
   const sagaRoute = new SagaRoute(option);
   sagaRoute.routing();
-  const context = fs.readFileSync(outputFile, "utf-8");
+  const context = fs.readFileSync(outputFile, 'utf-8');
   expect(context).toMatchSnapshot();
   expect(printHooksParseBefore.mock.calls).toHaveLength(1);
   expect(printHooksParseAfter.mock.calls).toHaveLength(1);
@@ -376,24 +356,20 @@ test("test skip print.inject", () => {
   expect(printHooksWriteAfter.mock.calls).toHaveLength(0);
 });
 
-test("test skip print.write", () => {
+test('test skip print.write', () => {
   const printHooksParseBefore = jest.fn();
   const printHooksParseAfter = jest.fn();
   const printHooksInjectBefore = jest.fn();
   const printHooksInjectAfter = jest.fn();
   const printHooksWriteBefore = jest.fn(() => null);
   const printHooksWriteAfter = jest.fn();
-  const outputFile = path.join(
-    __dirname,
-    "ignore-test-normal-src",
-    "route.tsx"
-  );
+  const outputFile = path.join(__dirname, 'ignore-test-normal-src', 'route.tsx');
   const option = {
-    dirpath: path.join(__dirname, "ignore-test-normal-src/pages"),
-    layoutDirPath: path.join(__dirname, "ignore-test-normal-src/layouts"),
+    dirpath: path.join(__dirname, 'ignore-test-normal-src/pages'),
+    layoutDirPath: path.join(__dirname, 'ignore-test-normal-src/layouts'),
     routeFilePath: outputFile,
     pathRewrite: {
-      "^./": "@/",
+      '^./': '@/',
     },
     hooks: {
       print: {
@@ -414,7 +390,7 @@ test("test skip print.write", () => {
   };
   const sagaRoute = new SagaRoute(option);
   sagaRoute.routing();
-  const context = fs.readFileSync(outputFile, "utf-8");
+  const context = fs.readFileSync(outputFile, 'utf-8');
   expect(context).toMatchSnapshot();
   expect(printHooksParseBefore.mock.calls).toHaveLength(1);
   expect(printHooksParseAfter.mock.calls).toHaveLength(1);

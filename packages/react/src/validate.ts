@@ -1,17 +1,17 @@
-import { object, string, mixed } from "yup";
-import { RoutingOption } from ".";
+import { object, string, mixed } from 'yup';
+import { RoutingOption } from '.';
 
 const handlerValidate = (value: any) => {
   return (
-    typeof value === "function" ||
-    (typeof value === "object" &&
-      typeof value.order === "number" &&
-      typeof value.handler === "function")
+    typeof value === 'function' ||
+    (typeof value === 'object' &&
+      typeof value.order === 'number' &&
+      typeof value.handler === 'function')
   );
 };
 
 const hookSchema = mixed().test(
-  "is-hook",
+  'is-hook',
   `\${path} must be one of the following type:
     1. function.
     2. an array filled with function.
@@ -23,19 +23,18 @@ const hookSchema = mixed().test(
     } else {
       return !value || handlerValidate(value);
     }
-  }
+  },
 );
 
 const pathRewriteSchema = object().test(
-  "is-pathrewrite",
-  "${path} must be a object with string key and string value.",
+  'is-pathrewrite',
+  '${path} must be a object with string key and string value.',
   (value) => {
     return (
       value === undefined ||
-      (typeof value === "object" &&
-        Object.values(value).every((item) => typeof item === "string"))
+      (typeof value === 'object' && Object.values(value).every((item) => typeof item === 'string'))
     );
-  }
+  },
 );
 
 const schema = object({
@@ -77,7 +76,7 @@ export default function validate(options: RoutingOption) {
   try {
     schema.validateSync(options, { strict: true });
   } catch (err: any) {
-    const message = err.errors.join(",");
+    const message = err.errors.join(',');
     throw new Error(message);
   }
 }

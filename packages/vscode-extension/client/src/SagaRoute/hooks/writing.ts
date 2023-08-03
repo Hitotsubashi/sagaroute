@@ -1,26 +1,21 @@
-import { RoutingOption } from "@sagaroute/react";
-import { Uri } from "vscode";
-import * as vscode from "vscode";
-import getCacheManager from "../../CacheManager";
-import isEqual from "lodash/isEqual";
-import getLogging from "../../Logging";
+import { RoutingOption } from '@sagaroute/react';
+import { Uri } from 'vscode';
+import * as vscode from 'vscode';
+import getCacheManager from '../../CacheManager';
+import isEqual from 'lodash/isEqual';
+import getLogging from '../../Logging';
 
 let hasChange = false;
 const cacheManager = getCacheManager();
 const logging = getLogging();
 
-const writingHooks: RoutingOption["hooks"] = {
+const writingHooks: RoutingOption['hooks'] = {
   gather: {
     beforeEach: {
       order: -5,
       handler(fileNodePath) {
-        if (
-          !cacheManager.hasDirty(fileNodePath) &&
-          cacheManager.hasCache(fileNodePath)
-        ) {
-          logging.logMessage(
-            `[gather:beforeEach] matching cache fileNodePath: ${fileNodePath}`
-          );
+        if (!cacheManager.hasDirty(fileNodePath) && cacheManager.hasCache(fileNodePath)) {
+          logging.logMessage(`[gather:beforeEach] matching cache fileNodePath: ${fileNodePath}`);
           return cacheManager.getCache(fileNodePath);
         }
       },
@@ -28,7 +23,7 @@ const writingHooks: RoutingOption["hooks"] = {
     afterEach: {
       order: 105,
       handler(fileNode, fileNodePath) {
-        if (fileNode.type === "file") {
+        if (fileNode.type === 'file') {
           cacheManager.curCount++;
           if (cacheManager.hasCache(fileNodePath)) {
             const oldFileNode = cacheManager.getCache(fileNodePath);
@@ -75,17 +70,9 @@ const writingHooks: RoutingOption["hooks"] = {
           vscode.workspace.openTextDocument(routerFilePath).then((document) => {
             const lastline = document.lineAt(document.lineCount - 1);
             const deleteEdit = vscode.TextEdit.delete(
-              new vscode.Range(
-                0,
-                0,
-                lastline.range.end.line,
-                lastline.range.end.character
-              )
+              new vscode.Range(0, 0, lastline.range.end.line, lastline.range.end.character),
             );
-            const textEdit = vscode.TextEdit.replace(
-              new vscode.Range(0, 0, 0, 0),
-              renderedContent
-            );
+            const textEdit = vscode.TextEdit.replace(new vscode.Range(0, 0, 0, 0), renderedContent);
             const workspaceRouterEdit = new vscode.WorkspaceEdit();
             workspaceRouterEdit.set(routerFilePath, [deleteEdit, textEdit]);
             vscode.workspace.applyEdit(workspaceRouterEdit).then(() => {

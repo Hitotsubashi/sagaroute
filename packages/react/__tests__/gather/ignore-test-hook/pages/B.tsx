@@ -1,7 +1,7 @@
 // @ts-nocheck
-import { loader1 as loader } from "@/utils/loader";
-import { action } from "@/utils/action";
-import ErrorBoundary from "@/pages/comp/ErrorBoundary";
+import { loader1 as loader } from '@/utils/loader';
+import { action } from '@/utils/action';
+import ErrorBoundary from '@/pages/comp/ErrorBoundary';
 
 const A = <div>123</div>;
 

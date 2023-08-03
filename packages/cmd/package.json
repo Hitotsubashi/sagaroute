@@ -25,7 +25,8 @@
   },
   "scripts": {
     "build": "tsc  && tsc-alias",
-    "test": "npx nyc yarn jest"
+    "test": "npx nyc yarn jest",
+    "lint:prettier": "prettier --check . --end-of-line auto"
   },
   "dependencies": {
     "@sagaroute/react": "^0.0.0",

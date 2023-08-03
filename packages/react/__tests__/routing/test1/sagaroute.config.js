@@ -1,12 +1,12 @@
-const path = require("path");
+const path = require('path');
 
 module.exports = {
-  dirpath: "src/pages",
-  routeFilePath: "src/router/route.tsx",
+  dirpath: 'src/pages',
+  routeFilePath: 'src/router/route.tsx',
   hooks: {
     gather: {
       before() {
-        console.log("gatherBefore");
+        console.log('gatherBefore');
       },
     },
   },

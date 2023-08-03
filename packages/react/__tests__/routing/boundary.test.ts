@@ -1,9 +1,9 @@
-import SagaRoute from "@/index";
+import SagaRoute from '@/index';
 
-test("test routing with error option which hook is number", () => {
+test('test routing with error option which hook is number', () => {
   expect(() => {
     new SagaRoute({
-      dirpath: "1",
+      dirpath: '1',
       hooks: {
         gather: {
           // @ts-ignore
@@ -16,14 +16,14 @@ test("test routing with error option which hook is number", () => {
     1. function.
     2. an array filled with function.
     3. an object as {order: number,handler: function}.
-    4. an array filled with object as {order: number,handler: function}.`
+    4. an array filled with object as {order: number,handler: function}.`,
   );
 });
 
-test("test routing with error option which hook is array of number", () => {
+test('test routing with error option which hook is array of number', () => {
   expect(() => {
     new SagaRoute({
-      dirpath: "1",
+      dirpath: '1',
       hooks: {
         gather: {
           // @ts-ignore
@@ -36,14 +36,14 @@ test("test routing with error option which hook is array of number", () => {
     1. function.
     2. an array filled with function.
     3. an object as {order: number,handler: function}.
-    4. an array filled with object as {order: number,handler: function}.`
+    4. an array filled with object as {order: number,handler: function}.`,
   );
 });
 
-test("test routing with error option which hook is array of number", () => {
+test('test routing with error option which hook is array of number', () => {
   expect(() => {
     new SagaRoute({
-      dirpath: "1",
+      dirpath: '1',
       hooks: {
         gather: {
           // @ts-ignore
@@ -56,6 +56,6 @@ test("test routing with error option which hook is array of number", () => {
     1. function.
     2. an array filled with function.
     3. an object as {order: number,handler: function}.
-    4. an array filled with object as {order: number,handler: function}.`
+    4. an array filled with object as {order: number,handler: function}.`,
   );
 });

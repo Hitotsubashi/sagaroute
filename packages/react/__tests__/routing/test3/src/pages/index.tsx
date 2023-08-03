@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from "react";
+import React from 'react';
 
 const Comp: React.FC = () => {
   return <content>123</content>;

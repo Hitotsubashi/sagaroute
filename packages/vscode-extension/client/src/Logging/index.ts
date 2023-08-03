@@ -1,9 +1,9 @@
-import { window } from "vscode";
+import { window } from 'vscode';
 
-type LogLevel = "DEBUG" | "INFO" | "WARN" | "ERROR" | "NONE";
+type LogLevel = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'NONE';
 
 class LoggingService {
-  private outputChannel = window.createOutputChannel("Sagaroute");
+  private outputChannel = window.createOutputChannel('Sagaroute');
 
   public show() {
     this.outputChannel.show();
@@ -13,17 +13,17 @@ class LoggingService {
     const message = JSON.stringify(
       data,
       function (k, v) {
-        if (typeof v === "function") {
-          return "fn";
+        if (typeof v === 'function') {
+          return 'fn';
         }
         return v;
       },
-      2
+      2,
     );
     this.outputChannel.appendLine(message);
   }
 
-  public logMessage(message: string, logLevel: LogLevel = "INFO"): void {
+  public logMessage(message: string, logLevel: LogLevel = 'INFO'): void {
     const title = new Date().toLocaleTimeString();
     this.outputChannel.appendLine(`["${logLevel}" - ${title}] ${message}`);
   }

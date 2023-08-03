@@ -1,14 +1,14 @@
-import { ParseResult } from "@babel/parser";
-import * as t from "@babel/types";
-import traverse from "@babel/traverse";
-import generate from "@babel/generator";
-import { File, ObjectExpression } from "@babel/types";
-import { transformFromAstSync } from "@babel/core";
-import path from "path";
-import { EVAL_STRING_SYMBOL, htmlTagNames, svgTagNames } from "./symbol";
-import normalizePath from "./normalizePath";
-import { Dependency, FileNode } from "@/gather";
-import generateImportName from "./generateImportName";
+import { ParseResult } from '@babel/parser';
+import * as t from '@babel/types';
+import traverse from '@babel/traverse';
+import generate from '@babel/generator';
+import { File, ObjectExpression } from '@babel/types';
+import { transformFromAstSync } from '@babel/core';
+import path from 'path';
+import { EVAL_STRING_SYMBOL, htmlTagNames, svgTagNames } from './symbol';
+import normalizePath from './normalizePath';
+import { Dependency, FileNode } from '@/gather';
+import generateImportName from './generateImportName';
 
 interface Option {
   pathRewrite?: [RegExp, string][];
@@ -19,8 +19,8 @@ export default function getExportPropsAndDependencies(
   ast: ParseResult<File>,
   propNames: string[],
   filepath: string,
-  { pathRewrite, relativePath }: Option
-): { props: Record<string, any>; dependencies: FileNode["dependencies"] } {
+  { pathRewrite, relativePath }: Option,
+): { props: Record<string, any>; dependencies: FileNode['dependencies'] } {
   const props: Record<string, any> = {};
   const dependencies: Dependency[] = [];
   const componentName = findDefaultExportComponentName(ast);
@@ -41,9 +41,7 @@ export default function getExportPropsAndDependencies(
   return { props, dependencies };
 }
 
-function findDefaultExportComponentName(
-  ast: ParseResult<File>
-): string | undefined {
+function findDefaultExportComponentName(ast: ParseResult<File>): string | undefined {
   let componentName: string | undefined = undefined;
   traverse(ast, {
     ExportDefaultDeclaration(traversePath) {
@@ -66,7 +64,7 @@ function findSpecifiedProp(
   propName: string,
   componentName: string,
   filepath: string,
-  { pathRewrite, relativePath }: Option
+  { pathRewrite, relativePath }: Option,
 ) {
   let propNode;
   traverse(ast, {
@@ -75,14 +73,13 @@ function findSpecifiedProp(
       const { expression } = node;
       if (
         t.isAssignmentExpression(expression) &&
-        expression.operator === "=" &&
+        expression.operator === '=' &&
         t.isMemberExpression(expression.left) &&
         t.isIdentifier(expression.left.object) &&
         expression.left.object.name === componentName &&
         ((t.isStringLiteral(expression.left.property) &&
           expression.left.property.value === propName) ||
-          (t.isIdentifier(expression.left.property) &&
-            expression.left.property.name === propName))
+          (t.isIdentifier(expression.left.property) && expression.left.property.name === propName))
       ) {
         propNode = expression.right;
         traversePath.stop();
@@ -112,31 +109,22 @@ function findSpecifiedProp(
 
 function adjustSourceInImportExpression(
   propNode: ObjectExpression,
-  { pathRewrite, relativePath }: Option
+  { pathRewrite, relativePath }: Option,
 ) {
   const ProgramNode = {
-    type: "Program" as "Program",
-    sourceType: "script" as "script",
+    type: 'Program' as 'Program',
+    sourceType: 'script' as 'script',
     directives: [],
-    sourceFile: "",
-    body: [
-      t.variableDeclaration("const", [
-        t.variableDeclarator(t.identifier("a"), propNode),
-      ]),
-    ],
+    sourceFile: '',
+    body: [t.variableDeclaration('const', [t.variableDeclarator(t.identifier('a'), propNode)])],
   };
   traverse(ProgramNode, {
     // import('xxx')语句
     CallExpression(traversePath) {
       const { node } = traversePath;
       if (t.isImport(node.callee) && t.isStringLiteral(node.arguments[0])) {
-        const { result: adjustedPath } = adjustPath(
-          node.arguments[0].value,
-          relativePath
-        );
-        node.arguments[0] = t.stringLiteral(
-          normalizePath(adjustedPath, pathRewrite)
-        );
+        const { result: adjustedPath } = adjustPath(node.arguments[0].value, relativePath);
+        node.arguments[0] = t.stringLiteral(normalizePath(adjustedPath, pathRewrite));
       }
     },
   });
@@ -153,7 +141,7 @@ function transformIdentifierToLiteral(
   ast: ParseResult<babel.types.File>,
   filepath: string,
   dependencies: Dependency[],
-  { relativePath, pathRewrite }: Option
+  { relativePath, pathRewrite }: Option,
 ) {
   const { properties } = propNode;
   for (let i = 0; i < properties.length; i++) {
@@ -161,19 +149,15 @@ function transformIdentifierToLiteral(
     // {routeProps: routeProps} 或者 {routeProps} 情况
     if (t.isProperty(property) && t.isIdentifier(property.value)) {
       const variableName = property.value.name;
-      if (variableName === "undefined") {
-        property.value = t.stringLiteral(
-          `${EVAL_STRING_SYMBOL}${variableName}`
-        );
+      if (variableName === 'undefined') {
+        property.value = t.stringLiteral(`${EVAL_STRING_SYMBOL}${variableName}`);
         continue;
       }
       let dependency: Dependency | undefined | null = dependencies.find(
-        ({ name }) => name === variableName
+        ({ name }) => name === variableName,
       );
       if (dependency) {
-        property.value = t.stringLiteral(
-          `${EVAL_STRING_SYMBOL}${dependency.asName}`
-        );
+        property.value = t.stringLiteral(`${EVAL_STRING_SYMBOL}${dependency.asName}`);
         continue;
       } else {
         dependency = getDependencyByName(variableName, ast, {
@@ -182,13 +166,11 @@ function transformIdentifierToLiteral(
         });
       }
       if (dependency) {
-        property.value = t.stringLiteral(
-          `${EVAL_STRING_SYMBOL}${dependency!.asName}`
-        );
+        property.value = t.stringLiteral(`${EVAL_STRING_SYMBOL}${dependency!.asName}`);
         dependencies.push(dependency);
       } else {
         throw new Error(
-          `The variable named "${variableName}" cannot be found in the file with the path "file://${filepath}"`
+          `The variable named "${variableName}" cannot be found in the file with the path "file://${filepath}"`,
         );
       }
     }
@@ -197,19 +179,13 @@ function transformIdentifierToLiteral(
 
 function transformExpressionToRawString(node: t.Expression) {
   const ProgramNode = {
-    type: "Program" as "Program",
-    sourceType: "script" as "script",
+    type: 'Program' as 'Program',
+    sourceType: 'script' as 'script',
     directives: [],
-    sourceFile: "",
-    body: [
-      t.variableDeclaration("const", [
-        t.variableDeclarator(t.identifier("a"), node),
-      ]),
-    ],
+    sourceFile: '',
+    body: [t.variableDeclaration('const', [t.variableDeclarator(t.identifier('a'), node)])],
   };
-  return transformFromAstSync(ProgramNode)?.code?.match(
-    /^const a \= (.*);$/s
-  )?.[1];
+  return transformFromAstSync(ProgramNode)?.code?.match(/^const a \= (.*);$/s)?.[1];
 }
 
 function transformSpecialElementToLiteral(propNode: ObjectExpression) {
@@ -226,7 +202,7 @@ function transformSpecialElementToLiteral(propNode: ObjectExpression) {
         // {xx:Symbol('x')}
         (t.isCallExpression(property.value) &&
           t.isIdentifier(property.value.callee) &&
-          property.value.callee.name === "Symbol") ||
+          property.value.callee.name === 'Symbol') ||
         // {xx:{...}}
         t.isObjectExpression(property.value) ||
         // {xx: new Object()}
@@ -247,7 +223,7 @@ function transformJSXToLiteral(
   ast: ParseResult<babel.types.File>,
   filepath: string,
   dependencies: Dependency[],
-  { relativePath, pathRewrite }: Option
+  { relativePath, pathRewrite }: Option,
 ) {
   const { properties } = propNode;
   for (let i = 0; i < properties.length; i++) {
@@ -261,9 +237,7 @@ function transformJSXToLiteral(
       }
       if (t.isJSXElement(property.value) || t.isJSXFragment(property.value)) {
         property.value = t.stringLiteral(
-          `${EVAL_STRING_SYMBOL}${transformExpressionToRawString(
-            property.value
-          )}`
+          `${EVAL_STRING_SYMBOL}${transformExpressionToRawString(property.value)}`,
         );
       }
     }
@@ -279,7 +253,7 @@ function transformSingleJSX(
   ast: ParseResult<babel.types.File>,
   filepath: string,
   dependencies: Dependency[],
-  { relativePath, pathRewrite }: Option
+  { relativePath, pathRewrite }: Option,
 ) {
   if (t.isJSXElement(element)) {
     let JSXOpeningElementName = element.openingElement.name as
@@ -308,9 +282,7 @@ function transformSingleJSX(
       !htmlTagNames.includes(jsxIdentifierOfOpen.name) &&
       !svgTagNames.includes(jsxIdentifierOfOpen.name)
     ) {
-      let dependency =
-        dependencies.find(({ name }) => name === jsxIdentifierOfOpen.name) ??
-        null;
+      let dependency = dependencies.find(({ name }) => name === jsxIdentifierOfOpen.name) ?? null;
       if (dependency) {
         jsxIdentifierOfOpen.name = dependency.asName;
         if (jsxIdentifierOfClose) {
@@ -340,46 +312,39 @@ function transformSingleJSX(
         (attr) =>
           t.isJSXAttribute(attr) &&
           t.isJSXExpressionContainer(attr.value) &&
-          t.isJSXElement(attr.value.expression)
+          t.isJSXElement(attr.value.expression),
       )
       .forEach((attr) =>
         transformSingleJSX(
-          ((attr as t.JSXAttribute).value as t.JSXExpressionContainer)
-            .expression as t.JSXElement,
+          ((attr as t.JSXAttribute).value as t.JSXExpressionContainer).expression as t.JSXElement,
           ast,
           filepath,
           dependencies,
           {
             relativePath,
             pathRewrite,
-          }
-        )
+          },
+        ),
       );
   }
   element.children
     .filter((child) => t.isJSXElement(child) || t.isJSXFragment(child))
     .forEach((child) =>
-      transformSingleJSX(
-        child as t.JSXElement | t.JSXFragment,
-        ast,
-        filepath,
-        dependencies,
-        {
-          relativePath,
-          pathRewrite,
-        }
-      )
+      transformSingleJSX(child as t.JSXElement | t.JSXFragment, ast, filepath, dependencies, {
+        relativePath,
+        pathRewrite,
+      }),
     );
 }
 
 function isPathAbsolute(filepath: string) {
-  return !filepath.startsWith(".");
+  return !filepath.startsWith('.');
 }
 
 function getDependencyByName(
   name: string,
   ast: ParseResult<babel.types.File>,
-  { relativePath, pathRewrite }: Option
+  { relativePath, pathRewrite }: Option,
 ): Dependency | null {
   let dependency: Dependency | null = null;
   traverse(ast, {
@@ -388,8 +353,10 @@ function getDependencyByName(
       for (let i = 0; i < node.specifiers.length; i++) {
         const specifier = node.specifiers[i];
         if (specifier.local.name === name) {
-          const { result: importPath, absolute: importPathAbsolute } =
-            adjustPath(node.source.value, relativePath);
+          const { result: importPath, absolute: importPathAbsolute } = adjustPath(
+            node.source.value,
+            relativePath,
+          );
           let normalizedImportPath = importPathAbsolute
             ? importPath
             : normalizePath(importPath, pathRewrite);
@@ -397,7 +364,7 @@ function getDependencyByName(
           if (t.isImportDefaultSpecifier(specifier)) {
             dependency = {
               name,
-              asName: generateImportName(importPath, ""),
+              asName: generateImportName(importPath, ''),
               importPath: normalizedImportPath,
               isDefault: true,
             };
@@ -418,8 +385,8 @@ function getDependencyByName(
             // import * as x1 from 'xxx'
           } else if (t.isImportNamespaceSpecifier(specifier)) {
             dependency = {
-              name: "*",
-              asName: generateImportName(importPath, ""),
+              name: '*',
+              asName: generateImportName(importPath, ''),
               importPath: normalizedImportPath,
               isDefault: true,
             };

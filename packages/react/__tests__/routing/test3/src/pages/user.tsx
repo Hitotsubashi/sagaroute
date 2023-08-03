@@ -4,7 +4,7 @@ const User = () => {
 };
 
 User.routeProps = {
-  path: "user1",
+  path: 'user1',
 };
 
 export default User;

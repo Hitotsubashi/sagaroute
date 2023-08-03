@@ -1,13 +1,13 @@
-import getExportProps from "@/utils/getExportProps";
-import parseToAst from "@/utils/parseToAst";
-import { EVAL_STRING_SYMBOL } from "@/utils/symbol";
-import path from "path";
+import getExportProps from '@/utils/getExportProps';
+import parseToAst from '@/utils/parseToAst';
+import { EVAL_STRING_SYMBOL } from '@/utils/symbol';
+import path from 'path';
 
 const loader1 = ({ params }: any) => {
   return params.teamId;
 };
 function loader2({ params }: any) {
-  return params["lang"];
+  return params['lang'];
 }
 
 const action1 = ({ params }: any) => {};
@@ -37,16 +37,16 @@ test("get routeProps from 'export const routeProps = {xxx}'", () => {
   }`;
   const ast = parseToAst(content, true);
   expect(
-    getExportProps(ast, ["routeProps"], path.join("src", "pages/b/b.tsx"), {
+    getExportProps(ast, ['routeProps'], path.join('src', 'pages/b/b.tsx'), {
       relativePath: path.relative(
-        path.join("src", "routes.tsx"),
-        path.join("src", "pages/b/b.tsx")
+        path.join('src', 'routes.tsx'),
+        path.join('src', 'pages/b/b.tsx'),
       ),
-    })
+    }),
   ).toStrictEqual({
     props: {
       routeProps: {
-        path: "/teams/:teamId",
+        path: '/teams/:teamId',
         loader: `${EVAL_STRING_SYMBOL}${loader1.toString()}`,
         action: `${EVAL_STRING_SYMBOL}${action1.toString()}`,
       },
@@ -66,21 +66,16 @@ test("get routeProps from 'export {routeProps}'", () => {
   };`;
   const ast = parseToAst(content);
   expect(
-    getExportProps(
-      ast,
-      ["routeProps"],
-      path.join("src", "pages", "index.tsx"),
-      {
-        relativePath: path.relative(
-          path.join("src", "routes.tsx"),
-          path.join("src", "pages", "index.tsx")
-        ),
-      }
-    )
+    getExportProps(ast, ['routeProps'], path.join('src', 'pages', 'index.tsx'), {
+      relativePath: path.relative(
+        path.join('src', 'routes.tsx'),
+        path.join('src', 'pages', 'index.tsx'),
+      ),
+    }),
   ).toStrictEqual({
     props: {
       routeProps: {
-        path: "/:lang?/categories",
+        path: '/:lang?/categories',
         loader: `${EVAL_STRING_SYMBOL}${loader2.toString()}`,
         action: `${EVAL_STRING_SYMBOL}${action1.toString()}`,
       },
@@ -102,17 +97,12 @@ test("get routeProps from 'export {routeMeta1 as routeProps}'", () => {
   const ast = parseToAst(content);
 
   expect(
-    getExportProps(
-      ast,
-      ["routeProps"],
-      path.join("src", "pages", "index.tsx"),
-      {
-        relativePath: path.relative(
-          path.join("src", "routes.tsx"),
-          path.join("src", "pages", "index.tsx")
-        ),
-      }
-    )
+    getExportProps(ast, ['routeProps'], path.join('src', 'pages', 'index.tsx'), {
+      relativePath: path.relative(
+        path.join('src', 'routes.tsx'),
+        path.join('src', 'pages', 'index.tsx'),
+      ),
+    }),
   ).toStrictEqual({
     props: {
       routeProps: {
@@ -124,7 +114,7 @@ test("get routeProps from 'export {routeMeta1 as routeProps}'", () => {
   });
 });
 
-test("get routeProps include variable exported in local file", () => {
+test('get routeProps include variable exported in local file', () => {
   const content = `
       import ErrorBoundary from './components/ErrorBoundary'
 
@@ -142,12 +132,12 @@ test("get routeProps include variable exported in local file", () => {
     `;
   const ast = parseToAst(content);
   expect(
-    getExportProps(ast, ["routeProps"], path.join("src", "pages", "a.tsx"), {
+    getExportProps(ast, ['routeProps'], path.join('src', 'pages', 'a.tsx'), {
       relativePath: path.relative(
-        path.join("src", "routes.tsx"),
-        path.join("src", "pages", "a.tsx")
+        path.join('src', 'routes.tsx'),
+        path.join('src', 'pages', 'a.tsx'),
       ),
-    })
+    }),
   ).toStrictEqual({
     props: {
       routeProps: {
@@ -161,16 +151,16 @@ test("get routeProps include variable exported in local file", () => {
     },
     dependencies: [
       {
-        name: "ErrorBoundary",
-        asName: "PagesComponentsErrorBoundary",
-        importPath: "./pages/components/ErrorBoundary",
+        name: 'ErrorBoundary',
+        asName: 'PagesComponentsErrorBoundary',
+        importPath: './pages/components/ErrorBoundary',
         isDefault: true,
       },
     ],
   });
 });
 
-test("boundary: get routeProps include not exist variable", () => {
+test('boundary: get routeProps include not exist variable', () => {
   const content = `
   const Comp = ()=>{}
   export default Comp;
@@ -180,39 +170,34 @@ test("boundary: get routeProps include not exist variable", () => {
   };`;
   const ast = parseToAst(content);
   expect(() => {
-    getExportProps(ast, ["routeProps"], path.join("src", "pages", "a.tsx"), {
+    getExportProps(ast, ['routeProps'], path.join('src', 'pages', 'a.tsx'), {
       relativePath: path.relative(
-        path.join("src", "routes.tsx"),
-        path.join("src", "pages", "a.tsx")
+        path.join('src', 'routes.tsx'),
+        path.join('src', 'pages', 'a.tsx'),
       ),
     });
   }).toThrow(
-    `The variable named "action" cannot be found in the file with the path "file://src${path.sep}pages${path.sep}a.tsx"`
+    `The variable named "action" cannot be found in the file with the path "file://src${path.sep}pages${path.sep}a.tsx"`,
   );
 });
 
-test("get nothing from export", () => {
+test('get nothing from export', () => {
   const content = `export const a = {}`;
   const ast = parseToAst(content);
   expect(
-    getExportProps(
-      ast,
-      ["routeProps"],
-      path.join("src", "pages", "index.tsx"),
-      {
-        relativePath: path.relative(
-          path.join("src", "routes.tsx"),
-          path.join("src", "pages", "index.tsx")
-        ),
-      }
-    )
+    getExportProps(ast, ['routeProps'], path.join('src', 'pages', 'index.tsx'), {
+      relativePath: path.relative(
+        path.join('src', 'routes.tsx'),
+        path.join('src', 'pages', 'index.tsx'),
+      ),
+    }),
   ).toStrictEqual({
     props: {},
     dependencies: [],
   });
 });
 
-test("get two props1 which both export wrapply", () => {
+test('get two props1 which both export wrapply', () => {
   const content = `
   const Comp = ()=>{}
   export default Comp;
@@ -226,16 +211,16 @@ test("get two props1 which both export wrapply", () => {
   };`;
   const ast = parseToAst(content);
   expect(
-    getExportProps(ast, ["routeProps", "routeOptions"], "src/pages/b/b.tsx", {
+    getExportProps(ast, ['routeProps', 'routeOptions'], 'src/pages/b/b.tsx', {
       relativePath: path.relative(
-        path.join("src", "routes.tsx"),
-        path.join("src", "pages/b/b.tsx")
+        path.join('src', 'routes.tsx'),
+        path.join('src', 'pages/b/b.tsx'),
       ),
-    })
+    }),
   ).toStrictEqual({
     props: {
       routeProps: {
-        path: "a",
+        path: 'a',
         lazy: `${EVAL_STRING_SYMBOL}() => import("./pages/a")`,
       },
       routeOptions: {
@@ -247,7 +232,7 @@ test("get two props1 which both export wrapply", () => {
   });
 });
 
-test("get two props2 which both export directly", () => {
+test('get two props2 which both export directly', () => {
   const content = `
   const Comp = ()=>{}
   export default Comp;
@@ -256,17 +241,12 @@ test("get two props2 which both export directly", () => {
   `;
   const ast = parseToAst(content);
   expect(
-    getExportProps(
-      ast,
-      ["routeProps", "routeOptions"],
-      path.join("src", "pages", "index.tsx"),
-      {
-        relativePath: path.relative(
-          path.join("src", "routes.tsx"),
-          path.join("src", "pages", "index.tsx")
-        ),
-      }
-    )
+    getExportProps(ast, ['routeProps', 'routeOptions'], path.join('src', 'pages', 'index.tsx'), {
+      relativePath: path.relative(
+        path.join('src', 'routes.tsx'),
+        path.join('src', 'pages', 'index.tsx'),
+      ),
+    }),
   ).toStrictEqual({
     props: {
       routeProps: { a: 1, b: 2 },
@@ -276,7 +256,7 @@ test("get two props2 which both export directly", () => {
   });
 });
 
-test("get two props whiich both export wrapply and with as", () => {
+test('get two props whiich both export wrapply and with as', () => {
   const content = `
   const Comp = ()=>{}
   export default Comp;
@@ -287,17 +267,12 @@ test("get two props whiich both export wrapply and with as", () => {
   `;
   const ast = parseToAst(content);
   expect(
-    getExportProps(
-      ast,
-      ["routeProps", "routeOptions"],
-      path.join("src", "pages", "index.tsx"),
-      {
-        relativePath: path.relative(
-          path.join("src", "routes.tsx"),
-          path.join("src", "pages", "index.tsx")
-        ),
-      }
-    )
+    getExportProps(ast, ['routeProps', 'routeOptions'], path.join('src', 'pages', 'index.tsx'), {
+      relativePath: path.relative(
+        path.join('src', 'routes.tsx'),
+        path.join('src', 'pages', 'index.tsx'),
+      ),
+    }),
   ).toStrictEqual({
     props: {
       routeProps: {
@@ -312,7 +287,7 @@ test("get two props whiich both export wrapply and with as", () => {
   });
 });
 
-test("get two props which export directly and init with comma", () => {
+test('get two props which export directly and init with comma', () => {
   const content = `
   const Comp = ()=>{}
   export default Comp
@@ -322,17 +297,12 @@ test("get two props which export directly and init with comma", () => {
   Comp.routeOptions = {a:1,b:3};`;
   const ast = parseToAst(content);
   expect(
-    getExportProps(
-      ast,
-      ["routeProps", "routeOptions"],
-      path.join("src", "pages", "index.tsx"),
-      {
-        relativePath: path.relative(
-          path.join("src", "routes.tsx"),
-          path.join("src", "pages", "index.tsx")
-        ),
-      }
-    )
+    getExportProps(ast, ['routeProps', 'routeOptions'], path.join('src', 'pages', 'index.tsx'), {
+      relativePath: path.relative(
+        path.join('src', 'routes.tsx'),
+        path.join('src', 'pages', 'index.tsx'),
+      ),
+    }),
   ).toStrictEqual({
     props: {
       routeProps: {
@@ -347,7 +317,7 @@ test("get two props which export directly and init with comma", () => {
   });
 });
 
-test("test  pathRewrite", () => {
+test('test  pathRewrite', () => {
   const content = `
     import {ErrorBoundary1, ErrorBoundary2 as EB2} from '../components/ErrorBoundarys';
     import * as loader from '../utils/loader.ts';
@@ -366,18 +336,13 @@ test("test  pathRewrite", () => {
     `;
   const ast = parseToAst(content);
   expect(
-    getExportProps(
-      ast,
-      ["routeProps", "routeOptions"],
-      path.join("src", "pages", "index.tsx"),
-      {
-        relativePath: path.relative(
-          path.join("src", "routes.tsx"),
-          path.join("src", "pages", "index.tsx")
-        ),
-        pathRewrite: [[new RegExp("^./"), "@/"]],
-      }
-    )
+    getExportProps(ast, ['routeProps', 'routeOptions'], path.join('src', 'pages', 'index.tsx'), {
+      relativePath: path.relative(
+        path.join('src', 'routes.tsx'),
+        path.join('src', 'pages', 'index.tsx'),
+      ),
+      pathRewrite: [[new RegExp('^./'), '@/']],
+    }),
   ).toStrictEqual({
     props: {
       routeProps: {
@@ -394,28 +359,28 @@ test("test  pathRewrite", () => {
     },
     dependencies: [
       {
-        name: "ErrorBoundary1",
-        asName: "ComponentsErrorBoundarysErrorBoundary1",
-        importPath: "@/components/ErrorBoundarys",
+        name: 'ErrorBoundary1',
+        asName: 'ComponentsErrorBoundarysErrorBoundary1',
+        importPath: '@/components/ErrorBoundarys',
         isDefault: false,
       },
       {
-        name: "*",
-        asName: "UtilsLoader",
-        importPath: "@/utils/loader.ts",
+        name: '*',
+        asName: 'UtilsLoader',
+        importPath: '@/utils/loader.ts',
         isDefault: true,
       },
       {
-        name: "ErrorBoundary2",
-        asName: "ComponentsErrorBoundarysErrorBoundary2",
-        importPath: "@/components/ErrorBoundarys",
+        name: 'ErrorBoundary2',
+        asName: 'ComponentsErrorBoundarysErrorBoundary2',
+        importPath: '@/components/ErrorBoundarys',
         isDefault: false,
       },
     ],
   });
 });
 
-test("test with htmlTag,ReactTag,SvgTag,custom Component and WebCustomComponent", () => {
+test('test with htmlTag,ReactTag,SvgTag,custom Component and WebCustomComponent', () => {
   const content = `
     import * as ErrorBoundary from '../components/ErrorBoundarys';
     import React from 'react'
@@ -452,18 +417,13 @@ test("test with htmlTag,ReactTag,SvgTag,custom Component and WebCustomComponent"
     };`;
   const ast = parseToAst(content);
   expect(
-    getExportProps(
-      ast,
-      ["routeOptions"],
-      path.join("src", "pages", "index.tsx"),
-      {
-        relativePath: path.relative(
-          path.join("src", "router", "index.tsx"),
-          path.join("src", "pages", "index.tsx")
-        ),
-        pathRewrite: [[new RegExp("^../"), "@/"]],
-      }
-    )
+    getExportProps(ast, ['routeOptions'], path.join('src', 'pages', 'index.tsx'), {
+      relativePath: path.relative(
+        path.join('src', 'router', 'index.tsx'),
+        path.join('src', 'pages', 'index.tsx'),
+      ),
+      pathRewrite: [[new RegExp('^../'), '@/']],
+    }),
   ).toStrictEqual({
     props: {
       routeOptions: {
@@ -492,64 +452,64 @@ test("test with htmlTag,ReactTag,SvgTag,custom Component and WebCustomComponent"
     },
     dependencies: [
       {
-        name: "*",
-        asName: "ComponentsErrorBoundarys",
-        importPath: "@/components/ErrorBoundarys",
+        name: '*',
+        asName: 'ComponentsErrorBoundarys',
+        importPath: '@/components/ErrorBoundarys',
         isDefault: true,
       },
       {
-        name: "Comp2",
-        asName: "ComponentsIndex",
-        importPath: "@/components/index",
+        name: 'Comp2',
+        asName: 'ComponentsIndex',
+        importPath: '@/components/index',
         isDefault: true,
       },
       {
-        name: "React",
-        asName: "React",
-        importPath: "react",
+        name: 'React',
+        asName: 'React',
+        importPath: 'react',
         isDefault: true,
       },
       {
-        name: "Comp3",
-        asName: "ComponentsIndexComp3",
-        importPath: "@/components/index",
+        name: 'Comp3',
+        asName: 'ComponentsIndexComp3',
+        importPath: '@/components/index',
         isDefault: false,
       },
       {
-        name: "Form",
-        asName: "AntdForm",
-        importPath: "antd",
+        name: 'Form',
+        asName: 'AntdForm',
+        importPath: 'antd',
         isDefault: false,
       },
       {
-        name: "Input",
-        asName: "AntdInput",
-        importPath: "antd",
+        name: 'Input',
+        asName: 'AntdInput',
+        importPath: 'antd',
         isDefault: false,
       },
       {
-        name: "Result",
-        asName: "AntdResult",
-        importPath: "antd",
+        name: 'Result',
+        asName: 'AntdResult',
+        importPath: 'antd',
         isDefault: false,
       },
       {
-        name: "Typography",
-        asName: "AntdTypography",
-        importPath: "antd",
+        name: 'Typography',
+        asName: 'AntdTypography',
+        importPath: 'antd',
         isDefault: false,
       },
       {
-        name: "DetailLog",
-        asName: "ComponentsDetailDetailLog",
-        importPath: "@/components/Detail",
+        name: 'DetailLog',
+        asName: 'ComponentsDetailDetailLog',
+        importPath: '@/components/Detail',
         isDefault: false,
       },
     ],
   });
 });
 
-test("import in different way and path", () => {
+test('import in different way and path', () => {
   const content = `
     import A from '@/components/A.tsx';
     import B from '../components/B.tsx';
@@ -572,18 +532,13 @@ test("import in different way and path", () => {
     };`;
   const ast = parseToAst(content);
   expect(
-    getExportProps(
-      ast,
-      ["routeOptions"],
-      path.join("src", "pages", "index.tsx"),
-      {
-        relativePath: path.relative(
-          path.join("src", "router", "index.tsx"),
-          path.join("src", "pages", "index.tsx")
-        ),
-        pathRewrite: [[new RegExp("^../"), "@/"]],
-      }
-    )
+    getExportProps(ast, ['routeOptions'], path.join('src', 'pages', 'index.tsx'), {
+      relativePath: path.relative(
+        path.join('src', 'router', 'index.tsx'),
+        path.join('src', 'pages', 'index.tsx'),
+      ),
+      pathRewrite: [[new RegExp('^../'), '@/']],
+    }),
   ).toStrictEqual({
     props: {
       routeOptions: {
@@ -600,40 +555,40 @@ test("import in different way and path", () => {
     },
     dependencies: [
       {
-        name: "A",
-        asName: "ComponentsA",
-        importPath: "@/components/A.tsx",
+        name: 'A',
+        asName: 'ComponentsA',
+        importPath: '@/components/A.tsx',
         isDefault: true,
       },
       {
-        name: "B",
-        asName: "ComponentsB",
-        importPath: "@/components/B.tsx",
+        name: 'B',
+        asName: 'ComponentsB',
+        importPath: '@/components/B.tsx',
         isDefault: true,
       },
       {
-        name: "C",
-        asName: "CompC",
-        importPath: "comp",
+        name: 'C',
+        asName: 'CompC',
+        importPath: 'comp',
         isDefault: false,
       },
       {
-        name: "D",
-        asName: "ComponentsCompD",
-        importPath: "@/components/comp",
+        name: 'D',
+        asName: 'ComponentsCompD',
+        importPath: '@/components/comp',
         isDefault: false,
       },
       {
-        name: "default",
-        asName: "ComponentsCompDefault",
-        importPath: "@/components/comp",
+        name: 'default',
+        asName: 'ComponentsCompDefault',
+        importPath: '@/components/comp',
         isDefault: false,
       },
     ],
   });
 });
 
-test("use same variable in different attributes", () => {
+test('use same variable in different attributes', () => {
   const content = `
     import A from '@/components/A.tsx';
     import {loader1,loader2} from '@/utils/loader.ts'
@@ -656,17 +611,12 @@ test("use same variable in different attributes", () => {
   `;
   const ast = parseToAst(content);
   expect(
-    getExportProps(
-      ast,
-      ["routeOptions"],
-      path.join("src", "pages", "index.tsx"),
-      {
-        relativePath: path.relative(
-          path.join("src", "router", "index.tsx"),
-          path.join("src", "pages", "index.tsx")
-        ),
-      }
-    )
+    getExportProps(ast, ['routeOptions'], path.join('src', 'pages', 'index.tsx'), {
+      relativePath: path.relative(
+        path.join('src', 'router', 'index.tsx'),
+        path.join('src', 'pages', 'index.tsx'),
+      ),
+    }),
   ).toStrictEqual({
     props: {
       routeOptions: {
@@ -685,21 +635,21 @@ test("use same variable in different attributes", () => {
     },
     dependencies: [
       {
-        name: "loader1",
-        asName: "UtilsLoaderLoader1",
-        importPath: "@/utils/loader.ts",
+        name: 'loader1',
+        asName: 'UtilsLoaderLoader1',
+        importPath: '@/utils/loader.ts',
         isDefault: false,
       },
       {
-        name: "loader2",
-        asName: "UtilsLoaderLoader2",
-        importPath: "@/utils/loader.ts",
+        name: 'loader2',
+        asName: 'UtilsLoaderLoader2',
+        importPath: '@/utils/loader.ts',
         isDefault: false,
       },
       {
-        name: "A",
-        asName: "ComponentsA",
-        importPath: "@/components/A.tsx",
+        name: 'A',
+        asName: 'ComponentsA',
+        importPath: '@/components/A.tsx',
         isDefault: true,
       },
     ],

@@ -1,8 +1,8 @@
-const globalJestConfig = require("../../jest.config");
+const globalJestConfig = require('../../jest.config');
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
   ...globalJestConfig,
-  rootDir: "./",
+  rootDir: './',
   silent: true,
 };

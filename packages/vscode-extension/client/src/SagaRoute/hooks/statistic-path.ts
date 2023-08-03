@@ -1,20 +1,20 @@
-import { RoutingOption } from "@sagaroute/react";
-import { RouteObject } from "@sagaroute/react/lib/weave";
+import { RoutingOption } from '@sagaroute/react';
+import { RouteObject } from '@sagaroute/react/lib/weave';
 import getPathCompletionItemManager, {
   PathCompletionItemManager,
-} from "../../PathCompletionItemManager";
-import path from "path";
+} from '../../PathCompletionItemManager';
+import path from 'path';
 
 let paths: { route: string; fpath?: string }[] = [];
 const pathCompletionItemManager = getPathCompletionItemManager();
 const routeToFilePathMap = new Map<RouteObject, string>();
 
-function traverseRoute(route: RouteObject, parentPath = "") {
+function traverseRoute(route: RouteObject, parentPath = '') {
   let routePath = route.path ? `${parentPath}/${route.path}` : parentPath;
-  if (!routePath.startsWith("/")) {
-    routePath = "/" + routePath;
+  if (!routePath.startsWith('/')) {
+    routePath = '/' + routePath;
   }
-  routePath = routePath.replace(/^\/\//, "/");
+  routePath = routePath.replace(/^\/\//, '/');
   const routeAvaliable =
     route.path &&
     (route.element ||
@@ -33,15 +33,15 @@ function traverseRoute(route: RouteObject, parentPath = "") {
   }
 }
 
-const statisticPathHooks: RoutingOption["hooks"] = {
+const statisticPathHooks: RoutingOption['hooks'] = {
   weave: {
     afterEach: {
       order: 105,
       handler(route, imports, fileNode) {
         process.nextTick(() => {
-          if (fileNode.type === "dir") {
+          if (fileNode.type === 'dir') {
             const layoutFileNode = fileNode.children?.find(
-              ({ name }) => path.parse(name).name === "_layout"
+              ({ name }) => path.parse(name).name === '_layout',
             );
             if (layoutFileNode) {
               routeToFilePathMap.set(route, layoutFileNode.path);
@@ -49,8 +49,7 @@ const statisticPathHooks: RoutingOption["hooks"] = {
               const indexFileNode = fileNode.children?.find(
                 ({ props, name }) =>
                   props?.routeProps?.index === true ||
-                  (path.parse(name).name === "index" &&
-                    props?.routeProps?.index !== false)
+                  (path.parse(name).name === 'index' && props?.routeProps?.index !== false),
               );
               if (indexFileNode) {
                 routeToFilePathMap.set(route, indexFileNode.path);
@@ -73,11 +72,8 @@ const statisticPathHooks: RoutingOption["hooks"] = {
           });
           pathCompletionItemManager.setCompletions(
             paths.map((item) =>
-              PathCompletionItemManager.transformPathToCompletionItem(
-                item.route,
-                item.fpath
-              )
-            )
+              PathCompletionItemManager.transformPathToCompletionItem(item.route, item.fpath),
+            ),
           );
           routeToFilePathMap.clear();
         });

@@ -14,8 +14,8 @@ new Sagaroute({
     weave: {
       afterEach(route) {
         route.path = route.path
-          ?.replace(/([A-Z])/g, "-$1")
-          .replace(/^-/, "")
+          ?.replace(/([A-Z])/g, '-$1')
+          .replace(/^-/, '')
           .toLocaleLowerCase();
       },
     },
@@ -46,15 +46,13 @@ new Sagaroute({
    * @param {RoutingOption} inputOption SagaRoute实例化时传入的配置参数
    * @returns {void|UltimateRoutingOption} 如果返回了结果，该结果将会作为最终的配置，且跳过读取配置文件、合并配置、格式化配置的步骤
    */
-  function buildbBefore(
-    inputOption: RoutingOption
-  ): void | UltimateRoutingOption;
+  function buildbBefore(inputOption: RoutingOption): void | UltimateRoutingOption;
   ```
 - 示例
 
   ```ts
   const sagaroute = new Sagaroute({
-    dirpath: "src/views",
+    dirpath: 'src/views',
     hooks: {
       build: {
         before(option) {
@@ -121,7 +119,7 @@ new Sagaroute({
       gather: {
         beforeEach(fpath) {
           // widgets文件夹下的文件不会被解析
-          if (fpath.includes("/widgets/")) {
+          if (fpath.includes('/widgets/')) {
             return null;
           }
         },
@@ -189,7 +187,7 @@ new Sagaroute({
    */
   function weaveBeforeEach(
     fileNode: FileNode,
-    parent: FileNodeParent
+    parent: FileNodeParent,
   ): void | { route: RouteObject; imports: Imports } | null;
   ```
 - 示例：如果要实现特定名称的文件夹下的文件不会被解析成路由，除了[gather.beforeEach](#gatherbeforeeach)，也可借助此钩子函数实现：
@@ -199,7 +197,7 @@ new Sagaroute({
     hooks: {
       weave: {
         beforeEach(fileNode) {
-          if (fileNode.path.includes("/widgets/")) {
+          if (fileNode.path.includes('/widgets/')) {
             return null;
           }
         },
@@ -223,7 +221,7 @@ new Sagaroute({
     route: RouteObject,
     imports: Imports,
     fileNode: FileNode,
-    parent: FileNodeParent
+    parent: FileNodeParent,
   ): void;
   ```
 - 示例：
@@ -236,8 +234,8 @@ new Sagaroute({
          weave: {
            afterEach(route) {
              route.path = route.path
-               ?.replace(/([A-Z])/g, "-$1")
-               .replace(/^-/, "")
+               ?.replace(/([A-Z])/g, '-$1')
+               .replace(/^-/, '')
                .toLocaleLowerCase();
            },
          },
@@ -253,8 +251,8 @@ new Sagaroute({
          weave: {
            afterEach(route) {
              route.path = route.path
-               ?.replace(/([A-Z])/g, "-$1")
-               .replace(/^-/, "")
+               ?.replace(/([A-Z])/g, '-$1')
+               .replace(/^-/, '')
                .toLocaleLowerCase();
            },
          },
@@ -272,11 +270,7 @@ new Sagaroute({
    * @param {Imports} imports 生成的路由列表所附带的依赖集合
    * @param {FileNode[]} fileNodes 遍历到的FileNode列表
    */
-  function weaveAfter(
-    routes: RouteObject[],
-    imports: Imports,
-    fileNodes: FileNode[]
-  ): void;
+  function weaveAfter(routes: RouteObject[], imports: Imports, fileNodes: FileNode[]): void;
   ```
 
 #### print.parse.before
@@ -301,10 +295,7 @@ new Sagaroute({
         parse: {
           before(routeFilePath) {
             // 读取返回渲染模板内容
-            return fs.readFileSync(
-              path.join(__dirname, "template.txt"),
-              "utf-8"
-            );
+            return fs.readFileSync(path.join(__dirname, 'template.txt'), 'utf-8');
           },
         },
       },
@@ -340,7 +331,7 @@ new Sagaroute({
   function printInjectBefore(
     view: Record<string, any>,
     template: string,
-    routes: RouteObject[]
+    routes: RouteObject[],
   ): void | string | null;
   ```
 - 示例：如果想把路由列表分割到两个路由变量上，可借助该钩子函数实现：
@@ -370,7 +361,7 @@ new Sagaroute({
   则可以借助该钩子函数实现：
 
   ```ts
-  import { transformRoutesToString } from "@sagaroute/react";
+  import { transformRoutesToString } from '@sagaroute/react';
 
   new Sagaroute({
     hooks: {
@@ -379,11 +370,11 @@ new Sagaroute({
           before(view, template, routes) {
             // 往模板变量view里新增userRoutes和chartRoutes变量
             // transformRoutesToString方法用于把路由列表转换为可渲染到渲染模板上的字符串
-            view["userRoutes"] = transformRoutesToString(
-              routes.filter((item: any) => item.path === "user")
+            view['userRoutes'] = transformRoutesToString(
+              routes.filter((item: any) => item.path === 'user'),
             );
-            view["chartRoutes"] = transformRoutesToString(
-              routes.filter((item: any) => item.path === "chart")
+            view['chartRoutes'] = transformRoutesToString(
+              routes.filter((item: any) => item.path === 'chart'),
             );
           },
         },
@@ -404,11 +395,7 @@ new Sagaroute({
    * @param {Object{string: any}} view 模板变量
    * @param {string} template 渲染模板
    */
-  function printInjectAfter(
-    content: string,
-    view: Record<string, any>,
-    template: string
-  ): void;
+  function printInjectAfter(content: string, view: Record<string, any>, template: string): void;
   ```
 
 #### print.write.before
@@ -422,10 +409,7 @@ new Sagaroute({
    * @param {string} routeFilePath 路由模板文件的路径
    * @returns {void | null} 如果返回的是null，则执行流程在此终止
    */
-  function printWriteBefore(
-    renderedContent: string,
-    routeFilePath: string
-  ): void | null;
+  function printWriteBefore(renderedContent: string, routeFilePath: string): void | null;
   ```
 
 #### print.write.after

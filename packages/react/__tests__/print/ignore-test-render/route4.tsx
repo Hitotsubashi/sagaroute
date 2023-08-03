@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from "react";
+import React from 'react';
 /* sagaroute-inject:imports */
 
 function getRoutes() {

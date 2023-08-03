@@ -1,6 +1,6 @@
-import { ParseResult } from "@babel/parser";
-import traverse from "@babel/traverse";
-import { File } from "@babel/types";
+import { ParseResult } from '@babel/parser';
+import traverse from '@babel/traverse';
+import { File } from '@babel/types';
 
 export default function isReactComponent(ast: ParseResult<File>) {
   let hasJSXElement = false;

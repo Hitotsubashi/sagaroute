@@ -1,5 +1,5 @@
 // @ts-nocheck
-import ErrorBoundary from "../components/ErrorBoundary";
+import ErrorBoundary from '../components/ErrorBoundary';
 
 type Props = Record<string, never>;
 

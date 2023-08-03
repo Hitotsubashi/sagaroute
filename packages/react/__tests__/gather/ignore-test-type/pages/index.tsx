@@ -1,5 +1,5 @@
 // @ts-nocheck
-import ErrorBoundary from "../components/ErrorBoundary";
+import ErrorBoundary from '../components/ErrorBoundary';
 
 type Props = Record<string, never>;
 
@@ -17,14 +17,14 @@ const App: React.FC<Props> = () => {
   );
 };
 
-App["routeProps"] = {
+App['routeProps'] = {
   // 基础数据类型
-  string: "string",
+  string: 'string',
   number: 1.2,
   boolean: true,
   null: null,
   undefined: undefined,
-  symbol: Symbol("s"),
+  symbol: Symbol('s'),
   // 引用数据类型
   funtion: function () {},
   object: {},

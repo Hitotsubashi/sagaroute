@@ -1,5 +1,5 @@
-import { stdout } from "single-line-log";
-import { green, cyan, blue } from "colorette";
+import { stdout } from 'single-line-log';
+import { green, cyan, blue } from 'colorette';
 
 type StdoutHeader = {
   badge: string;
@@ -14,15 +14,12 @@ type StdoutContent = {
 };
 class StdoutManager {
   header: StdoutHeader = {
-    badge: "",
-    message: "",
+    badge: '',
+    message: '',
   };
   content: StdoutContent | undefined = undefined;
 
-  set(
-    header: Partial<StdoutHeader>,
-    content?: Partial<StdoutContent> | undefined
-  ) {
+  set(header: Partial<StdoutHeader>, content?: Partial<StdoutContent> | undefined) {
     this.header = { ...this.header, ...header };
     if (content === undefined) {
       this.content = undefined;
@@ -30,9 +27,9 @@ class StdoutManager {
       if (this.content === undefined) {
         this.content = {
           progress: 0,
-          stage: "",
-          status: "",
-          message: "",
+          stage: '',
+          status: '',
+          message: '',
         };
       }
       this.content = { ...this.content!, ...content };
@@ -43,11 +40,11 @@ class StdoutManager {
   output() {
     const headerLine = `${this.header.badge} ${this.header.message}`;
     const contentLine = this.content
-      ? `${green(`${this.content.progress}%`)} ${cyan(
-          this.content.stage
-        )} ${blue(this.content.status)} ${this.content.message}`
-      : "";
-    stdout(headerLine + "\n" + contentLine + "\n");
+      ? `${green(`${this.content.progress}%`)} ${cyan(this.content.stage)} ${blue(
+          this.content.status,
+        )} ${this.content.message}`
+      : '';
+    stdout(headerLine + '\n' + contentLine + '\n');
   }
 }
 

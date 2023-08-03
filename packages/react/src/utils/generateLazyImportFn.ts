@@ -1,28 +1,26 @@
-import { FileNode } from "@/gather";
-import { EVAL_STRING_SYMBOL } from "./symbol";
-import { Imports, RouteObject } from "@/weave";
-import generateImports from "./generateImports";
-import mergeImports from "./mergeImports";
-import transformRoutesToString from "./transformRoutesToString";
-import normalizePath from "./normalizePath";
-import generateImportName from "./generateImportName";
+import { FileNode } from '@/gather';
+import { EVAL_STRING_SYMBOL } from './symbol';
+import { Imports, RouteObject } from '@/weave';
+import generateImports from './generateImports';
+import mergeImports from './mergeImports';
+import transformRoutesToString from './transformRoutesToString';
+import normalizePath from './normalizePath';
+import generateImportName from './generateImportName';
 
 function generateImportLines(imports: Imports): string {
   const importLines: string[] = [];
 
   Object.entries(imports).forEach(([source, dependencies]) => {
     const notDefaultImport: string[] = [];
-    let defaultImport: string = "";
+    let defaultImport: string = '';
     dependencies.forEach((dependency) => {
       if (dependency.isDefault) {
         // import x1 from 'xxx'
-        if (dependency.name !== "*") {
+        if (dependency.name !== '*') {
           notDefaultImport.push(`default: ${dependency.asName}`);
           // import * as x1 from 'xxx'
         } else {
-          importLines.push(
-            `const ${dependency.asName} = await import("${source}");`
-          );
+          importLines.push(`const ${dependency.asName} = await import("${source}");`);
         }
       } else {
         // import {x1} from 'xxx'
@@ -35,39 +33,34 @@ function generateImportLines(imports: Imports): string {
     });
     const importElementString = [
       defaultImport,
-      notDefaultImport.length ? `{${notDefaultImport.join(",")}}` : "",
+      notDefaultImport.length ? `{${notDefaultImport.join(',')}}` : '',
     ]
       .filter((item) => Boolean(item))
-      .join(",");
+      .join(',');
     if (importElementString) {
-      importLines.push(
-        `const ${importElementString}  = await import("${source}");`
-      );
+      importLines.push(`const ${importElementString}  = await import("${source}");`);
     }
   });
-  return importLines.join("\n");
+  return importLines.join('\n');
 }
 
 interface Option {
   pathRewrite?: [RegExp, string][];
-  restRouteProps: Omit<
-    RouteObject,
-    "path" | "index" | "children" | "caseSensitive"
-  >;
-  dependencies: FileNode["dependencies"];
+  restRouteProps: Omit<RouteObject, 'path' | 'index' | 'children' | 'caseSensitive'>;
+  dependencies: FileNode['dependencies'];
 }
 
 export default function generateLazyImportFn(
   componentPath: string,
-  { restRouteProps, dependencies, pathRewrite }: Option
+  { restRouteProps, dependencies, pathRewrite }: Option,
 ) {
-  const asName = generateImportName(componentPath, "");
+  const asName = generateImportName(componentPath, '');
   const adjustedPath = normalizePath(componentPath, pathRewrite);
   const imports = generateImports(dependencies);
   mergeImports(imports, {
     [adjustedPath]: [
       {
-        name: "default",
+        name: 'default',
         asName,
         isDefault: false,
       },

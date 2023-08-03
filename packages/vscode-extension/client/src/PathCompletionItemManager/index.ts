@@ -1,8 +1,7 @@
-import { CompletionItem } from "vscode";
-import * as vscode from "vscode";
+import { CompletionItem } from 'vscode';
+import * as vscode from 'vscode';
 
-const workspaceRootFolderPath =
-  vscode.workspace.workspaceFolders![0].uri.fsPath;
+const workspaceRootFolderPath = vscode.workspace.workspaceFolders![0].uri.fsPath;
 
 function transformPathToSnippetLine(path: string) {
   let index = 1;
@@ -15,19 +14,11 @@ export class PathCompletionItemManager {
   completions: CompletionItem[] = [];
 
   static transformPathToCompletionItem(route: string, fpath?: string) {
-    const completion = new vscode.CompletionItem(
-      route,
-      vscode.CompletionItemKind.Keyword
-    );
-    completion.insertText = new vscode.SnippetString(
-      transformPathToSnippetLine(route)
-    );
+    const completion = new vscode.CompletionItem(route, vscode.CompletionItemKind.Keyword);
+    completion.insertText = new vscode.SnippetString(transformPathToSnippetLine(route));
     if (fpath) {
       completion.documentation = new vscode.MarkdownString(
-        `related to file: [${fpath.replace(
-          workspaceRootFolderPath,
-          ""
-        )}](${fpath})`
+        `related to file: [${fpath.replace(workspaceRootFolderPath, '')}](${fpath})`,
       );
     }
     return completion;

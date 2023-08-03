@@ -25,7 +25,8 @@
   },
   "scripts": {
     "test": "jest",
-    "build": "tsc --project tsconfig.build.json && tsc-alias -p tsconfig.build.json"
+    "build": "tsc --project tsconfig.build.json && tsc-alias -p tsconfig.build.json",
+    "lint:prettier": "prettier --check . --end-of-line auto"
   },
   "devDependencies": {
     "@types/jest": "^29.4.0",

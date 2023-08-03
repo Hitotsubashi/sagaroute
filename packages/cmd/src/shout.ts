@@ -1,12 +1,12 @@
-import { bgBlue, bgGreen, bgRed, bgYellow, black } from "colorette";
+import { bgBlue, bgGreen, bgRed, bgYellow, black } from 'colorette';
 import {
   FileNode,
   GatherHookAfter,
   GatherHookAfterEach,
   GatherHookBefore,
   GatherHookBeforeEach,
-} from "@sagaroute/react/lib/gather";
-import stdoutManager from "./stdoutManager";
+} from '@sagaroute/react/lib/gather';
+import stdoutManager from './stdoutManager';
 import {
   FileNodeParent,
   Imports,
@@ -15,20 +15,20 @@ import {
   WeaveHookAfterEach,
   WeaveHookBefore,
   WeaveHookBeforeEach,
-} from "@sagaroute/react/lib/weave";
+} from '@sagaroute/react/lib/weave';
 import {
   PrintHookAfterInject,
   PrintHookAfterParse,
   PrintHookBeforeInject,
   PrintHookBeforeParse,
-} from "@sagaroute/react/lib/print";
-import { HookBeforeBuild, HookAfterBuild } from "@sagaroute/react/lib/index";
+} from '@sagaroute/react/lib/print';
+import { HookBeforeBuild, HookAfterBuild } from '@sagaroute/react/lib/index';
 
 export const stdoutBadge = {
-  info: bgBlue(black(" INFO ")),
-  done: bgGreen(black(" DONE ")),
-  fail: bgRed(black(" FAIL ")),
-  warn: bgYellow(black(" WARN ")),
+  info: bgBlue(black(' INFO ')),
+  done: bgGreen(black(' DONE ')),
+  fail: bgRed(black(' FAIL ')),
+  warn: bgYellow(black(' WARN ')),
 };
 
 export const buildHookBeforeStdout: HookBeforeBuild = () => {
@@ -36,10 +36,10 @@ export const buildHookBeforeStdout: HookBeforeBuild = () => {
     {},
     {
       progress: 1,
-      stage: "build",
-      status: "start",
-      message: "",
-    }
+      stage: 'build',
+      status: 'start',
+      message: '',
+    },
   );
 };
 
@@ -48,38 +48,36 @@ export const buildHookAfterStdout: HookAfterBuild = () => {
     {},
     {
       progress: 4,
-      stage: "build",
-      status: "end",
-      message: "",
-    }
+      stage: 'build',
+      status: 'end',
+      message: '',
+    },
   );
 };
 
 export const gatherHookBeforeStdout: GatherHookBefore = (
   dirpath: string,
-  layoutDirPath: string
+  layoutDirPath: string,
 ) => {
   stdoutManager.set(
     {},
     {
       progress: 5,
-      stage: "gather",
-      status: "start",
+      stage: 'gather',
+      status: 'start',
       message: `dirpath:${dirpath}, layoutDirPath:${layoutDirPath}`,
-    }
+    },
   );
 };
 
-export const gatherHookBeforeEachStdout: GatherHookBeforeEach = (
-  fileNodePath: string
-) => {
+export const gatherHookBeforeEachStdout: GatherHookBeforeEach = (fileNodePath: string) => {
   stdoutManager.set(
     {},
     {
       progress: 35,
-      status: "start:node",
+      status: 'start:node',
       message: `fileNodePath: ${fileNodePath}`,
-    }
+    },
   );
 };
 
@@ -88,16 +86,16 @@ let perWeaveStep = 0;
 
 export const gatherHookAfterEachStdout: GatherHookAfterEach = (
   fileNode: FileNode,
-  fileNodePath: string
+  fileNodePath: string,
 ) => {
   fileNodeCount += 1;
   stdoutManager.set(
     {},
     {
       progress: 35,
-      status: "done:node",
+      status: 'done:node',
       message: `fileNodePath: ${fileNodePath}`,
-    }
+    },
   );
 };
 
@@ -106,9 +104,9 @@ export const gatherHookAfterStdout: GatherHookAfter = () => {
     {},
     {
       progress: 40,
-      status: "done",
-      message: "",
-    }
+      status: 'done',
+      message: '',
+    },
   );
 };
 
@@ -117,23 +115,23 @@ export const weaveHookBeforeStdout: WeaveHookBefore = () => {
   stdoutManager.set(
     {},
     {
-      stage: "weave",
-      status: "start",
-      message: "",
-    }
+      stage: 'weave',
+      status: 'start',
+      message: '',
+    },
   );
 };
 
 export const weaveHookBeforeEachStdout: WeaveHookBeforeEach = (
   fileNode: FileNode,
-  parent: FileNodeParent
+  parent: FileNodeParent,
 ) => {
   stdoutManager.set(
     {},
     {
-      status: "start:node",
+      status: 'start:node',
       message: `fileNode.name: ${fileNode.name}, parent: ${parent}`,
-    }
+    },
   );
 };
 
@@ -141,7 +139,7 @@ export const weaveHookAfterEachStdout: WeaveHookAfterEach = (
   route: RouteObject | null,
   imports: Imports,
   fileNode: FileNode,
-  parent: FileNodeParent
+  parent: FileNodeParent,
 ) => {
   let progress = stdoutManager.content!.progress + perWeaveStep;
   if (progress > 90) {
@@ -151,9 +149,9 @@ export const weaveHookAfterEachStdout: WeaveHookAfterEach = (
     {},
     {
       progress,
-      status: "done:node",
+      status: 'done:node',
       message: `fileNode.name: ${fileNode.name}, parent: ${parent}`,
-    }
+    },
   );
 };
 
@@ -161,22 +159,20 @@ export const weaveHookAfterStdout: WeaveHookAfter = () => {
   stdoutManager.set(
     {},
     {
-      status: "done",
-    }
+      status: 'done',
+    },
   );
 };
 
-export const printHookBeforeParseStdout: PrintHookBeforeParse = (
-  routeFilePath: string
-) => {
+export const printHookBeforeParseStdout: PrintHookBeforeParse = (routeFilePath: string) => {
   stdoutManager.set(
     {},
     {
       progress: 92,
-      stage: "print",
-      status: "parse:start",
+      stage: 'print',
+      status: 'parse:start',
       message: `routeFilePath: ${routeFilePath}`,
-    }
+    },
   );
 };
 
@@ -185,8 +181,8 @@ export const printHookAfterParseStdout: PrintHookAfterParse = () => {
     {},
     {
       progress: 94,
-      status: "parse:done",
-    }
+      status: 'parse:done',
+    },
   );
 };
 
@@ -195,8 +191,8 @@ export const printHookBeforeInjectStdout: PrintHookBeforeInject = () => {
     {},
     {
       progress: 96,
-      status: "inject:start",
-    }
+      status: 'inject:start',
+    },
   );
 };
 
@@ -205,7 +201,7 @@ export const printHookAfterInjectStdout: PrintHookAfterInject = () => {
     {},
     {
       progress: 98,
-      status: "inject:done",
-    }
+      status: 'inject:done',
+    },
   );
 };

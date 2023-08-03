@@ -1,5 +1,5 @@
 // @ts-nocheck
-import ErrorEle from "@/components/ErrorEle.tsx";
+import ErrorEle from '@/components/ErrorEle.tsx';
 
 const Comp: React.FC = () => {
   const [temp, setTemp] = useState(0);
@@ -7,7 +7,7 @@ const Comp: React.FC = () => {
 };
 
 Comp.routeProps = {
-  role: ["amdin"],
+  role: ['amdin'],
   errorElement: <ErrorEle />,
 };
 

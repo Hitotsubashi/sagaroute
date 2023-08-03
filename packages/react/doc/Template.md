@@ -5,8 +5,8 @@
 例如存在**路由模板文件**，其内容如下所示：
 
 ```js
-import React from "react";
-import { createBrowserRouter } from "react-router-dom";
+import React from 'react';
+import { createBrowserRouter } from 'react-router-dom';
 /* sagaroute-inject:imports */
 
 /* sagaroute-inject:routes */
@@ -32,8 +32,8 @@ export default router;
 例如在**路由模板文件**中有以下代码：
 
 ```js
-import React from "react";
-import { createBrowserRouter } from "react-router-dom";
+import React from 'react';
+import { createBrowserRouter } from 'react-router-dom';
 /* sagaroute-inject:imports */
 
 /* sagaroute-inject:routes */
@@ -77,7 +77,7 @@ const a = {{{a}}};
     /* sagaroute-inject:b */
     b = 1;
     /* sagaroute-inject:c */
-    export const c = "3";
+    export const c = '3';
     ```
 
     `@sagaroute/react`会将上述代码 👆 转换成**渲染模板**如下 👇 所示：

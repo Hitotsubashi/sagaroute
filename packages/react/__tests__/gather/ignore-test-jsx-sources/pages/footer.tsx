@@ -1,6 +1,6 @@
 // @ts-nocheck
-import * as Text from "./components/Text.tsx";
-import Title from "./components/Title.tsx";
+import * as Text from './components/Text.tsx';
+import Title from './components/Title.tsx';
 
 const Footer: React.FC<Props> = () => {
   const request = useCallback(() => {}, []);

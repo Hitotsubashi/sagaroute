@@ -1,8 +1,5 @@
 // @ts-nocheck
-import ErrorBoundary2, {
-  Header,
-  Context,
-} from "./components/ErrorBoundary2.tsx";
+import ErrorBoundary2, { Header, Context } from './components/ErrorBoundary2.tsx';
 
 type Props = Record<string, never>;
 

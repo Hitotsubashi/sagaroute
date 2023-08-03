@@ -1,41 +1,33 @@
-import path from "path";
-import fs from "fs";
+import path from 'path';
+import fs from 'fs';
 import {
   INJECT_SYMBOL_PREFIX_REGEXP,
   TEMPLATE_RENDER_IMPORTS_SYMBOL,
   TEMPLATE_RENDER_ROUTE_SYMBOL,
-} from "@/utils/symbol";
-import { Imports, RouteObject } from "@/weave";
-import { ParseResult } from "@babel/parser";
-import traverse from "@babel/traverse";
-import * as t from "@babel/types";
-import generate from "@babel/generator";
-import Mustache from "mustache";
-import hookCompose from "@/utils/hookCompose";
-import parseToAst from "@/utils/parseToAst";
-import transformRoutesToString from "./utils/transformRoutesToString";
+} from '@/utils/symbol';
+import { Imports, RouteObject } from '@/weave';
+import { ParseResult } from '@babel/parser';
+import traverse from '@babel/traverse';
+import * as t from '@babel/types';
+import generate from '@babel/generator';
+import Mustache from 'mustache';
+import hookCompose from '@/utils/hookCompose';
+import parseToAst from '@/utils/parseToAst';
+import transformRoutesToString from './utils/transformRoutesToString';
 
-export type PrintHookBeforeParse = (
-  routeFilePath: string
-) => void | string | null;
-export type PrintHookAfterParse = (
-  template: string,
-  routeFilePath: string
-) => void;
+export type PrintHookBeforeParse = (routeFilePath: string) => void | string | null;
+export type PrintHookAfterParse = (template: string, routeFilePath: string) => void;
 export type PrintHookBeforeInject = (
   view: Record<string, any>,
   template: string,
-  routes: RouteObject[]
+  routes: RouteObject[],
 ) => void | string | null;
 export type PrintHookAfterInject = (
   content: string,
   view: Record<string, any>,
-  template: string
+  template: string,
 ) => void;
-export type PrintHookBeforeWrite = (
-  renderedContent: string,
-  routeFilePath: string
-) => void | null;
+export type PrintHookBeforeWrite = (renderedContent: string, routeFilePath: string) => void | null;
 export type PrintHookAfterWrite = (routeFilePath: string) => void;
 
 interface PrintOption {
@@ -62,23 +54,23 @@ function getRouteFileContent(routeFilePath: string): string {
   if (!stats || !stats.isFile()) {
     throw new Error(`Could not find the file with path ${routeFilePath}`);
   }
-  return fs.readFileSync(routeFilePath, "utf-8");
+  return fs.readFileSync(routeFilePath, 'utf-8');
 }
 
-const IMPORT_DECLARATIONS_COMMENT = "injected by sagaroute";
+const IMPORT_DECLARATIONS_COMMENT = 'injected by sagaroute';
 export const IMPORT_DECLARATIONS_COMMENT_START = `${IMPORT_DECLARATIONS_COMMENT}: start`;
 export const IMPORT_DECLARATIONS_COMMENT_END = `${IMPORT_DECLARATIONS_COMMENT}: end`;
 
 function removeInjectedContent(content: string) {
   return content.replace(
     /\/\* injected by sagaroute\: start \*\/.*\/\* injected by sagaroute\: end \*\//gs,
-    ""
+    '',
   );
 }
 
 function parseStickyInjectCommentToPlaceholder(
   ast: ParseResult<t.File>,
-  handledInjectVariables: string[]
+  handledInjectVariables: string[],
 ) {
   function getInjectedVariable(node: t.Node) {
     const startLine = node.loc?.start.line;
@@ -151,10 +143,7 @@ function parseStickyInjectCommentToPlaceholder(
   });
 }
 
-function parseEmptyInjectCommentToPlaceholder(
-  content: string,
-  handledInjectVariables: string[]
-) {
+function parseEmptyInjectCommentToPlaceholder(content: string, handledInjectVariables: string[]) {
   const injectedVariables = new Set(handledInjectVariables);
   function replacer(match: string, p1: string) {
     const matchObj = p1.match(INJECT_SYMBOL_PREFIX_REGEXP);
@@ -167,7 +156,7 @@ function parseEmptyInjectCommentToPlaceholder(
           `/* ${IMPORT_DECLARATIONS_COMMENT_START} */`,
           `{{{${varName}}}}`,
           `/* ${IMPORT_DECLARATIONS_COMMENT_END} */`,
-        ].join("\n");
+        ].join('\n');
       }
     }
     return match;
@@ -181,23 +170,17 @@ function parseEmptyInjectCommentToPlaceholder(
   };
 }
 
-function generateRenderTemplateFromContent(
-  content: string,
-  routeFilePath: string
-) {
+function generateRenderTemplateFromContent(content: string, routeFilePath: string) {
   const handledInjectVariables: string[] = [];
   let modifiedContent = removeInjectedContent(content);
-  const ast = parseToAst(
-    modifiedContent,
-    [".ts", ".tsx"].includes(path.extname(routeFilePath))
-  );
+  const ast = parseToAst(modifiedContent, ['.ts', '.tsx'].includes(path.extname(routeFilePath)));
   const existedImportNames = collectExistedImportNames(ast);
   parseStickyInjectCommentToPlaceholder(ast, handledInjectVariables);
   let { code: template } = generate(ast);
   let injectedVariables: string[];
   ({ template, injectedVariables } = parseEmptyInjectCommentToPlaceholder(
     template,
-    handledInjectVariables
+    handledInjectVariables,
   ));
   return { template, existedImportNames, injectedVariables };
 }
@@ -220,27 +203,22 @@ function collectExistedImportNames(ast: ParseResult<t.File>) {
   return existedImportNames;
 }
 
-function transformImportsToString(
-  imports: Imports,
-  existedImportNames: string[]
-) {
+function transformImportsToString(imports: Imports, existedImportNames: string[]) {
   const importLines: string[] = [];
 
   Object.entries(imports).forEach(([source, dependencies]) => {
     const notDefaultImport: string[] = [];
-    let defaultImport: string = "";
+    let defaultImport: string = '';
     dependencies
       .filter(({ asName }) => !existedImportNames.includes(asName))
       .forEach((dependency) => {
         if (dependency.isDefault) {
           // import x1 from 'xxx'
-          if (dependency.name !== "*") {
+          if (dependency.name !== '*') {
             defaultImport = dependency.asName;
             // import * as x1 from 'xxx'
           } else {
-            importLines.push(
-              `import * as ${dependency.asName} from "${source}";`
-            );
+            importLines.push(`import * as ${dependency.asName} from "${source}";`);
           }
         } else {
           // import {x1} from 'xxx'
@@ -253,55 +231,43 @@ function transformImportsToString(
       });
     const importElementString = [
       defaultImport,
-      notDefaultImport.length ? `{${notDefaultImport.join(",")}}` : "",
+      notDefaultImport.length ? `{${notDefaultImport.join(',')}}` : '',
     ]
       .filter((item) => Boolean(item))
-      .join(",");
+      .join(',');
     if (importElementString) {
       importLines.push(`import ${importElementString} from "${source}";`);
     }
   });
-  return importLines.join("\n");
+  return importLines.join('\n');
 }
 
 function diffVariableBetweenViewAndTemplate(
   viewVariable: string[],
   templateVariable: string[],
-  onWarning: NonNullable<PrintOption["onWarning"]>,
-  routeFilePath: string
+  onWarning: NonNullable<PrintOption['onWarning']>,
+  routeFilePath: string,
 ) {
-  const variablesOnlyInView = viewVariable.filter(
-    (item) => !templateVariable.includes(item)
-  );
-  const variablesOnlyInTemplate = templateVariable.filter(
-    (item) => !viewVariable.includes(item)
-  );
+  const variablesOnlyInView = viewVariable.filter((item) => !templateVariable.includes(item));
+  const variablesOnlyInTemplate = templateVariable.filter((item) => !viewVariable.includes(item));
   if (variablesOnlyInView.length) {
     onWarning(
       `The RoutingTemplateFile<${routeFilePath}> has no variables such as ${variablesOnlyInView
         .map((item) => `[${item}]`)
-        .join(",")} which are needed in view.`
+        .join(',')} which are needed in view.`,
     );
   }
   if (variablesOnlyInTemplate.length) {
     onWarning(
       `The view of stage<print.inject.before> has no variables such as ${variablesOnlyInTemplate
         .map((item) => `[${item}]`)
-        .join(",")} which are needed in template.`
+        .join(',')} which are needed in template.`,
     );
   }
 }
 
-export default function print(
-  routes: RouteObject[],
-  imports: Imports,
-  option?: PrintOption
-) {
-  let {
-    routeFilePath = path.join("src", "route.ts"),
-    hooks,
-    onWarning,
-  } = option ?? {};
+export default function print(routes: RouteObject[], imports: Imports, option?: PrintOption) {
+  let { routeFilePath = path.join('src', 'route.ts'), hooks, onWarning } = option ?? {};
   let renderTemplate = hookCompose(hooks?.parse?.before, routeFilePath);
   if (renderTemplate === null) return;
   let existedImportNames: string[] = [];
@@ -317,17 +283,9 @@ export default function print(
   hookCompose(hooks?.parse?.after, renderTemplate, routeFilePath);
   const view: Record<string, any> = {
     [TEMPLATE_RENDER_ROUTE_SYMBOL]: transformRoutesToString(routes),
-    [TEMPLATE_RENDER_IMPORTS_SYMBOL]: transformImportsToString(
-      imports,
-      existedImportNames
-    ),
+    [TEMPLATE_RENDER_IMPORTS_SYMBOL]: transformImportsToString(imports, existedImportNames),
   };
-  let renderedContent = hookCompose(
-    hooks?.inject?.before,
-    view,
-    renderTemplate,
-    routes
-  );
+  let renderedContent = hookCompose(hooks?.inject?.before, view, renderTemplate, routes);
   if (renderedContent === null) return;
   // 如果用户在parse.before中返回了template，此时injectedVariables为undefined
   if (injectedVariables && onWarning) {
@@ -335,22 +293,20 @@ export default function print(
       Object.keys(view),
       injectedVariables,
       onWarning,
-      routeFilePath
+      routeFilePath,
     );
   }
   if (!renderedContent) {
     renderedContent = Mustache.render(renderTemplate, view);
     renderedContent = renderedContent.replace(
       /\/\* injected by sagaroute\: start \*\/\s*\/\* injected by sagaroute\: end \*\/\s/gs,
-      ""
+      '',
     );
   }
   hookCompose(hooks?.inject?.after, renderedContent, view, renderTemplate);
-  if (
-    hookCompose(hooks?.write?.before, renderedContent, routeFilePath) !== null
-  ) {
+  if (hookCompose(hooks?.write?.before, renderedContent, routeFilePath) !== null) {
     fs.writeFileSync(routeFilePath, renderedContent, {
-      flag: "w+",
+      flag: 'w+',
     });
     hookCompose(hooks?.write?.after, routeFilePath);
   }

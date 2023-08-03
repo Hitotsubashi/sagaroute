@@ -1,24 +1,24 @@
-import gather from "@/gather";
-import { EVAL_STRING_SYMBOL } from "@/utils/symbol";
-import path from "path";
+import gather from '@/gather';
+import { EVAL_STRING_SYMBOL } from '@/utils/symbol';
+import path from 'path';
 
-test("gather fileNodes with multiple type of variables.", () => {
-  const gatherDirPath = path.join("__tests__", "gather", "ignore-test-type");
+test('gather fileNodes with multiple type of variables.', () => {
+  const gatherDirPath = path.join('__tests__', 'gather', 'ignore-test-type');
   const exist = gather({
-    dirpath: path.join(gatherDirPath, "pages"),
+    dirpath: path.join(gatherDirPath, 'pages'),
     relativeDirpath: path.relative(
-      path.join(gatherDirPath, "routes.tsx"),
-      path.join(gatherDirPath, "pages")
+      path.join(gatherDirPath, 'routes.tsx'),
+      path.join(gatherDirPath, 'pages'),
     ),
   });
   expect(exist).toStrictEqual([
     {
-      name: "index.tsx",
-      type: "file",
-      path: path.join(gatherDirPath, "pages", "index.tsx"),
+      name: 'index.tsx',
+      type: 'file',
+      path: path.join(gatherDirPath, 'pages', 'index.tsx'),
       props: {
         routeProps: {
-          string: "string",
+          string: 'string',
           number: 1.2,
           boolean: true,
           null: null,
@@ -34,9 +34,9 @@ test("gather fileNodes with multiple type of variables.", () => {
       },
       dependencies: [
         {
-          name: "ErrorBoundary",
-          asName: "ComponentsErrorBoundary",
-          importPath: "./components/ErrorBoundary",
+          name: 'ErrorBoundary',
+          asName: 'ComponentsErrorBoundary',
+          importPath: './components/ErrorBoundary',
           isDefault: true,
         },
       ],

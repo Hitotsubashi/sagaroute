@@ -1,30 +1,30 @@
-import { Dependency, FileNode } from "@/gather";
-import path from "path";
-import { EVAL_STRING_SYMBOL } from "@/utils/symbol";
-import hookCompose from "@/utils/hookCompose";
-import generateLazyImportFn from "@/utils/generateLazyImportFn";
-import normalizePath from "@/utils/normalizePath";
-import generateImportName from "@/utils/generateImportName";
-import mergeImports from "@/utils/mergeImports";
-import { LazyFn } from ".";
-import generateImports from "./utils/generateImports";
-import { PartialRequired } from "./typings";
+import { Dependency, FileNode } from '@/gather';
+import path from 'path';
+import { EVAL_STRING_SYMBOL } from '@/utils/symbol';
+import hookCompose from '@/utils/hookCompose';
+import generateLazyImportFn from '@/utils/generateLazyImportFn';
+import normalizePath from '@/utils/normalizePath';
+import generateImportName from '@/utils/generateImportName';
+import mergeImports from '@/utils/mergeImports';
+import { LazyFn } from '.';
+import generateImports from './utils/generateImports';
+import { PartialRequired } from './typings';
 
 export type WeaveHookBefore = (fileNodes: FileNode[]) => void | null;
 export type WeaveHookBeforeEach = (
   fileNode: FileNode,
-  parent: FileNodeParent
+  parent: FileNodeParent,
 ) => void | { route: RouteObject; imports: Imports } | null;
 export type WeaveHookAfterEach = (
   route: RouteObject,
   imports: Imports,
   fileNode: FileNode,
-  parent: FileNodeParent
+  parent: FileNodeParent,
 ) => void;
 export type WeaveHookAfter = (
   routes: RouteObject[],
   imports: Imports,
-  fileNodes: FileNode[]
+  fileNodes: FileNode[],
 ) => void;
 
 interface WeaveOption {
@@ -40,10 +40,7 @@ interface WeaveOption {
   };
 }
 
-type InnerWeaveOption = PartialRequired<
-  WeaveOption,
-  "relativeDirpath" | "relativeLayoutDirPath"
->;
+type InnerWeaveOption = PartialRequired<WeaveOption, 'relativeDirpath' | 'relativeLayoutDirPath'>;
 
 export interface RouteObject {
   path?: string;
@@ -55,7 +52,7 @@ export interface RouteObject {
   [key: string]: any;
 }
 
-export type Imports = Record<string, Omit<Dependency, "importPath">[]>;
+export type Imports = Record<string, Omit<Dependency, 'importPath'>[]>;
 
 export interface FileNodeParent {
   path: string;
@@ -64,7 +61,7 @@ export interface FileNodeParent {
 
 function transformParamNameToParamPath(name: string | undefined) {
   if (name === undefined) return name;
-  if (name === "[]") return "*";
+  if (name === '[]') return '*';
   let match = name.match(/^\[([^\$]*)\$\]$/);
   if (match) {
     return `:${match[1]}?`;
@@ -79,10 +76,9 @@ function transformParamNameToParamPath(name: string | undefined) {
 function traverse(
   fileNodes: FileNode[],
   parent: FileNodeParent,
-  option: InnerWeaveOption
+  option: InnerWeaveOption,
 ): { routes: RouteObject[]; imports: Imports } {
-  const { lazy, relativeDirpath, relativeLayoutDirPath, pathRewrite, hooks } =
-    option;
+  const { lazy, relativeDirpath, relativeLayoutDirPath, pathRewrite, hooks } = option;
   const imports: Imports = {};
   const routes = fileNodes.reduce((pre, fileNode) => {
     let route: RouteObject | null;
@@ -91,32 +87,29 @@ function traverse(
     const hookResult = hookCompose(hooks?.beforeEach, fileNode, parent);
 
     if (!hookResult && hookResult !== null) {
-      const { name, children, type, layoutNode, props, dependencies } =
-        fileNode;
-      const isFile = type === "file";
+      const { name, children, type, layoutNode, props, dependencies } = fileNode;
+      const isFile = type === 'file';
       const currentPath = path.join(parent.path, name);
       // fileNode 类型为文件
       if (isFile) {
-        const basename = name.replace(path.extname(name), "");
-        let routePath: RouteObject["path"] = layoutNode ? "/" : basename;
+        const basename = name.replace(path.extname(name), '');
+        let routePath: RouteObject['path'] = layoutNode ? '/' : basename;
         let index =
           props?.routeProps?.index !== undefined
             ? props.routeProps.index
-            : !layoutNode &&
-              (parent.path !== "" || parent.layoutNode) &&
-              routePath === "index"
+            : !layoutNode && (parent.path !== '' || parent.layoutNode) && routePath === 'index'
             ? true
             : undefined;
         if (index) {
           routePath = undefined;
-        } else if (routePath === "index" && parent.path === "") {
-          routePath = "/";
-        } else if (routePath === "404") {
-          routePath = "*";
+        } else if (routePath === 'index' && parent.path === '') {
+          routePath = '/';
+        } else if (routePath === '404') {
+          routePath = '*';
         }
         routePath = transformParamNameToParamPath(routePath);
         const childrenResult = layoutNode
-          ? traverse(children!, { path: "", layoutNode: true }, option)
+          ? traverse(children!, { path: '', layoutNode: true }, option)
           : undefined;
         route = {
           path: routePath,
@@ -127,15 +120,14 @@ function traverse(
 
         const routeImportPath = path.join(
           layoutNode ? relativeLayoutDirPath : relativeDirpath,
-          currentPath
+          currentPath,
         );
         // routeProps.lazy有定义
         if (props?.routeProps?.lazy) {
           routeImports = generateImports(dependencies);
           // 全局lazy被定义
-        } else if (typeof lazy === "function" ? lazy(fileNode.path) : lazy) {
-          const { path, index, children, caseSensitive, ...restRouteProps } =
-            route;
+        } else if (typeof lazy === 'function' ? lazy(fileNode.path) : lazy) {
+          const { path, index, children, caseSensitive, ...restRouteProps } = route;
           route = {
             path,
             index,
@@ -151,7 +143,7 @@ function traverse(
           };
           // lazy为false
         } else {
-          const asName = generateImportName(routeImportPath, "");
+          const asName = generateImportName(routeImportPath, '');
           const importForCurrentRouteComponent: Imports = {
             [normalizePath(routeImportPath, pathRewrite)]: [
               {
@@ -174,9 +166,7 @@ function traverse(
         // fileNode 类型为文件夹
       } else {
         const _layoutFileNode = children!.find(
-          ({ name, type }) =>
-            type === "file" &&
-            name.replace(path.extname(name), "") === "_layout"
+          ({ name, type }) => type === 'file' && name.replace(path.extname(name), '') === '_layout',
         );
         route = {
           path: transformParamNameToParamPath(name),
@@ -186,27 +176,20 @@ function traverse(
           const childrenResult = traverse(
             children!.filter((item) => item !== _layoutFileNode),
             { path: currentPath },
-            option
+            option,
           );
           route = {
             ...route,
             children: childrenResult.routes,
             ..._layoutFileNode.props?.routeProps,
           };
-          const routeImportPath = path.join(
-            relativeDirpath,
-            currentPath,
-            _layoutFileNode.name
-          );
+          const routeImportPath = path.join(relativeDirpath, currentPath, _layoutFileNode.name);
           // routeProps.lazy有定义
           if (_layoutFileNode.props?.routeProps?.lazy) {
             routeImports = generateImports(dependencies);
             // 全局lazy有定义
-          } else if (
-            typeof lazy === "function" ? lazy(_layoutFileNode.path) : lazy
-          ) {
-            const { path, index, children, caseSensitive, ...restRouteProps } =
-              route;
+          } else if (typeof lazy === 'function' ? lazy(_layoutFileNode.path) : lazy) {
+            const { path, index, children, caseSensitive, ...restRouteProps } = route;
             route = {
               path,
               index,
@@ -222,11 +205,8 @@ function traverse(
             };
             // lazy为false
           } else {
-            const asName = generateImportName(routeImportPath, "");
-            const basename = _layoutFileNode.name.replace(
-              path.extname(_layoutFileNode.name),
-              ""
-            );
+            const asName = generateImportName(routeImportPath, '');
+            const basename = _layoutFileNode.name.replace(path.extname(_layoutFileNode.name), '');
             const importForCurrentRouteComponent: Imports = {
               [normalizePath(routeImportPath, pathRewrite)]: [
                 {
@@ -248,11 +228,7 @@ function traverse(
           }
           // 文件里的文件夹中不包含_layout
         } else {
-          const childrenResult = traverse(
-            children!,
-            { path: currentPath },
-            option
-          );
+          const childrenResult = traverse(children!, { path: currentPath }, option);
           route = {
             ...route,
             children: childrenResult.routes,
@@ -297,8 +273,8 @@ function normalize(route: RouteObject): RouteObject {
 
 export default function weave(fileNodes: FileNode[], option: WeaveOption) {
   const {
-    relativeDirpath = path.join("..", "src", "pages"),
-    relativeLayoutDirPath = path.join("..", "src", "layouts"),
+    relativeDirpath = path.join('..', 'src', 'pages'),
+    relativeLayoutDirPath = path.join('..', 'src', 'layouts'),
   } = option;
   if (hookCompose(option.hooks?.before, fileNodes) !== null) {
     let routes: RouteObject[];
@@ -309,23 +285,22 @@ export default function weave(fileNodes: FileNode[], option: WeaveOption) {
       const unlayoutFileNodes = fileNodes.filter(
         ({ name, props, layoutNode, children }) =>
           !layoutNode &&
-          ((name.replace(path.extname(name), "") === "404" &&
+          ((name.replace(path.extname(name), '') === '404' &&
             props?.routeOptions?.layout !== true) ||
             props?.routeOptions?.layout === false ||
             children?.some(
               ({ type, name, props }) =>
-                type === "file" &&
-                name.replace(path.extname(name), "") === "_layout" &&
-                props?.routeOptions?.layout === false
-            ))
+                type === 'file' &&
+                name.replace(path.extname(name), '') === '_layout' &&
+                props?.routeOptions?.layout === false,
+            )),
       );
 
       ultimateFileNodes = [
         {
           ...layoutFileNode,
           children: fileNodes.filter(
-            (item) =>
-              item !== layoutFileNode && !unlayoutFileNodes.includes(item)
+            (item) => item !== layoutFileNode && !unlayoutFileNodes.includes(item),
           ),
         },
         ...unlayoutFileNodes,
@@ -333,8 +308,8 @@ export default function weave(fileNodes: FileNode[], option: WeaveOption) {
     }
     ({ routes, imports } = traverse(
       ultimateFileNodes,
-      { path: "" },
-      { ...option, relativeDirpath, relativeLayoutDirPath }
+      { path: '' },
+      { ...option, relativeDirpath, relativeLayoutDirPath },
     ));
     hookCompose(option?.hooks?.after, routes, imports, fileNodes);
     return { routes, imports };

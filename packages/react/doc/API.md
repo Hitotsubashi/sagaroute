@@ -37,14 +37,14 @@
 ```jsx
 /* sagaroute-inject:imports */
 /* injected by sagaroute: start */
-import PageIndex from "./pages/index.jsx";
-import { loader1 as UtilLoaderLoader1 } from "./utils/loader";
+import PageIndex from './pages/index.jsx';
+import { loader1 as UtilLoaderLoader1 } from './utils/loader';
 /* injected by sagaroute: end */
 
 /* sagaroute-inject:routes */
 const routes = [
   {
-    path: "/",
+    path: '/',
     element: <PagesIndex />,
     loader: UtilLoaderLoader1,
   },
@@ -59,10 +59,10 @@ const routes = [
 /* sagaroute-inject:routes */
 const routes = [
   {
-    path: "/",
+    path: '/',
     lazy: async function () {
-      const { default: PagesIndex } = await import("./pages/index.jsx");
-      const { loader1: UtilLoaderLoader1 } = await import("./utils/loader");
+      const { default: PagesIndex } = await import('./pages/index.jsx');
+      const { loader1: UtilLoaderLoader1 } = await import('./utils/loader');
       return {
         Component: PagesIndex,
         loader: UtilLoaderLoader1,
@@ -95,16 +95,16 @@ const routes = [
 ```js
 /* sagaroute-inject:imports */
 /* injected by sagaroute: start */
-import PageIndex from "./pages/index.jsx";
+import PageIndex from './pages/index.jsx';
 /* injected by sagaroute: end */
 
 /* sagaroute-inject:routes */
 const routes = [
   {
-    path: "/",
+    path: '/',
     element: <PagesIndex />,
     loader: async function () {
-      const { fetchUser } = await import("./apis");
+      const { fetchUser } = await import('./apis');
       return fetchUser();
     },
   },
@@ -116,16 +116,16 @@ const routes = [
 ```js
 /* sagaroute-inject:imports */
 /* injected by sagaroute: start */
-import PageIndex from "@/pages/index.jsx";
+import PageIndex from '@/pages/index.jsx';
 /* injected by sagaroute: end */
 
 /* sagaroute-inject:routes */
 const routes = [
   {
-    path: "/",
+    path: '/',
     element: <PagesIndex />,
     loader: async function () {
-      const { fetchUser } = await import("@/apis");
+      const { fetchUser } = await import('@/apis');
       return fetchUser();
     },
   },
@@ -137,16 +137,16 @@ const routes = [
 ```js
 /* sagaroute-inject:imports */
 /* injected by sagaroute: start */
-import PageIndex from "./pages/index";
+import PageIndex from './pages/index';
 /* injected by sagaroute: end */
 
 /* sagaroute-inject:routes */
 const routes = [
   {
-    path: "/",
+    path: '/',
     element: <PagesIndex />,
     loader: async function () {
-      const { fetchUser } = await import("./apis");
+      const { fetchUser } = await import('./apis');
       return fetchUser();
     },
   },

@@ -1,61 +1,61 @@
-import mergeOption from "@/utils/mergeOption";
+import mergeOption from '@/utils/mergeOption';
 
-test("test mergeOption with basic config", () => {
+test('test mergeOption with basic config', () => {
   expect(
     mergeOption(
       {
-        dirpath: "input",
-        layoutDirPath: "input",
-        routeFilePath: "input",
+        dirpath: 'input',
+        layoutDirPath: 'input',
+        routeFilePath: 'input',
         lazy: true,
         pathRewrite: {
-          input: "input",
+          input: 'input',
         },
       },
       {
-        dirpath: "config",
-        layoutDirPath: "config",
-        routeFilePath: "config",
+        dirpath: 'config',
+        layoutDirPath: 'config',
+        routeFilePath: 'config',
         lazy: false,
         pathRewrite: {
-          config: "config",
+          config: 'config',
         },
-      }
-    )
+      },
+    ),
   ).toStrictEqual({
-    dirpath: "input",
-    layoutDirPath: "input",
-    routeFilePath: "input",
+    dirpath: 'input',
+    layoutDirPath: 'input',
+    routeFilePath: 'input',
     lazy: true,
     pathRewrite: {
-      input: "input",
+      input: 'input',
     },
   });
 });
 
-test("test mergeOption with both config wich some options of input are undefined", () => {
+test('test mergeOption with both config wich some options of input are undefined', () => {
   expect(
     mergeOption(
       {
-        dirpath: "input",
+        dirpath: 'input',
       },
       {
-        dirpath: "config",
-        layoutDirPath: "config",
-        routeFilePath: "config",
+        dirpath: 'config',
+        layoutDirPath: 'config',
+        routeFilePath: 'config',
         lazy: false,
         pathRewrite: {
-          config: "config",
+          config: 'config',
         },
-      }
-    )
+      },
+    ),
   ).toStrictEqual({
-    dirpath: "input",
-    layoutDirPath: "config",
-    routeFilePath: "config",
+    dirpath: 'input',
+    layoutDirPath: 'config',
+    routeFilePath: 'config',
     lazy: false,
     pathRewrite: {
-      config: "config",
+      config: 'config',
     },
   });
 });
@@ -66,7 +66,7 @@ test("test mergeOption with both config wich some options of input are undefined
  * fn
  * undefined
  */
-test("test mergeOption with multiple hook", () => {
+test('test mergeOption with multiple hook', () => {
   const hook1 = () => {};
   const hook2 = () => {};
   expect(
@@ -125,8 +125,8 @@ test("test mergeOption with multiple hook", () => {
             },
           },
         },
-      }
-    )
+      },
+    ),
   ).toStrictEqual({
     hooks: {
       gather: {

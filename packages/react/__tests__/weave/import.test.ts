@@ -1,14 +1,14 @@
-import { FileNode } from "@/gather";
-import { EVAL_STRING_SYMBOL } from "@/utils/symbol";
-import weave, { Imports, RouteObject } from "@/weave";
-import path from "path";
+import { FileNode } from '@/gather';
+import { EVAL_STRING_SYMBOL } from '@/utils/symbol';
+import weave, { Imports, RouteObject } from '@/weave';
+import path from 'path';
 
-test("fileNode with dependency", () => {
+test('fileNode with dependency', () => {
   const fileNodes: FileNode[] = [
     {
-      name: "head.tsx",
-      type: "file",
-      path: path.join("project", "src", "pages", "head.tsx"),
+      name: 'head.tsx',
+      type: 'file',
+      path: path.join('project', 'src', 'pages', 'head.tsx'),
       props: {
         routeProps: {
           errorElement: `${EVAL_STRING_SYMBOL}<PagesComponentsErrorBoundary2>
@@ -19,29 +19,29 @@ test("fileNode with dependency", () => {
       },
       dependencies: [
         {
-          name: "ErrorBoundary2",
-          asName: "PagesComponentsErrorBoundary2",
-          importPath: "./pages/components/ErrorBoundary2.tsx",
+          name: 'ErrorBoundary2',
+          asName: 'PagesComponentsErrorBoundary2',
+          importPath: './pages/components/ErrorBoundary2.tsx',
           isDefault: true,
         },
         {
-          name: "Header",
-          asName: "PagesComponentsErrorBoundary2Header",
-          importPath: "./pages/components/ErrorBoundary2.tsx",
+          name: 'Header',
+          asName: 'PagesComponentsErrorBoundary2Header',
+          importPath: './pages/components/ErrorBoundary2.tsx',
           isDefault: false,
         },
         {
-          name: "Context",
-          asName: "PagesComponentsErrorBoundary2Context",
-          importPath: "./pages/components/ErrorBoundary2.tsx",
+          name: 'Context',
+          asName: 'PagesComponentsErrorBoundary2Context',
+          importPath: './pages/components/ErrorBoundary2.tsx',
           isDefault: false,
         },
       ],
     },
     {
-      name: "index.tsx",
-      type: "file",
-      path: path.join("project", "src", "pages", "index.tsx"),
+      name: 'index.tsx',
+      type: 'file',
+      path: path.join('project', 'src', 'pages', 'index.tsx'),
       props: {
         routeProps: {
           errorElement: `${EVAL_STRING_SYMBOL}<PagesComponentsErrorBoundary></PagesComponentsErrorBoundary>`,
@@ -49,9 +49,9 @@ test("fileNode with dependency", () => {
       },
       dependencies: [
         {
-          name: "ErrorBoundary",
-          asName: "PagesComponentsErrorBoundary",
-          importPath: "./pages/components/ErrorBoundary.tsx",
+          name: 'ErrorBoundary',
+          asName: 'PagesComponentsErrorBoundary',
+          importPath: './pages/components/ErrorBoundary.tsx',
           isDefault: true,
         },
       ],
@@ -59,7 +59,7 @@ test("fileNode with dependency", () => {
   ];
   const routes: RouteObject[] = [
     {
-      path: "head",
+      path: 'head',
       element: `${EVAL_STRING_SYMBOL}<PagesHead/>`,
       errorElement: `${EVAL_STRING_SYMBOL}<PagesComponentsErrorBoundary2>
           <PagesComponentsErrorBoundary2Header text="header" />
@@ -67,67 +67,64 @@ test("fileNode with dependency", () => {
         </PagesComponentsErrorBoundary2>`,
     },
     {
-      path: "/",
+      path: '/',
       element: `${EVAL_STRING_SYMBOL}<PagesIndex/>`,
       errorElement: `${EVAL_STRING_SYMBOL}<PagesComponentsErrorBoundary></PagesComponentsErrorBoundary>`,
     },
   ];
   const imports: Imports = {
-    "./pages/head.tsx": [
+    './pages/head.tsx': [
       {
-        name: "head",
-        asName: "PagesHead",
+        name: 'head',
+        asName: 'PagesHead',
         isDefault: true,
       },
     ],
-    "./pages/components/ErrorBoundary2.tsx": [
+    './pages/components/ErrorBoundary2.tsx': [
       {
-        name: "ErrorBoundary2",
-        asName: "PagesComponentsErrorBoundary2",
+        name: 'ErrorBoundary2',
+        asName: 'PagesComponentsErrorBoundary2',
         isDefault: true,
       },
       {
-        name: "Header",
-        asName: "PagesComponentsErrorBoundary2Header",
+        name: 'Header',
+        asName: 'PagesComponentsErrorBoundary2Header',
         isDefault: false,
       },
       {
-        name: "Context",
-        asName: "PagesComponentsErrorBoundary2Context",
+        name: 'Context',
+        asName: 'PagesComponentsErrorBoundary2Context',
         isDefault: false,
       },
     ],
-    "./pages/index.tsx": [
+    './pages/index.tsx': [
       {
-        name: "index",
-        asName: "PagesIndex",
+        name: 'index',
+        asName: 'PagesIndex',
         isDefault: true,
       },
     ],
-    "./pages/components/ErrorBoundary.tsx": [
+    './pages/components/ErrorBoundary.tsx': [
       {
-        name: "ErrorBoundary",
-        asName: "PagesComponentsErrorBoundary",
+        name: 'ErrorBoundary',
+        asName: 'PagesComponentsErrorBoundary',
         isDefault: true,
       },
     ],
   };
   expect(
     weave(fileNodes, {
-      relativeDirpath: path.relative(
-        path.join("src", "routes.tsx"),
-        path.join("src", "pages")
-      ),
-    })
+      relativeDirpath: path.relative(path.join('src', 'routes.tsx'), path.join('src', 'pages')),
+    }),
   ).toStrictEqual({ routes, imports });
 });
 
-test("has different dependency in same source during different fileNode", () => {
+test('has different dependency in same source during different fileNode', () => {
   const fileNodes: FileNode[] = [
     {
-      name: "user.tsx",
-      type: "file",
-      path: path.join("project", "src", "pages", "user.tsx"),
+      name: 'user.tsx',
+      type: 'file',
+      path: path.join('project', 'src', 'pages', 'user.tsx'),
       props: {
         routeProps: {
           loader: `${EVAL_STRING_SYMBOL}loader1`,
@@ -136,23 +133,23 @@ test("has different dependency in same source during different fileNode", () => 
       },
       dependencies: [
         {
-          name: "loader1",
-          asName: "loader1",
-          importPath: "@/utils/loader.ts",
+          name: 'loader1',
+          asName: 'loader1',
+          importPath: '@/utils/loader.ts',
           isDefault: false,
         },
         {
-          name: "ErrorBoundary1",
-          asName: "EB1",
-          importPath: "@/components/ErrorBoundary.tsx",
+          name: 'ErrorBoundary1',
+          asName: 'EB1',
+          importPath: '@/components/ErrorBoundary.tsx',
           isDefault: false,
         },
       ],
     },
     {
-      name: "account.tsx",
-      type: "file",
-      path: path.join("project", "src", "pages", "account.tsx"),
+      name: 'account.tsx',
+      type: 'file',
+      path: path.join('project', 'src', 'pages', 'account.tsx'),
       props: {
         routeProps: {
           loader: `${EVAL_STRING_SYMBOL}loader2`,
@@ -161,23 +158,23 @@ test("has different dependency in same source during different fileNode", () => 
       },
       dependencies: [
         {
-          name: "loader2",
-          asName: "loader2",
-          importPath: "@/utils/loader.ts",
+          name: 'loader2',
+          asName: 'loader2',
+          importPath: '@/utils/loader.ts',
           isDefault: false,
         },
         {
-          name: "ErrorBoundary2",
-          asName: "EB2",
-          importPath: "@/components/ErrorBoundary.tsx",
+          name: 'ErrorBoundary2',
+          asName: 'EB2',
+          importPath: '@/components/ErrorBoundary.tsx',
           isDefault: false,
         },
       ],
     },
     {
-      name: "index.tsx",
-      type: "file",
-      path: path.join("project", "src", "layouts", "index.tsx"),
+      name: 'index.tsx',
+      type: 'file',
+      path: path.join('project', 'src', 'layouts', 'index.tsx'),
       layoutNode: true,
       props: {
         routeProps: {
@@ -187,15 +184,15 @@ test("has different dependency in same source during different fileNode", () => 
       },
       dependencies: [
         {
-          name: "loader3",
-          asName: "loader3",
-          importPath: "@/utils/loader.ts",
+          name: 'loader3',
+          asName: 'loader3',
+          importPath: '@/utils/loader.ts',
           isDefault: false,
         },
         {
-          name: "ErrorBoundary3",
-          asName: "EB3",
-          importPath: "@/components/ErrorBoundary.tsx",
+          name: 'ErrorBoundary3',
+          asName: 'EB3',
+          importPath: '@/components/ErrorBoundary.tsx',
           isDefault: false,
         },
       ],
@@ -203,19 +200,19 @@ test("has different dependency in same source during different fileNode", () => 
   ];
   const routes: RouteObject[] = [
     {
-      path: "/",
+      path: '/',
       element: `${EVAL_STRING_SYMBOL}<LayoutsIndex/>`,
       loader: `${EVAL_STRING_SYMBOL}loader3`,
       ErrorBoundary: `${EVAL_STRING_SYMBOL}<EB3 text="error3"/>`,
       children: [
         {
-          path: "user",
+          path: 'user',
           element: `${EVAL_STRING_SYMBOL}<PagesUser/>`,
           loader: `${EVAL_STRING_SYMBOL}loader1`,
           ErrorBoundary: `${EVAL_STRING_SYMBOL}<EB1 text="error1"/>`,
         },
         {
-          path: "account",
+          path: 'account',
           element: `${EVAL_STRING_SYMBOL}<PagesAccount/>`,
           loader: `${EVAL_STRING_SYMBOL}loader2`,
           ErrorBoundary: `${EVAL_STRING_SYMBOL}<EB2 text="error2"/>`,
@@ -224,82 +221,79 @@ test("has different dependency in same source during different fileNode", () => 
     },
   ];
   const imports: Imports = {
-    "./layouts/index.tsx": [
+    './layouts/index.tsx': [
       {
-        name: "index",
-        asName: "LayoutsIndex",
+        name: 'index',
+        asName: 'LayoutsIndex',
         isDefault: true,
       },
     ],
-    "./pages/user.tsx": [
+    './pages/user.tsx': [
       {
-        name: "user",
-        asName: "PagesUser",
+        name: 'user',
+        asName: 'PagesUser',
         isDefault: true,
       },
     ],
-    "./pages/account.tsx": [
+    './pages/account.tsx': [
       {
-        name: "account",
-        asName: "PagesAccount",
+        name: 'account',
+        asName: 'PagesAccount',
         isDefault: true,
       },
     ],
-    "@/utils/loader.ts": [
+    '@/utils/loader.ts': [
       {
-        name: "loader3",
-        asName: "loader3",
+        name: 'loader3',
+        asName: 'loader3',
         isDefault: false,
       },
       {
-        name: "loader1",
-        asName: "loader1",
+        name: 'loader1',
+        asName: 'loader1',
         isDefault: false,
       },
       {
-        name: "loader2",
-        asName: "loader2",
+        name: 'loader2',
+        asName: 'loader2',
         isDefault: false,
       },
     ],
-    "@/components/ErrorBoundary.tsx": [
+    '@/components/ErrorBoundary.tsx': [
       {
-        name: "ErrorBoundary3",
-        asName: "EB3",
+        name: 'ErrorBoundary3',
+        asName: 'EB3',
         isDefault: false,
       },
       {
-        name: "ErrorBoundary1",
-        asName: "EB1",
+        name: 'ErrorBoundary1',
+        asName: 'EB1',
         isDefault: false,
       },
       {
-        name: "ErrorBoundary2",
-        asName: "EB2",
+        name: 'ErrorBoundary2',
+        asName: 'EB2',
         isDefault: false,
       },
     ],
   };
   expect(
     weave(fileNodes, {
-      relativeDirpath: path.relative(
-        path.join("src", "routes.tsx"),
-        path.join("src", "pages")
-      ),
+      relativeDirpath: path.relative(path.join('src', 'routes.tsx'), path.join('src', 'pages')),
       relativeLayoutDirPath: path.relative(
-        path.join("src", "routes.tsx"),
-        path.join("src", "layouts")
+        path.join('src', 'routes.tsx'),
+        path.join('src', 'layouts'),
       ),
-    })
+    }),
   ).toStrictEqual({ routes, imports });
 });
 
-test("has same dependency during different fileNode", () => {
+test('has same dependency during different fileNode', () => {
   const fileNodes: FileNode[] = [
     {
-      name: "user.tsx",
-      type: "file",
-      path: path.join("project", "src", "pages", "user.tsx"),
+      name: 'user.tsx',
+      type: 'file',
+      path: path.join('project', 'src', 'pages', 'user.tsx'),
       props: {
         routeProps: {
           loader: `${EVAL_STRING_SYMBOL}loader`,
@@ -308,23 +302,23 @@ test("has same dependency during different fileNode", () => {
       },
       dependencies: [
         {
-          name: "loader",
-          asName: "loader",
-          importPath: "@/utils/loader.ts",
+          name: 'loader',
+          asName: 'loader',
+          importPath: '@/utils/loader.ts',
           isDefault: true,
         },
         {
-          name: "ErrorBoundary",
-          asName: "EB",
-          importPath: "@/components/ErrorBoundary.tsx",
+          name: 'ErrorBoundary',
+          asName: 'EB',
+          importPath: '@/components/ErrorBoundary.tsx',
           isDefault: true,
         },
       ],
     },
     {
-      name: "account.tsx",
-      type: "file",
-      path: path.join("project", "src", "pages", "account.tsx"),
+      name: 'account.tsx',
+      type: 'file',
+      path: path.join('project', 'src', 'pages', 'account.tsx'),
       props: {
         routeProps: {
           loader: `${EVAL_STRING_SYMBOL}loader`,
@@ -333,24 +327,24 @@ test("has same dependency during different fileNode", () => {
       },
       dependencies: [
         {
-          name: "loader",
-          asName: "loader",
-          importPath: "@/utils/loader.ts",
+          name: 'loader',
+          asName: 'loader',
+          importPath: '@/utils/loader.ts',
           isDefault: true,
         },
         {
-          name: "ErrorBoundary",
-          asName: "EB",
-          importPath: "@/components/ErrorBoundary.tsx",
+          name: 'ErrorBoundary',
+          asName: 'EB',
+          importPath: '@/components/ErrorBoundary.tsx',
           isDefault: true,
         },
       ],
     },
     {
-      name: "index.tsx",
-      type: "file",
+      name: 'index.tsx',
+      type: 'file',
       layoutNode: true,
-      path: path.join("project", "src", "layouts", "index.tsx"),
+      path: path.join('project', 'src', 'layouts', 'index.tsx'),
       props: {
         routeProps: {
           loader: `${EVAL_STRING_SYMBOL}loader`,
@@ -359,15 +353,15 @@ test("has same dependency during different fileNode", () => {
       },
       dependencies: [
         {
-          name: "loader",
-          asName: "loader",
-          importPath: "@/utils/loader.ts",
+          name: 'loader',
+          asName: 'loader',
+          importPath: '@/utils/loader.ts',
           isDefault: true,
         },
         {
-          name: "ErrorBoundary",
-          asName: "EB",
-          importPath: "@/components/ErrorBoundary.tsx",
+          name: 'ErrorBoundary',
+          asName: 'EB',
+          importPath: '@/components/ErrorBoundary.tsx',
           isDefault: true,
         },
       ],
@@ -375,19 +369,19 @@ test("has same dependency during different fileNode", () => {
   ];
   const routes: RouteObject[] = [
     {
-      path: "/",
+      path: '/',
       element: `${EVAL_STRING_SYMBOL}<LayoutsIndex/>`,
       loader: `${EVAL_STRING_SYMBOL}loader`,
       ErrorBoundary: `${EVAL_STRING_SYMBOL}<EB text="error3"/>`,
       children: [
         {
-          path: "user",
+          path: 'user',
           element: `${EVAL_STRING_SYMBOL}<PagesUser/>`,
           loader: `${EVAL_STRING_SYMBOL}loader`,
           ErrorBoundary: `${EVAL_STRING_SYMBOL}<EB text="error1"/>`,
         },
         {
-          path: "account",
+          path: 'account',
           element: `${EVAL_STRING_SYMBOL}<PagesAccount/>`,
           loader: `${EVAL_STRING_SYMBOL}loader`,
           ErrorBoundary: `${EVAL_STRING_SYMBOL}<EB text="error2"/>`,
@@ -396,63 +390,60 @@ test("has same dependency during different fileNode", () => {
     },
   ];
   const imports: Imports = {
-    "./layouts/index.tsx": [
+    './layouts/index.tsx': [
       {
-        name: "index",
-        asName: "LayoutsIndex",
+        name: 'index',
+        asName: 'LayoutsIndex',
         isDefault: true,
       },
     ],
-    "./pages/user.tsx": [
+    './pages/user.tsx': [
       {
-        name: "user",
-        asName: "PagesUser",
+        name: 'user',
+        asName: 'PagesUser',
         isDefault: true,
       },
     ],
-    "./pages/account.tsx": [
+    './pages/account.tsx': [
       {
-        name: "account",
-        asName: "PagesAccount",
+        name: 'account',
+        asName: 'PagesAccount',
         isDefault: true,
       },
     ],
-    "@/utils/loader.ts": [
+    '@/utils/loader.ts': [
       {
-        name: "loader",
-        asName: "loader",
+        name: 'loader',
+        asName: 'loader',
         isDefault: true,
       },
     ],
-    "@/components/ErrorBoundary.tsx": [
+    '@/components/ErrorBoundary.tsx': [
       {
-        name: "ErrorBoundary",
-        asName: "EB",
+        name: 'ErrorBoundary',
+        asName: 'EB',
         isDefault: true,
       },
     ],
   };
   expect(
     weave(fileNodes, {
-      relativeDirpath: path.relative(
-        path.join("src", "routes.tsx"),
-        path.join("src", "pages")
-      ),
+      relativeDirpath: path.relative(path.join('src', 'routes.tsx'), path.join('src', 'pages')),
       relativeLayoutDirPath: path.relative(
-        path.join("src", "routes.tsx"),
-        path.join("src", "layouts")
+        path.join('src', 'routes.tsx'),
+        path.join('src', 'layouts'),
       ),
-    })
+    }),
   ).toStrictEqual({ routes, imports });
 });
 
-test("has multiple dependencies in lazy fileNode", () => {
+test('has multiple dependencies in lazy fileNode', () => {
   const fileNodes: FileNode[] = [
     {
-      name: "index.tsx",
-      type: "file",
+      name: 'index.tsx',
+      type: 'file',
       layoutNode: true,
-      path: path.join("project", "src", "layouts", "index.tsx"),
+      path: path.join('project', 'src', 'layouts', 'index.tsx'),
       props: {
         routeProps: {
           loader: `${EVAL_STRING_SYMBOL}UtilsLoader`,
@@ -462,29 +453,29 @@ test("has multiple dependencies in lazy fileNode", () => {
       },
       dependencies: [
         {
-          name: "loader",
-          asName: "UtilsLoader",
-          importPath: "@/utils/loader.ts",
+          name: 'loader',
+          asName: 'UtilsLoader',
+          importPath: '@/utils/loader.ts',
           isDefault: false,
         },
         {
-          name: "loader1",
-          asName: "UtilsLoader1",
-          importPath: "@/utils/loader.ts",
+          name: 'loader1',
+          asName: 'UtilsLoader1',
+          importPath: '@/utils/loader.ts',
           isDefault: false,
         },
         {
-          name: "loader2",
-          asName: "UtilsLoader2",
-          importPath: "@/utils/loader.ts",
+          name: 'loader2',
+          asName: 'UtilsLoader2',
+          importPath: '@/utils/loader.ts',
           isDefault: false,
         },
       ],
     },
     {
-      name: "index.tsx",
-      type: "file",
-      path: path.join("project", "src", "pages", "index.tsx"),
+      name: 'index.tsx',
+      type: 'file',
+      path: path.join('project', 'src', 'pages', 'index.tsx'),
       props: {
         routeProps: {
           loader: `${EVAL_STRING_SYMBOL}UtilsLoader`,
@@ -495,27 +486,27 @@ test("has multiple dependencies in lazy fileNode", () => {
       },
       dependencies: [
         {
-          name: "loader",
-          asName: "UtilsLoader",
-          importPath: "@/utils/loader.ts",
+          name: 'loader',
+          asName: 'UtilsLoader',
+          importPath: '@/utils/loader.ts',
           isDefault: false,
         },
         {
-          name: "ErrorBoundary",
-          asName: "ComponentsErrorBoundary",
-          importPath: "@/components/ErrorBoundary.tsx",
+          name: 'ErrorBoundary',
+          asName: 'ComponentsErrorBoundary',
+          importPath: '@/components/ErrorBoundary.tsx',
           isDefault: true,
         },
         {
-          name: "action",
-          asName: "PagesIndexAction",
-          importPath: "./pages/index.tsx",
+          name: 'action',
+          asName: 'PagesIndexAction',
+          importPath: './pages/index.tsx',
           isDefault: false,
         },
         {
-          name: "*",
-          asName: "UtilsHandle",
-          importPath: "./utils/handle.tsx",
+          name: '*',
+          asName: 'UtilsHandle',
+          importPath: './utils/handle.tsx',
           isDefault: true,
         },
       ],
@@ -523,7 +514,7 @@ test("has multiple dependencies in lazy fileNode", () => {
   ];
   const routes: RouteObject[] = [
     {
-      path: "/",
+      path: '/',
       lazy: `${EVAL_STRING_SYMBOL}async function(){
         const {loader: UtilsLoader,loader1: UtilsLoader1,loader2: UtilsLoader2} = await import("@/utils/loader.ts");
         const {default : LayoutsIndex } = await import("./layouts/index.tsx");
@@ -558,14 +549,11 @@ test("has multiple dependencies in lazy fileNode", () => {
   expect(
     weave(fileNodes, {
       lazy: true,
-      relativeDirpath: path.relative(
-        path.join("src", "routes.tsx"),
-        path.join("src", "pages")
-      ),
+      relativeDirpath: path.relative(path.join('src', 'routes.tsx'), path.join('src', 'pages')),
       relativeLayoutDirPath: path.relative(
-        path.join("src", "routes.tsx"),
-        path.join("src", "layouts")
+        path.join('src', 'routes.tsx'),
+        path.join('src', 'layouts'),
       ),
-    })
+    }),
   ).toStrictEqual({ routes, imports });
 });

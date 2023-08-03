@@ -1,5 +1,5 @@
 // @ts-nocheck
-import ErrorBoundary from "../components/ErrorBoundary";
+import ErrorBoundary from '../components/ErrorBoundary';
 
 const Comp: React.FC = ({ children }) => {
   return <content>user-{children}</content>;

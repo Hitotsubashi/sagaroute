@@ -1,8 +1,5 @@
-#!/usr/bin/env node
-"use strict";
-
-import yargs from "yargs/yargs";
-import { hideBin } from "yargs/helpers";
+import yargs from 'yargs/yargs';
+import { hideBin } from 'yargs/helpers';
 import {
   buildHookAfterStdout,
   buildHookBeforeStdout,
@@ -19,10 +16,10 @@ import {
   weaveHookAfterStdout,
   weaveHookBeforeEachStdout,
   weaveHookBeforeStdout,
-} from "./shout";
-import stdoutManager from "./stdoutManager";
-import { blue, green, red, white, yellow } from "colorette";
-import SagaRoute from "@sagaroute/react";
+} from './shout';
+import stdoutManager from './stdoutManager';
+import { blue, green, red, white, yellow } from 'colorette';
+import SagaRoute from '@sagaroute/react';
 
 export default function execute() {
   const argv = yargs(hideBin(process.argv)).argv;
@@ -30,7 +27,7 @@ export default function execute() {
   const warningMessages: string[] = [];
   stdoutManager.set({
     badge: stdoutBadge.info,
-    message: blue("sagaroute is working..."),
+    message: blue('sagaroute is working...'),
   });
   try {
     const sagaRoute = new SagaRoute({
@@ -74,13 +71,9 @@ export default function execute() {
       ? yellow(
           `sagaroute has completed the work, but there are the following problems:\n${warningMessages
             .map((item, index) => white(`${index + 1}. ${item}`))
-            .join("\n")}`
+            .join('\n')}`,
         )
-      : green(
-          `sagaroute has finished successfully in ${Math.round(
-            endTime - startTime
-          )}ms`
-        );
+      : green(`sagaroute has finished successfully in ${Math.round(endTime - startTime)}ms`);
     stdoutManager.set({
       badge,
       message,
@@ -91,7 +84,7 @@ export default function execute() {
         badge: stdoutBadge.fail,
         message: red(err.message),
       },
-      {}
+      {},
     );
     throw err;
   }

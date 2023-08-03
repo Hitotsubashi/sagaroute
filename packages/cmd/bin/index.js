@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-"use strict";
+'use strict';
 
-const execute = require("../lib/index").default;
+const execute = require('../lib/index').default;
 execute();

@@ -6,8 +6,8 @@ import {
   CompletionItemKind,
   TextDocumentSyncKind,
   InitializeResult,
-} from "vscode-languageserver/node";
-import { TextDocument } from "vscode-languageserver-textdocument";
+} from 'vscode-languageserver/node';
+import { TextDocument } from 'vscode-languageserver-textdocument';
 
 const connection = createConnection(ProposedFeatures.all);
 
@@ -22,9 +22,7 @@ connection.onInitialize((params: InitializeParams) => {
 
   // Does the client support the `workspace/configuration` request?
   // If not, we fall back using global settings.
-  hasConfigurationCapability = !!(
-    capabilities.workspace && !!capabilities.workspace.configuration
-  );
+  hasConfigurationCapability = !!(capabilities.workspace && !!capabilities.workspace.configuration);
 
   hasWorkspaceFolderCapability = !!(
     capabilities.workspace && !!capabilities.workspace.workspaceFolders
@@ -57,9 +55,9 @@ connection.onInitialize((params: InitializeParams) => {
 connection.onCompletion((args) => {
   return [
     {
-      label: "One",
+      label: 'One',
       kind: CompletionItemKind.TypeParameter,
-      detail: "CompletionItemKind.TypeParameter",
+      detail: 'CompletionItemKind.TypeParameter',
     },
   ];
 });

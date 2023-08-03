@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Layout } from "antd";
+import { Layout } from 'antd';
 const { Header, Footer, Content } = Layout;
 
 type Props = {

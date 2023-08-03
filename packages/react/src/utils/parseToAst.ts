@@ -1,12 +1,12 @@
-import { parse, ParserPlugin } from "@babel/parser";
+import { parse, ParserPlugin } from '@babel/parser';
 
 export default function parseToAst(content: string, isTsx = false) {
-  const plugins: ParserPlugin[] = ["jsx"];
+  const plugins: ParserPlugin[] = ['jsx'];
   if (isTsx) {
-    plugins.push("typescript");
+    plugins.push('typescript');
   }
   return parse(content, {
-    sourceType: "module",
+    sourceType: 'module',
     plugins,
   });
 }

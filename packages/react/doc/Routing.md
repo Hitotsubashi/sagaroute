@@ -18,8 +18,8 @@
 
 ```jsx
 [
-  { path: "/", element: <PagesIndex /> },
-  { path: "users", element: <PagesUsers /> },
+  { path: '/', element: <PagesIndex /> },
+  { path: 'users', element: <PagesUsers /> },
 ];
 ```
 
@@ -60,18 +60,18 @@
 ```jsx
 [
   {
-    path: ":post",
+    path: ':post',
     children: [
       { index: true, element: <PagesPostIndex /> },
-      { path: "comments", element: <PagesPostComments /> },
+      { path: 'comments', element: <PagesPostComments /> },
     ],
   },
   {
-    path: "users",
-    children: [{ path: ":id", element: <PagesUsersId /> }],
+    path: 'users',
+    children: [{ path: ':id', element: <PagesUsersId /> }],
   },
   {
-    path: "/",
+    path: '/',
     element: <PagesIndex />,
   },
 ];
@@ -102,15 +102,15 @@
 ```jsx
 [
   {
-    path: ":post?",
-    children: [{ path: "comments", element: <PagesPostComments /> }],
+    path: ':post?',
+    children: [{ path: 'comments', element: <PagesPostComments /> }],
   },
   {
-    path: "users",
-    children: [{ path: ":id?", element: <PagesUsersId /> }],
+    path: 'users',
+    children: [{ path: ':id?', element: <PagesUsersId /> }],
   },
   {
-    path: "/",
+    path: '/',
     element: <PagesIndex />,
   },
 ];
@@ -134,10 +134,10 @@
 ```jsx
 [
   {
-    path: "users",
+    path: 'users',
     children: [
       { index: true, element: <PagesUsersIndex /> },
-      { path: "list", element: <PagesUsersList /> },
+      { path: 'list', element: <PagesUsersList /> },
     ],
   },
 ];
@@ -160,10 +160,10 @@ PagesIndex.routeProps = {
 ```tsx
 [
   {
-    path: "users",
+    path: 'users',
     children: [
-      { path: "index", index: false, element: <PagesUsersIndex /> },
-      { path: "list", element: <PagesUsersList /> },
+      { path: 'index', index: false, element: <PagesUsersIndex /> },
+      { path: 'list', element: <PagesUsersList /> },
     ],
   },
 ];
@@ -171,8 +171,7 @@ PagesIndex.routeProps = {
 
 ## 嵌套路由
 
-约定目录下存在命名为`_layout`的`jsx`或`tsx`文件时，会把`_layout`文件作为该目录所对应路由的`element`。`_layout`文件需要默认导出一个`React`组件，且该`React`
-组件中需要包含`react-router`提供的[`Outlet`](https://reactrouter.com/en/main/components/outlet)组件。
+约定目录下存在命名为`_layout`的`jsx`或`tsx`文件时，会把`_layout`文件作为该目录所对应路由的`element`。`_layout`文件需要默认导出一个`React`组件，且该`React` 组件中需要包含`react-router`提供的[`Outlet`](https://reactrouter.com/en/main/components/outlet)组件。
 
 比如以下文件结构：
 
@@ -189,11 +188,11 @@ PagesIndex.routeProps = {
 ```jsx
 [
   {
-    path: "users",
+    path: 'users',
     element: <PagesUsersLayout />,
     children: [
       { index: true, element: <PagesUsersIndex /> },
-      { path: "list", element: <PagesUsersList /> },
+      { path: 'list', element: <PagesUsersList /> },
     ],
   },
 ];
@@ -219,11 +218,11 @@ PagesIndex.routeProps = {
 ```jsx
 [
   {
-    path: "/",
+    path: '/',
     element: <LayoutsIndex />,
     children: [
       { index: true, element: <PagesIndex /> },
-      { path: "users", element: <PagesUsers /> },
+      { path: 'users', element: <PagesUsers /> },
     ],
   },
 ];
@@ -238,13 +237,13 @@ PagesIndex.routeProps = {
 在**全局路由文件**中对当前路径做判断区分，以渲染不同的 layout，如下所示：
 
 ```jsx
-import LoginLayout from "./LoginLayout";
-import DashboardLayout from "./DashboardLayout";
-import { useLocation } from "react-router-dom";
+import LoginLayout from './LoginLayout';
+import DashboardLayout from './DashboardLayout';
+import { useLocation } from 'react-router-dom';
 
 const Layout = () => {
   const location = useLocation();
-  return location.pathname === "/login" ? <LoginLayout /> : <DashboardLayout />;
+  return location.pathname === '/login' ? <LoginLayout /> : <DashboardLayout />;
 };
 
 export default Layout;
@@ -287,18 +286,18 @@ User.routeOptions = {
 ```jsx
 [
   {
-    path: "/",
+    path: '/',
     element: <LayoutsIndex />,
     children: [
       { index: true, element: <PagesIndex /> },
-      { path: "users", element: <PagesUsers /> },
+      { path: 'users', element: <PagesUsers /> },
     ],
   },
-  { path: "users", element: <PagesUsers /> },
+  { path: 'users', element: <PagesUsers /> },
   {
-    path: "permission",
+    path: 'permission',
     element: <PagrsPermissionLayout />,
-    children: [{ path: "role", element: <PagrsPermissionRole /> }],
+    children: [{ path: 'role', element: <PagrsPermissionRole /> }],
   },
 ];
 ```
@@ -324,15 +323,15 @@ User.routeOptions = {
 ```tsx
 [
   {
-    path: "/",
+    path: '/',
     element: <LayoutsIndex />,
     children: [
       { index: true, element: <PagesIndex /> },
-      { path: "users", element: <PagesUsers /> },
+      { path: 'users', element: <PagesUsers /> },
     ],
   },
   {
-    path: "*",
+    path: '*',
     element: <Pages404 />,
   },
 ];
@@ -346,7 +345,7 @@ export default function Pages404() {
 }
 
 Pages404.routeProps = {
-  path: "404",
+  path: '404',
 };
 ```
 
@@ -355,15 +354,15 @@ Pages404.routeProps = {
 ```tsx
 [
   {
-    path: "/",
+    path: '/',
     element: <LayoutsIndex />,
     children: [
       { index: true, element: <PagesIndex /> },
-      { path: "users", element: <PagesUsers /> },
+      { path: 'users', element: <PagesUsers /> },
     ],
   },
   {
-    path: "404",
+    path: '404',
     element: <Pages404 />,
   },
 ];
@@ -415,7 +414,7 @@ interface RouteObject {
   Component?: React.ComponentType | null;
   errorElement?: React.ReactNode | null;
   ErrorBoundary?: React.ComponentType | null;
-  handle?: RouteObject["handle"];
+  handle?: RouteObject['handle'];
   shouldRevalidate?: ShouldRevalidateFunction;
   lazy?: LazyRouteFunction<RouteObject>;
 }
@@ -434,13 +433,13 @@ interface RouteObject {
      // 错误写法：index的值不能为闭包变量
      index,
      // 错误写法：path的值不能为表达式
-     path: location.origin === "xx" ? "a" : "b",
+     path: location.origin === 'xx' ? 'a' : 'b',
    };
 
    // 正确写法：所有属性都是常量
    Comp.routeProps = {
      index: false,
-     path: "a",
+     path: 'a',
    };
    ```
 
@@ -484,7 +483,7 @@ interface RouteObject {
    例如存在`src/pages/users.tsx`文件，其文件内容如下所示：
 
    ```jsx
-   import { action } from "../utils/action";
+   import { action } from '../utils/action';
 
    export default function User() {}
 
@@ -498,12 +497,12 @@ interface RouteObject {
 
    ```jsx
    // @sagaroute/react会对从相对路径导出的变量进行重命名以防变量名重复冲突
-   import { action as UtilsActionAction } from "./utils/action";
-   import PagesUsers from "./pages/users.tsx";
+   import { action as UtilsActionAction } from './utils/action';
+   import PagesUsers from './pages/users.tsx';
 
    const routes = [
      {
-       path: "users",
+       path: 'users',
        action: UtilsActionAction,
        element: <PagesUsers />,
      },
@@ -517,7 +516,7 @@ interface RouteObject {
    例如存在`src/pages/users.tsx`文件，其文件内容如下所示：
 
    ```jsx
-   import ErrorBoundary from "@/components/Errorboundary";
+   import ErrorBoundary from '@/components/Errorboundary';
 
    export default function User() {}
 
@@ -530,12 +529,12 @@ interface RouteObject {
    最后生成的路由列表如下所示：
 
    ```jsx
-   import ComponentsErrorBoundary from "@/components/Errorboundary";
-   import PagesUsers from "./pages/users.tsx";
+   import ComponentsErrorBoundary from '@/components/Errorboundary';
+   import PagesUsers from './pages/users.tsx';
 
    const routes = [
      {
-       path: "users",
+       path: 'users',
        errorElement: <ComponentsErrorBoundary />,
        element: <PagesUsers />,
      },
@@ -547,7 +546,7 @@ interface RouteObject {
    ```js
    async function loader1({ params }) {
      // 如果import路径为相对路径，则会自动转换到适配路由文件的路径
-     const { fetchTeam } = await import("@/api");
+     const { fetchTeam } = await import('@/api');
      return fetchTeam(params.teamId);
    }
    ```
@@ -604,18 +603,18 @@ User.routeOptions = {
 ```jsx
 [
   {
-    path: "/",
+    path: '/',
     element: <LayoutsIndex />,
     children: [
       { index: true, element: <PagesIndex /> },
-      { path: "users", element: <PagesUsers /> },
+      { path: 'users', element: <PagesUsers /> },
     ],
   },
-  { path: "users", element: <PagesUsers /> },
+  { path: 'users', element: <PagesUsers /> },
   {
-    path: "permission",
+    path: 'permission',
     element: <PagrsPermissionLayout />,
-    children: [{ path: "role", element: <PagrsPermissionRole /> }],
+    children: [{ path: 'role', element: <PagrsPermissionRole /> }],
   },
 ];
 ```

@@ -1,7 +1,7 @@
-import isReactComponent from "@/utils/isReactComponent";
-import parseToAst from "@/utils/parseToAst";
+import isReactComponent from '@/utils/isReactComponent';
+import parseToAst from '@/utils/parseToAst';
 
-test("detect component in jsx", () => {
+test('detect component in jsx', () => {
   const content = `
     const profile = (
         <div>
@@ -14,7 +14,7 @@ test("detect component in jsx", () => {
   expect(isReactComponent(ast)).toBe(true);
 });
 
-test("detect component in tsx", () => {
+test('detect component in tsx', () => {
   const content = `
     const profile:React.FC<Props> = (
         <div>
@@ -27,7 +27,7 @@ test("detect component in tsx", () => {
   expect(isReactComponent(ast)).toBe(true);
 });
 
-test("detect component in normal ts script", () => {
+test('detect component in normal ts script', () => {
   const content = `
     var a: string = "";
       `;

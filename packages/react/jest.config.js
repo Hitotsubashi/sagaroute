@@ -1,16 +1,16 @@
-const globalJestConfig = require("../../jest.config");
+const globalJestConfig = require('../../jest.config');
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
   ...globalJestConfig,
-  rootDir: "./",
-  setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
+  rootDir: './',
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   silent: true,
   collectCoverage: true,
-  collectCoverageFrom: ["src/**/*.ts"],
+  collectCoverageFrom: ['src/**/*.ts'],
   moduleNameMapper: {
-    "^@/(.*)$": "<rootDir>/src/$1",
-    "^～/(.*)$": "<rootDir>/$1",
-    "^#/(.*)$": "<rootDir>/__tests__/$1",
+    '^@/(.*)$': '<rootDir>/src/$1',
+    '^～/(.*)$': '<rootDir>/$1',
+    '^#/(.*)$': '<rootDir>/__tests__/$1',
   },
 };

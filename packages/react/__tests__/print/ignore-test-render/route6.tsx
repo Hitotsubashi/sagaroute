@@ -1,8 +1,8 @@
 // @ts-nocheck
-import xx1 from "xxx";
+import xx1 from 'xxx';
 /* sagaroute-inject:imports */
 /* injected by sagaroute: start */
-import xx from "xxx";
+import xx from 'xxx';
 /* injected by sagaroute: end */
 
 // sagaroute-inject: routes

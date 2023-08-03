@@ -1,4 +1,4 @@
-import { FileNode } from "@sagaroute/react/lib/gather";
+import { FileNode } from '@sagaroute/react/lib/gather';
 
 class CacheManger {
   dirty: string[] = [];

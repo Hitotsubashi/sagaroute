@@ -1,42 +1,30 @@
-import print from "@/print";
-import { RouteObject } from "@/weave";
-import path from "path";
+import print from '@/print';
+import { RouteObject } from '@/weave';
+import path from 'path';
 
-test("test print with no exist routeFile", () => {
+test('test print with no exist routeFile', () => {
   const routes: RouteObject[] = [];
-  const routeFilePath = path.join(
-    __dirname,
-    "ignore-test-render",
-    "routexxx.tsx"
-  );
+  const routeFilePath = path.join(__dirname, 'ignore-test-render', 'routexxx.tsx');
   expect(() => {
     print(routes, {}, { routeFilePath });
   }).toThrow(`Could not find the file with path ${routeFilePath}`);
 });
 
-test("view has variable that not in template", () => {
+test('view has variable that not in template', () => {
   const onWarningMock = jest.fn();
   const routes: RouteObject[] = [];
-  const routeFilePath = path.join(
-    __dirname,
-    "ignore-test-render",
-    "route9.tsx"
-  );
+  const routeFilePath = path.join(__dirname, 'ignore-test-render', 'route9.tsx');
   print(routes, {}, { routeFilePath, onWarning: onWarningMock });
   expect(onWarningMock.mock.calls).toHaveLength(1);
   expect(onWarningMock.mock.calls[0][0]).toEqual(
-    `The RoutingTemplateFile: ${routeFilePath} has no variables including [routes] which are included in view.`
+    `The RoutingTemplateFile<${routeFilePath}> has no variables such as [routes] which are needed in view.`,
   );
 });
 
-test("template has variable that not in view", () => {
+test('template has variable that not in view', () => {
   const onWarningMock = jest.fn();
   const routes: RouteObject[] = [];
-  const routeFilePath = path.join(
-    __dirname,
-    "ignore-test-render",
-    "route9.tsx"
-  );
+  const routeFilePath = path.join(__dirname, 'ignore-test-render', 'route9.tsx');
   print(
     routes,
     {},
@@ -53,10 +41,10 @@ test("template has variable that not in view", () => {
           ],
         },
       },
-    }
+    },
   );
   expect(onWarningMock.mock.calls).toHaveLength(1);
   expect(onWarningMock.mock.calls[0][0]).toEqual(
-    `The View of stage<print.inject.before> has no variables including [imports] which are included in template.`
+    `The view of stage<print.inject.before> has no variables such as [imports] which are needed in template.`,
   );
 });

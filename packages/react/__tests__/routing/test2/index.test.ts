@@ -1,7 +1,7 @@
-import path from "path";
-import SagaRoute from "@/index";
+import path from 'path';
+import SagaRoute from '@/index';
 
-test("test routing that only gather.", () => {
+test('test routing that only gather.', () => {
   const buildHooksBefore = jest.fn();
   const buildHooksAfter = jest.fn();
   const gatherHooksBefore = jest.fn();
@@ -20,7 +20,7 @@ test("test routing that only gather.", () => {
   const printHooksWriteAfter = jest.fn();
   const option = {
     rootPath: __dirname,
-    layoutDirPath: path.join("src/views"),
+    layoutDirPath: path.join('src/views'),
     hooks: {
       build: {
         before: buildHooksBefore,
@@ -78,7 +78,7 @@ test("test routing that only gather.", () => {
   expect(printHooksWriteAfter.mock.calls).toHaveLength(0);
 });
 
-test("test routing that only gather and weave.", () => {
+test('test routing that only gather and weave.', () => {
   const buildHooksBefore = jest.fn();
   const buildHooksAfter = jest.fn();
   const gatherHooksBefore = jest.fn();
@@ -98,7 +98,7 @@ test("test routing that only gather and weave.", () => {
 
   const option = {
     rootPath: __dirname,
-    layoutDirPath: path.join("src", "views"),
+    layoutDirPath: path.join('src', 'views'),
     hooks: {
       build: {
         before: [buildHooksBefore],

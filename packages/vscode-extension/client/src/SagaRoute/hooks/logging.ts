@@ -1,20 +1,20 @@
-import { RoutingOption } from "@sagaroute/react";
-import getLogging from "../../Logging";
+import { RoutingOption } from '@sagaroute/react';
+import getLogging from '../../Logging';
 
 const logging = getLogging();
 
-const loggingHooks: RoutingOption["hooks"] = {
+const loggingHooks: RoutingOption['hooks'] = {
   build: {
     before: {
       order: -10,
       handler() {
-        logging.logMessage("[build:start]");
+        logging.logMessage('[build:start]');
       },
     },
     after: {
       order: 110,
       handler(ultimateOption) {
-        logging.logMessage("[build:end]");
+        logging.logMessage('[build:end]');
         logging.logObject(ultimateOption);
       },
     },
@@ -23,9 +23,7 @@ const loggingHooks: RoutingOption["hooks"] = {
     before: {
       order: -10,
       handler(dirpath, layoutDirPath) {
-        logging.logMessage(
-          `[gather:before]  dirpath: ${dirpath}, layoutDirPath: ${layoutDirPath}`
-        );
+        logging.logMessage(`[gather:before]  dirpath: ${dirpath}, layoutDirPath: ${layoutDirPath}`);
       },
     },
     // beforeEach: {
@@ -39,9 +37,7 @@ const loggingHooks: RoutingOption["hooks"] = {
     afterEach: {
       order: 110,
       handler(fileNode, fileNodePath) {
-        logging.logMessage(
-          `[gather:afterEach] gathering fileNodePath: ${fileNodePath}`
-        );
+        logging.logMessage(`[gather:afterEach] gathering fileNodePath: ${fileNodePath}`);
       },
     },
     after: {
@@ -62,7 +58,7 @@ const loggingHooks: RoutingOption["hooks"] = {
       order: -10,
       handler(fileNode, parent) {
         logging.logMessage(
-          `[weave:beforeEach]  fileNode.name: ${fileNode.name}, parent.path: ${parent.path}`
+          `[weave:beforeEach]  fileNode.name: ${fileNode.name}, parent.path: ${parent.path}`,
         );
       },
     },
@@ -70,7 +66,7 @@ const loggingHooks: RoutingOption["hooks"] = {
       order: 110,
       handler(route, imports, fileNode, parent) {
         logging.logMessage(
-          `[weave:afterEach]  fileNode.name: ${fileNode.name}, parent.path: ${parent.path}`
+          `[weave:afterEach]  fileNode.name: ${fileNode.name}, parent.path: ${parent.path}`,
         );
       },
     },
@@ -86,17 +82,13 @@ const loggingHooks: RoutingOption["hooks"] = {
       before: {
         order: 1,
         handler(routeFilePath) {
-          logging.logMessage(
-            `[print:parse:before]  routeFilePath: ${routeFilePath}`
-          );
+          logging.logMessage(`[print:parse:before]  routeFilePath: ${routeFilePath}`);
         },
       },
       after: {
         order: 110,
         handler(template, routeFilePath) {
-          logging.logMessage(
-            `[print:parse:after]  routeFilePath: ${routeFilePath}`
-          );
+          logging.logMessage(`[print:parse:after]  routeFilePath: ${routeFilePath}`);
         },
       },
     },
@@ -118,18 +110,14 @@ const loggingHooks: RoutingOption["hooks"] = {
       before: {
         order: -10,
         handler(renderedContent: string, routeFilePath: string) {
-          logging.logMessage(
-            `[print:write:before]  routeFilePath: ${routeFilePath}`
-          );
+          logging.logMessage(`[print:write:before]  routeFilePath: ${routeFilePath}`);
         },
       },
 
       after: {
         order: 110,
         handler(routeFilePath: string) {
-          logging.logMessage(
-            `[print:write:after]  routeFilePath: ${routeFilePath}`
-          );
+          logging.logMessage(`[print:write:after]  routeFilePath: ${routeFilePath}`);
         },
       },
     },

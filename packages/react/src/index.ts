@@ -1,10 +1,10 @@
-import path from "path";
+import path from 'path';
 import gather, {
   GatherHookAfter,
   GatherHookAfterEach,
   GatherHookBefore,
   GatherHookBeforeEach,
-} from "@/gather";
+} from '@/gather';
 import print, {
   PrintHookAfterInject,
   PrintHookAfterParse,
@@ -12,19 +12,19 @@ import print, {
   PrintHookBeforeInject,
   PrintHookBeforeParse,
   PrintHookBeforeWrite,
-} from "@/print";
+} from '@/print';
 import weave, {
   WeaveHookAfter,
   WeaveHookAfterEach,
   WeaveHookBefore,
   WeaveHookBeforeEach,
-} from "@/weave";
-import transformRoutesToString from "@/utils/transformRoutesToString";
-import validate from "@/validate";
-import loadFileConfig from "@/loadConfig";
-import mergeOption from "@/utils/mergeOption";
-import hookCompose from "@/utils/hookCompose";
-import hookNormalize from "@/utils/hookNormalize";
+} from '@/weave';
+import transformRoutesToString from '@/utils/transformRoutesToString';
+import validate from '@/validate';
+import loadFileConfig from '@/loadConfig';
+import mergeOption from '@/utils/mergeOption';
+import hookCompose from '@/utils/hookCompose';
+import hookNormalize from '@/utils/hookNormalize';
 
 type OrderHandler<T> = { order: number; handler: T };
 
@@ -66,9 +66,7 @@ export interface RoutingOption extends BasicRoutingOption {
   };
 }
 
-export type HookBeforeBuild = (
-  inputOption?: RoutingOption
-) => void | UltimateRoutingOption;
+export type HookBeforeBuild = (inputOption?: RoutingOption) => void | UltimateRoutingOption;
 export type HookAfterBuild = (ultimateOption: UltimateRoutingOption) => void;
 
 interface UltimateRoutingOption extends BasicRoutingOption {
@@ -123,9 +121,7 @@ interface BasicRoutingOption {
   onWarning?: (message: string) => void;
 }
 
-function normalizeToUltimateOption(
-  inputOption: RoutingOption
-): UltimateRoutingOption {
+function normalizeToUltimateOption(inputOption: RoutingOption): UltimateRoutingOption {
   const rootPath = inputOption.rootPath ?? process.cwd();
   const ultimateOption: UltimateRoutingOption = {
     ...inputOption,
@@ -139,19 +135,19 @@ function normalizeToUltimateOption(
       ? path.isAbsolute(inputOption.dirpath)
         ? inputOption.dirpath
         : path.join(rootPath, inputOption.dirpath)
-      : path.join(rootPath, "src", "pages"),
+      : path.join(rootPath, 'src', 'pages'),
     layoutDirPath: inputOption.layoutDirPath
       ? path.isAbsolute(inputOption.layoutDirPath)
         ? inputOption.layoutDirPath
         : path.join(rootPath, inputOption.layoutDirPath)
-      : path.join(rootPath, "src", "layouts"),
+      : path.join(rootPath, 'src', 'layouts'),
     routeFilePath: inputOption.routeFilePath
       ? path.isAbsolute(inputOption.routeFilePath)
         ? inputOption.routeFilePath
         : path.join(rootPath, inputOption.routeFilePath)
-      : path.join(rootPath, "src", "routes.tsx"),
-    relativeDirpath: "",
-    relativeLayoutDirPath: "",
+      : path.join(rootPath, 'src', 'routes.tsx'),
+    relativeDirpath: '',
+    relativeLayoutDirPath: '',
     hooks: {
       build: {
         before: hookNormalize(inputOption.hooks?.build?.before),
@@ -187,11 +183,11 @@ function normalizeToUltimateOption(
   };
   ultimateOption.relativeDirpath = path.relative(
     ultimateOption.routeFilePath,
-    ultimateOption.dirpath
+    ultimateOption.dirpath,
   );
   ultimateOption.relativeLayoutDirPath = path.relative(
     ultimateOption.routeFilePath,
-    ultimateOption.layoutDirPath
+    ultimateOption.layoutDirPath,
   );
 
   return ultimateOption;
@@ -206,12 +202,10 @@ export default class SagaRoute {
     let inputOption: RoutingOption = option || {};
     let ultimateOption: UltimateRoutingOption | undefined | void = hookCompose(
       hookNormalize(option?.hooks?.build?.before),
-      inputOption
+      inputOption,
     );
     if (!ultimateOption) {
-      let configFileOption = loadFileConfig(
-        inputOption?.rootPath ?? process.cwd()
-      );
+      let configFileOption = loadFileConfig(inputOption?.rootPath ?? process.cwd());
       if (configFileOption) {
         inputOption = mergeOption(inputOption, configFileOption);
       }

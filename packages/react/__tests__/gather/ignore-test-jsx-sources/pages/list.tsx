@@ -1,5 +1,5 @@
 // @ts-nocheck
-import ErrorBoundary from "./components/ErrorBoundary.tsx";
+import ErrorBoundary from './components/ErrorBoundary.tsx';
 
 const list = () => {
   return (

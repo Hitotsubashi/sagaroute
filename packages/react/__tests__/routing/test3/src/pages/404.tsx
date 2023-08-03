@@ -4,7 +4,7 @@ const Page404 = () => {
 };
 
 Page404.routeProps = {
-  path: "404",
+  path: '404',
 };
 
 Page404.routeOptions = {

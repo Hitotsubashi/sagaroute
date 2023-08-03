@@ -1,9 +1,7 @@
-import { Dependency } from "@/gather";
-import { Imports } from "@/weave";
+import { Dependency } from '@/gather';
+import { Imports } from '@/weave';
 
-export default function generateImports(
-  dependencies: Dependency[] | undefined
-): Imports {
+export default function generateImports(dependencies: Dependency[] | undefined): Imports {
   const imports: Imports = {};
   dependencies?.forEach((dependency) => {
     const { importPath, ...rest } = dependency;
