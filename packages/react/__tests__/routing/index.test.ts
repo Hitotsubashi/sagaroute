@@ -19,10 +19,10 @@ test('test routing in normal', () => {
   const printHooksInjectAfter = jest.fn();
   const printHooksWriteBefore = jest.fn();
   const printHooksWriteAfter = jest.fn();
-  const outputFile = path.join(__dirname, 'ignore-test-normal-src', 'route.tsx');
+  const outputFile = path.join(__dirname, 'test-fixtures', 'normal-src', 'route.tsx');
   const option = {
-    dirpath: path.join(__dirname, 'ignore-test-normal-src/pages'),
-    layoutDirPath: path.join(__dirname, 'ignore-test-normal-src/layouts'),
+    dirpath: path.join(__dirname, 'test-fixtures', 'normal-src/pages'),
+    layoutDirPath: path.join(__dirname, 'test-fixtures', 'normal-src/layouts'),
     routeFilePath: outputFile,
     pathRewrite: {
       '^./': '@/',
@@ -139,10 +139,10 @@ test('test skip gather,weave and print', () => {
   const printHooksInjectAfter = jest.fn();
   const printHooksWriteBefore = jest.fn();
   const printHooksWriteAfter = jest.fn();
-  const outputFile = path.join(__dirname, 'ignore-test-normal-src', 'route.tsx');
+  const outputFile = path.join(__dirname, 'test-fixtures', 'normal-src', 'route.tsx');
   const option = {
-    dirpath: path.join(__dirname, 'ignore-test-normal-src/pages'),
-    layoutDirPath: path.join(__dirname, 'ignore-test-normal-src/layouts'),
+    dirpath: path.join(__dirname, 'test-fixtures', 'normal-src/pages'),
+    layoutDirPath: path.join(__dirname, 'test-fixtures', 'normal-src/layouts'),
     routeFilePath: outputFile,
     pathRewrite: {
       '^./': '@/',
@@ -210,10 +210,10 @@ test('test skip weave and print', () => {
   const printHooksInjectAfter = jest.fn();
   const printHooksWriteBefore = jest.fn();
   const printHooksWriteAfter = jest.fn();
-  const outputFile = path.join(__dirname, 'ignore-test-normal-src', 'route.tsx');
+  const outputFile = path.join(__dirname, 'test-fixtures', 'normal-src', 'route.tsx');
   const option = {
-    dirpath: path.join(__dirname, 'ignore-test-normal-src/pages'),
-    layoutDirPath: path.join(__dirname, 'ignore-test-normal-src/layouts'),
+    dirpath: path.join(__dirname, 'test-fixtures', 'normal-src/pages'),
+    layoutDirPath: path.join(__dirname, 'test-fixtures', 'normal-src/layouts'),
     routeFilePath: outputFile,
     pathRewrite: {
       '^./': '@/',
@@ -275,10 +275,10 @@ test('test skip print.parse', () => {
   const printHooksInjectAfter = jest.fn();
   const printHooksWriteBefore = jest.fn();
   const printHooksWriteAfter = jest.fn();
-  const outputFile = path.join(__dirname, 'ignore-test-normal-src', 'route.tsx');
+  const outputFile = path.join(__dirname, 'test-fixtures', 'normal-src', 'route.tsx');
   const option = {
-    dirpath: path.join(__dirname, 'ignore-test-normal-src/pages'),
-    layoutDirPath: path.join(__dirname, 'ignore-test-normal-src/layouts'),
+    dirpath: path.join(__dirname, 'test-fixtures', 'normal-src/pages'),
+    layoutDirPath: path.join(__dirname, 'test-fixtures', 'normal-src/layouts'),
     routeFilePath: outputFile,
     pathRewrite: {
       '^./': '@/',
@@ -319,10 +319,10 @@ test('test skip print.inject', () => {
   const printHooksInjectAfter = jest.fn();
   const printHooksWriteBefore = jest.fn();
   const printHooksWriteAfter = jest.fn();
-  const outputFile = path.join(__dirname, 'ignore-test-normal-src', 'route.tsx');
+  const outputFile = path.join(__dirname, 'test-fixtures', 'normal-src', 'route.tsx');
   const option = {
-    dirpath: path.join(__dirname, 'ignore-test-normal-src/pages'),
-    layoutDirPath: path.join(__dirname, 'ignore-test-normal-src/layouts'),
+    dirpath: path.join(__dirname, 'test-fixtures', 'normal-src/pages'),
+    layoutDirPath: path.join(__dirname, 'test-fixtures', 'normal-src/layouts'),
     routeFilePath: outputFile,
     pathRewrite: {
       '^./': '@/',
@@ -363,10 +363,10 @@ test('test skip print.write', () => {
   const printHooksInjectAfter = jest.fn();
   const printHooksWriteBefore = jest.fn(() => null);
   const printHooksWriteAfter = jest.fn();
-  const outputFile = path.join(__dirname, 'ignore-test-normal-src', 'route.tsx');
+  const outputFile = path.join(__dirname, 'test-fixtures', 'normal-src', 'route.tsx');
   const option = {
-    dirpath: path.join(__dirname, 'ignore-test-normal-src/pages'),
-    layoutDirPath: path.join(__dirname, 'ignore-test-normal-src/layouts'),
+    dirpath: path.join(__dirname, 'test-fixtures', 'normal-src/pages'),
+    layoutDirPath: path.join(__dirname, 'test-fixtures', 'normal-src/layouts'),
     routeFilePath: outputFile,
     pathRewrite: {
       '^./': '@/',

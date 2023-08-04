@@ -2,8 +2,9 @@ node_modules
 coverage
 lib
 .nyc_output
-ignore-test-**
+test-fixtures
 output
 **.log
 yarn.lock
 images
+.eslintcache

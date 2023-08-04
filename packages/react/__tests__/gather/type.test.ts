@@ -3,7 +3,7 @@ import { EVAL_STRING_SYMBOL } from '@/utils/symbol';
 import path from 'path';
 
 test('gather fileNodes with multiple type of variables.', () => {
-  const gatherDirPath = path.join('__tests__', 'gather', 'ignore-test-type');
+  const gatherDirPath = path.join('__tests__', 'gather', 'test-fixtures', 'type');
   const exist = gather({
     dirpath: path.join(gatherDirPath, 'pages'),
     relativeDirpath: path.relative(
@@ -23,7 +23,7 @@ test('gather fileNodes with multiple type of variables.', () => {
           boolean: true,
           null: null,
           undefined: `${EVAL_STRING_SYMBOL}undefined`,
-          symbol: `${EVAL_STRING_SYMBOL}Symbol("s")`,
+          symbol: `${EVAL_STRING_SYMBOL}Symbol('s')`,
           funtion: `${EVAL_STRING_SYMBOL}function () {}`,
           object: `${EVAL_STRING_SYMBOL}{}`,
           array: `${EVAL_STRING_SYMBOL}[]`,

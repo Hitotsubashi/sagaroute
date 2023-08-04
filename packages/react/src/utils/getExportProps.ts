@@ -112,8 +112,8 @@ function adjustSourceInImportExpression(
   { pathRewrite, relativePath }: Option,
 ) {
   const ProgramNode = {
-    type: 'Program' as 'Program',
-    sourceType: 'script' as 'script',
+    type: 'Program' as const,
+    sourceType: 'script' as const,
     directives: [],
     sourceFile: '',
     body: [t.variableDeclaration('const', [t.variableDeclarator(t.identifier('a'), propNode)])],
@@ -132,7 +132,7 @@ function adjustSourceInImportExpression(
 
 function adjustPath(origin: string, context: string) {
   const absolute = isPathAbsolute(origin);
-  let result = absolute ? origin : path.join(path.dirname(context), origin);
+  const result = absolute ? origin : path.join(path.dirname(context), origin);
   return { absolute, result };
 }
 
@@ -179,13 +179,13 @@ function transformIdentifierToLiteral(
 
 function transformExpressionToRawString(node: t.Expression) {
   const ProgramNode = {
-    type: 'Program' as 'Program',
-    sourceType: 'script' as 'script',
+    type: 'Program' as const,
+    sourceType: 'script' as const,
     directives: [],
     sourceFile: '',
     body: [t.variableDeclaration('const', [t.variableDeclarator(t.identifier('a'), node)])],
   };
-  return transformFromAstSync(ProgramNode)?.code?.match(/^const a \= (.*);$/s)?.[1];
+  return transformFromAstSync(ProgramNode)?.code?.match(/^const a = (.*);$/s)?.[1];
 }
 
 function transformSpecialElementToLiteral(propNode: ObjectExpression) {
@@ -271,12 +271,14 @@ function transformSingleJSX(
         JSXOpeningElementName = JSXOpeningElementName.object;
       }
     }
+    // eslint-disable-next-line prefer-const
     jsxIdentifierOfOpen = JSXOpeningElementName;
     if (t.isJSXMemberExpression(JSXClosingElementName)) {
       while (t.isJSXMemberExpression(JSXClosingElementName)) {
         JSXClosingElementName = JSXClosingElementName.object;
       }
     }
+    // eslint-disable-next-line prefer-const
     jsxIdentifierOfClose = JSXClosingElementName;
     if (
       !htmlTagNames.includes(jsxIdentifierOfOpen.name) &&
@@ -357,7 +359,7 @@ function getDependencyByName(
             node.source.value,
             relativePath,
           );
-          let normalizedImportPath = importPathAbsolute
+          const normalizedImportPath = importPathAbsolute
             ? importPath
             : normalizePath(importPath, pathRewrite);
           // import x1 from 'xxx'

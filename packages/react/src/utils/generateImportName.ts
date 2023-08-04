@@ -8,7 +8,7 @@ export default function generateImportName(fpath: string, varName: string): stri
   const { name, dir } = path.parse(fpath);
   let upper = true;
   let importName = '';
-  let basepath = path.join(dir, name);
+  const basepath = path.join(dir, name);
   for (let i = 0; i < basepath.length; i++) {
     // if (basepath[i] === ".") {
     //   upper = false;

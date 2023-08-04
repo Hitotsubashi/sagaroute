@@ -12,7 +12,7 @@ import PagesDashboard from "@/pages/dashboard.tsx";
 import PagesChart,{Error as PagesChartError} from "@/pages/chart.tsx";
 /* injected by sagaroute: end */
 
-import React from "react";
+import React from 'react';
 
 // sagaroute-inject: routes
 export default [
@@ -40,7 +40,7 @@ export default [
 
 exports[`test print with normal routes by comment: /**/ 1`] = `
 "// @ts-nocheck
-import React from "react";
+import React from 'react';
 /* sagaroute-inject:imports */
 /* injected by sagaroute: start */
 import SrcPagesUsers_Id_ from "./src/pages/users/[id].tsx";
@@ -75,7 +75,7 @@ export default getRoutes;"
 
 exports[`test print with normal routes by comment: // 1`] = `
 "// @ts-nocheck
-import React from "react";
+import React from 'react';
 // @ts-ignore
 /* sagaroute-inject:imports */
 /* injected by sagaroute: start */

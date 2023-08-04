@@ -656,11 +656,15 @@ test('test weave with pathRewrite', () => {
 });
 
 test('test weave with hoooks', () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const beforeFn = jest.fn((fileNodes: FileNode[]) => {});
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const beforeEachFn = jest.fn((fileNode: FileNode) => {});
   const afterEachFn = jest.fn(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     (route: RouteObject | null, imports: Imports, fileNode: FileNode) => {},
   );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const afterFn = jest.fn((routes: RouteObject[], imports: Imports, fileNodes: FileNode[]) => {});
 
   const fileNodes: FileNode[] = [

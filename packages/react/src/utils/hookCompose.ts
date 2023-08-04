@@ -5,7 +5,7 @@ export default function hookCompose<T extends ((...args: any[]) => any)[]>(
   let result: ReturnType<T[0]> | undefined = undefined;
   if (fns) {
     fns.forEach((fn) => {
-      let temp = fn(...args);
+      const temp = fn(...args);
       if (temp !== undefined) {
         result = temp;
       }

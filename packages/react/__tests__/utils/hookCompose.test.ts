@@ -24,7 +24,7 @@ test('test hookCompose', () => {
           node.props.routeProps.meta = { title: node.name, origin: dirpath };
         }
       },
-      function (node: FileNode, dirpath: string) {
+      function (node: FileNode) {
         if (node.props?.routeProps && !node.props.routeProps?.access) {
           node.props.routeProps.access = { admin: 'true' };
         }

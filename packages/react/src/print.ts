@@ -63,7 +63,7 @@ export const IMPORT_DECLARATIONS_COMMENT_END = `${IMPORT_DECLARATIONS_COMMENT}: 
 
 function removeInjectedContent(content: string) {
   return content.replace(
-    /\/\* injected by sagaroute\: start \*\/.*\/\* injected by sagaroute\: end \*\//gs,
+    /\/\* injected by sagaroute: start \*\/.*\/\* injected by sagaroute: end \*\//gs,
     '',
   );
 }
@@ -172,12 +172,13 @@ function parseEmptyInjectCommentToPlaceholder(content: string, handledInjectVari
 
 function generateRenderTemplateFromContent(content: string, routeFilePath: string) {
   const handledInjectVariables: string[] = [];
-  let modifiedContent = removeInjectedContent(content);
+  const modifiedContent = removeInjectedContent(content);
   const ast = parseToAst(modifiedContent, ['.ts', '.tsx'].includes(path.extname(routeFilePath)));
   const existedImportNames = collectExistedImportNames(ast);
   parseStickyInjectCommentToPlaceholder(ast, handledInjectVariables);
   let { code: template } = generate(ast);
   let injectedVariables: string[];
+  // eslint-disable-next-line prefer-const
   ({ template, injectedVariables } = parseEmptyInjectCommentToPlaceholder(
     template,
     handledInjectVariables,
@@ -267,7 +268,7 @@ function diffVariableBetweenViewAndTemplate(
 }
 
 export default function print(routes: RouteObject[], imports: Imports, option?: PrintOption) {
-  let { routeFilePath = path.join('src', 'route.ts'), hooks, onWarning } = option ?? {};
+  const { routeFilePath = path.join('src', 'route.ts'), hooks, onWarning } = option ?? {};
   let renderTemplate = hookCompose(hooks?.parse?.before, routeFilePath);
   if (renderTemplate === null) return;
   let existedImportNames: string[] = [];
@@ -299,7 +300,7 @@ export default function print(routes: RouteObject[], imports: Imports, option?: 
   if (!renderedContent) {
     renderedContent = Mustache.render(renderTemplate, view);
     renderedContent = renderedContent.replace(
-      /\/\* injected by sagaroute\: start \*\/\s*\/\* injected by sagaroute\: end \*\/\s/gs,
+      /\/\* injected by sagaroute: start \*\/\s*\/\* injected by sagaroute: end \*\/\s/gs,
       '',
     );
   }

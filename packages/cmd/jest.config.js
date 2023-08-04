@@ -1,3 +1,4 @@
+/* eslint-env node */
 const globalJestConfig = require('../../jest.config');
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */

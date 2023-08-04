@@ -2,7 +2,7 @@
 
 exports[`test print with hook skip render. 1`] = `
 "// @ts-nocheck
-import xx1 from "xxx";
+import xx1 from 'xxx';
 /* sagaroute-inject:imports */
 /* injected by sagaroute: start */
 import xx from "xxx";
@@ -15,7 +15,7 @@ export default null;"
 
 exports[`test print with hook skip write. 1`] = `
 "// @ts-nocheck
-import React from "react";
+import React from 'react';
 /* sagaroute-inject:imports */
 /* injected by sagaroute: start */
 import SrcPagesUsers_Id_ from "./src/pages/users/[id].tsx";
@@ -48,7 +48,7 @@ export default routes;"
 
 exports[`test print with hook skip write. 2`] = `
 "// @ts-nocheck
-import React from "react";
+import React from 'react';
 /* sagaroute-inject:imports */
 
 // sagaroute-inject: routes

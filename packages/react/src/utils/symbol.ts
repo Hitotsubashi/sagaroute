@@ -1,5 +1,5 @@
 export const EVAL_STRING_SYMBOL = '/*#__EVAL__*/';
-export const EVAL_STRING_SYMBOL_REGEXP = /\"\/\*#__EVAL__\*\/(.*?)\/\*#__EVAL__\*\/\"/g;
+export const EVAL_STRING_SYMBOL_REGEXP = /"\/\*#__EVAL__\*\/(.*?)\/\*#__EVAL__\*\/"/g;
 export const ROUTE_CONTENT_SYMBOL_REGEXP = /SAGA_ROUTE:?(.*)?/;
 export const TEMPLATE_RENDER_ROUTE_SYMBOL = 'routes';
 export const TEMPLATE_RENDER_IMPORTS_SYMBOL = 'imports';

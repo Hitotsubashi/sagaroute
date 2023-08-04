@@ -60,9 +60,11 @@ test('test print with hooks', () => {
       },
     ],
   };
-  const routeFilePath = path.join(__dirname, 'ignore-test-render', 'route3.tsx');
+  const routeFilePath = path.join(__dirname, 'test-fixtures', 'render', 'route3.tsx');
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const printHookBeforeParse = jest.fn((routeFilePath: string) => {});
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const printHookAfterParse = jest.fn((template: string, routeFilePath: string) => {});
   const printHookBeforeInject = jest.fn(
     (view: Record<string, any>, template: string, routes: RouteObject[]) => {
@@ -144,7 +146,7 @@ test('test print with hook using custom template', () => {
       },
     ],
   };
-  const routeFilePath = path.join(__dirname, 'ignore-test-render', 'route5.tsx');
+  const routeFilePath = path.join(__dirname, 'test-fixtures', 'render', 'route5.tsx');
   print(routes, imports, {
     routeFilePath,
     hooks: {
@@ -152,7 +154,7 @@ test('test print with hook using custom template', () => {
         before: [
           () => {
             return fs.readFileSync(
-              path.join(__dirname, 'ignore-test-render', 'route5.tpl'),
+              path.join(__dirname, 'test-fixtures', 'render', 'route5.tpl'),
               'utf-8',
             );
           },
@@ -207,7 +209,7 @@ test('test print with hook skip render.', () => {
       },
     ],
   };
-  const routeFilePath = path.join(__dirname, 'ignore-test-render', 'route6.tsx');
+  const routeFilePath = path.join(__dirname, 'test-fixtures', 'render', 'route6.tsx');
   print(routes, imports, {
     routeFilePath,
     hooks: {
@@ -270,7 +272,7 @@ test('test print with hook skip write.', () => {
       },
     ],
   };
-  const routeFilePath = path.join(__dirname, 'ignore-test-render', 'route7.tsx');
+  const routeFilePath = path.join(__dirname, 'test-fixtures', 'render', 'route7.tsx');
   let renderContentRecord = '';
   print(routes, imports, {
     routeFilePath,

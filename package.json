@@ -8,10 +8,14 @@
     "node": ">= 16.10.0"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.2.1",
+    "@typescript-eslint/parser": "^6.2.1",
+    "eslint": "^8.46.0",
     "lerna": "^6.5.1",
     "prettier": "^3.0.1"
   },
   "scripts": {
-    "lint:prettier": "prettier --check . --end-of-line auto"
+    "lint:eslint": "npx eslint --cache .",
+    "lint:prettier": "npx prettier --check . --end-of-line auto"
   }
 }

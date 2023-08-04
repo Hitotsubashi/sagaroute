@@ -4,7 +4,7 @@ import path from 'path';
 
 test('test print with no exist routeFile', () => {
   const routes: RouteObject[] = [];
-  const routeFilePath = path.join(__dirname, 'ignore-test-render', 'routexxx.tsx');
+  const routeFilePath = path.join(__dirname, 'test-fixtures', 'render', 'routexxx.tsx');
   expect(() => {
     print(routes, {}, { routeFilePath });
   }).toThrow(`Could not find the file with path ${routeFilePath}`);
@@ -13,7 +13,7 @@ test('test print with no exist routeFile', () => {
 test('view has variable that not in template', () => {
   const onWarningMock = jest.fn();
   const routes: RouteObject[] = [];
-  const routeFilePath = path.join(__dirname, 'ignore-test-render', 'route9.tsx');
+  const routeFilePath = path.join(__dirname, 'test-fixtures', 'render', 'route9.tsx');
   print(routes, {}, { routeFilePath, onWarning: onWarningMock });
   expect(onWarningMock.mock.calls).toHaveLength(1);
   expect(onWarningMock.mock.calls[0][0]).toEqual(
@@ -24,7 +24,7 @@ test('view has variable that not in template', () => {
 test('template has variable that not in view', () => {
   const onWarningMock = jest.fn();
   const routes: RouteObject[] = [];
-  const routeFilePath = path.join(__dirname, 'ignore-test-render', 'route9.tsx');
+  const routeFilePath = path.join(__dirname, 'test-fixtures', 'render', 'route9.tsx');
   print(
     routes,
     {},

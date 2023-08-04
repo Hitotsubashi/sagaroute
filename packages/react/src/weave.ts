@@ -6,7 +6,6 @@ import generateLazyImportFn from '@/utils/generateLazyImportFn';
 import normalizePath from '@/utils/normalizePath';
 import generateImportName from '@/utils/generateImportName';
 import mergeImports from '@/utils/mergeImports';
-import { LazyFn } from '.';
 import generateImports from './utils/generateImports';
 import { PartialRequired } from './typings';
 
@@ -42,13 +41,14 @@ interface WeaveOption {
 
 type InnerWeaveOption = PartialRequired<WeaveOption, 'relativeDirpath' | 'relativeLayoutDirPath'>;
 
+export type LazyFn = (fpath: string) => boolean;
 export interface RouteObject {
   path?: string;
   index?: boolean;
   caseSensitive?: boolean;
   children?: RouteObject[];
   element?: string;
-  lazy?: string | Function;
+  lazy?: string | LazyFn;
   [key: string]: any;
 }
 
@@ -62,7 +62,7 @@ export interface FileNodeParent {
 function transformParamNameToParamPath(name: string | undefined) {
   if (name === undefined) return name;
   if (name === '[]') return '*';
-  let match = name.match(/^\[([^\$]*)\$\]$/);
+  let match = name.match(/^\[([^$]*)\$\]$/);
   if (match) {
     return `:${match[1]}?`;
   }
@@ -94,7 +94,7 @@ function traverse(
       if (isFile) {
         const basename = name.replace(path.extname(name), '');
         let routePath: RouteObject['path'] = layoutNode ? '/' : basename;
-        let index =
+        const index =
           props?.routeProps?.index !== undefined
             ? props.routeProps.index
             : !layoutNode && (parent.path !== '' || parent.layoutNode) && routePath === 'index'
@@ -258,7 +258,7 @@ function traverse(
 }
 
 function normalize(route: RouteObject): RouteObject {
-  for (let key in route) {
+  for (const key in route) {
     if (route[key] === undefined) {
       delete route[key];
     }
@@ -277,8 +277,6 @@ export default function weave(fileNodes: FileNode[], option: WeaveOption) {
     relativeLayoutDirPath = path.join('..', 'src', 'layouts'),
   } = option;
   if (hookCompose(option.hooks?.before, fileNodes) !== null) {
-    let routes: RouteObject[];
-    let imports: Imports;
     const layoutFileNode = fileNodes.find(({ layoutNode }) => layoutNode);
     let ultimateFileNodes: FileNode[] = fileNodes;
     if (layoutFileNode) {
@@ -306,11 +304,11 @@ export default function weave(fileNodes: FileNode[], option: WeaveOption) {
         ...unlayoutFileNodes,
       ];
     }
-    ({ routes, imports } = traverse(
+    const { routes, imports } = traverse(
       ultimateFileNodes,
       { path: '' },
       { ...option, relativeDirpath, relativeLayoutDirPath },
-    ));
+    );
     hookCompose(option?.hooks?.after, routes, imports, fileNodes);
     return { routes, imports };
   } else {

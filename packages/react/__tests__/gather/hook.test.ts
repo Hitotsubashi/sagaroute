@@ -3,8 +3,8 @@ import { EVAL_STRING_SYMBOL } from '@/utils/symbol';
 import path from 'path';
 
 test('gather fileNodes from normal document without hook.', () => {
-  const gatherDirPath = path.join('__tests__', 'gather', 'ignore-test-hook');
-  const adjustedDirPath = '__tests__/gather/ignore-test-hook';
+  const gatherDirPath = path.join('__tests__', 'gather', 'test-fixtures', 'hook');
+  const adjustedDirPath = '__tests__/gather/test-fixtures/hook';
   const exist = gather({
     dirpath: path.join(gatherDirPath, 'pages'),
     layoutDirPath: path.join(gatherDirPath, 'layouts'),
@@ -104,8 +104,8 @@ test('gather fileNodes from normal document without hook.', () => {
 });
 
 test('gather fileNodes from normal document with hook doing cache.', () => {
-  const gatherDirPath = path.join('__tests__', 'gather', 'ignore-test-hook');
-  const adjustedDirPath = '__tests__/gather/ignore-test-hook';
+  const gatherDirPath = path.join('__tests__', 'gather', 'test-fixtures', 'hook');
+  const adjustedDirPath = '__tests__/gather/test-fixtures/hook';
   const exist = gather({
     dirpath: path.join(gatherDirPath, 'pages'),
     layoutDirPath: path.join(gatherDirPath, 'layouts'),
@@ -256,8 +256,8 @@ test('gather fileNodes from normal document with hook doing cache.', () => {
 });
 
 test('gather fileNodes from normal document with hook doing skip.', () => {
-  const gatherDirPath = path.join('__tests__', 'gather', 'ignore-test-hook');
-  const adjustedDirPath = '__tests__/gather/ignore-test-hook';
+  const gatherDirPath = path.join('__tests__', 'gather', 'test-fixtures', 'hook');
+  const adjustedDirPath = '__tests__/gather/test-fixtures/hook';
   const exist = gather({
     dirpath: path.join(gatherDirPath, 'pages'),
     layoutDirPath: path.join(gatherDirPath, 'layouts'),

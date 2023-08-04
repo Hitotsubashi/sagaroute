@@ -1,0 +1,42 @@
+// @ts-nocheck
+// sagaroute-inject:imports
+/* injected by sagaroute: start */
+import LayoutsIndex from "./layouts/index.tsx";
+import Pages404 from "./pages/404.tsx";
+import PagesIndex from "./pages/index.tsx";
+import PagesUser from "./pages/user.tsx";
+import PagesNormal from "./pages/normal.tsx";
+/* injected by sagaroute: end */
+
+import React from 'react';
+
+// sagaroute-inject: routes
+const routes = [
+  {
+    "path": "/",
+    "element": <LayoutsIndex/>,
+    "children": [
+      {
+        "path": "404",
+        "element": <Pages404/>
+      },
+      {
+        "index": true,
+        "errorElement": <React.Fragement>
+      <div>error...</div>
+      <button>back</button>
+    </React.Fragement>,
+        "element": <PagesIndex/>
+      },
+      {
+        "path": "user1",
+        "element": <PagesUser/>
+      }
+    ]
+  },
+  {
+    "path": "*",
+    "element": <PagesNormal/>
+  }
+];
+export default routes;

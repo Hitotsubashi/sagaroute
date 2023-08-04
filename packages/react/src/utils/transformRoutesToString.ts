@@ -17,7 +17,7 @@ function replacer(key: string, value: any) {
 export default function transformRoutesToString(routes: RouteObject[] | RouteObject) {
   return JSON.stringify(routes, replacer, 2)
     .replace(EVAL_STRING_SYMBOL_REGEXP, (global, m1) => {
-      return m1.replace(/\\\"/g, '"');
+      return m1.replace(/\\"/g, '"');
     })
     .replace(/\\r\\n/g, '\r\n')
     .replace(/\\n/g, '\r\n');

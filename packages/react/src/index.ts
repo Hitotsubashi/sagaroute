@@ -14,6 +14,7 @@ import print, {
   PrintHookBeforeWrite,
 } from '@/print';
 import weave, {
+  LazyFn,
   WeaveHookAfter,
   WeaveHookAfterEach,
   WeaveHookBefore,
@@ -110,8 +111,6 @@ interface UltimateRoutingOption extends BasicRoutingOption {
   };
 }
 
-export type LazyFn = (fpath: string) => boolean;
-
 interface BasicRoutingOption {
   rootPath?: string;
   dirpath?: string;
@@ -205,7 +204,7 @@ export default class SagaRoute {
       inputOption,
     );
     if (!ultimateOption) {
-      let configFileOption = loadFileConfig(inputOption?.rootPath ?? process.cwd());
+      const configFileOption = loadFileConfig(inputOption?.rootPath ?? process.cwd());
       if (configFileOption) {
         inputOption = mergeOption(inputOption, configFileOption);
       }

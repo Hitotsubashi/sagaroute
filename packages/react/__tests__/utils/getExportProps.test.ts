@@ -10,6 +10,7 @@ function loader2({ params }: any) {
   return params['lang'];
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const action1 = ({ params }: any) => {};
 const action2 = async ({ request }: any) => {
   const formData = await request.formData();

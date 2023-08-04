@@ -47,7 +47,7 @@ test('test print with normal routes by comment: //', () => {
       },
     ],
   };
-  const routeFilePath = path.join(__dirname, 'ignore-test-render', 'route1.tsx');
+  const routeFilePath = path.join(__dirname, 'test-fixtures', 'render', 'route1.tsx');
   print(routes, imports, { routeFilePath });
   const context = fs.readFileSync(routeFilePath, 'utf-8');
   expect(context).toMatchSnapshot();
@@ -96,7 +96,7 @@ test('test print with normal routes by comment: /**/', () => {
       },
     ],
   };
-  const routeFilePath = path.join(__dirname, 'ignore-test-render', 'route2.tsx');
+  const routeFilePath = path.join(__dirname, 'test-fixtures', 'render', 'route2.tsx');
   print(routes, imports, { routeFilePath });
   const context = fs.readFileSync(routeFilePath, 'utf-8');
   expect(context).toMatchSnapshot();
@@ -183,7 +183,7 @@ test('print with multiple imports', () => {
     ],
   };
 
-  const routeFilePath = path.join(__dirname, 'ignore-test-render', 'route8.tsx');
+  const routeFilePath = path.join(__dirname, 'test-fixtures', 'render', 'route8.tsx');
   print(routes, imports, { routeFilePath });
   const context = fs.readFileSync(routeFilePath, 'utf-8');
   expect(context).toMatchSnapshot();

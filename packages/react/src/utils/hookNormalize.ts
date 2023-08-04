@@ -1,5 +1,6 @@
 import { Handler } from '..';
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export default function hookNormalize<T extends Function>(
   hook: undefined | Handler<T>,
 ): T[] | undefined {

@@ -4,8 +4,8 @@ import { EVAL_STRING_SYMBOL } from '@/utils/symbol';
 
 test('gather fileNodes from normal document,includes tsx in routeProps.', () => {
   // cmd路径 /packages/react
-  const gatherDirPath = path.join('__tests__', 'gather', 'ignore-test-dir');
-  const adjustedDirPath = '__tests__/gather/ignore-test-dir';
+  const gatherDirPath = path.join('__tests__', 'gather', 'test-fixtures', 'dir');
+  const adjustedDirPath = '__tests__/gather/test-fixtures/dir';
   const exist = gather({
     dirpath: path.join(gatherDirPath, 'pages'),
     relativeDirpath: path.relative(
@@ -36,7 +36,7 @@ test('gather fileNodes from normal document,includes tsx in routeProps.', () => 
           path: path.join(gatherDirPath, 'pages', 'a', 'a1.tsx'),
           props: {
             routeProps: {
-              role: `${EVAL_STRING_SYMBOL}["amdin"]`,
+              role: `${EVAL_STRING_SYMBOL}['amdin']`,
               errorElement: `${EVAL_STRING_SYMBOL}<ComponentsErrorEle />`,
             },
           },
@@ -91,7 +91,7 @@ test('gather fileNodes from normal document,includes tsx in routeProps.', () => 
 });
 
 test('test tsx in routeProps,whick comes from multiple sources', () => {
-  const gatherDirPath = path.join('__tests__', 'gather', 'ignore-test-jsx-sources');
+  const gatherDirPath = path.join('__tests__', 'gather', 'test-fixtures', 'jsx-sources');
   const exist = gather({
     dirpath: path.join(gatherDirPath, 'pages'),
     relativeDirpath: path.relative(
@@ -233,7 +233,7 @@ test('test tsx in routeProps,whick comes from multiple sources', () => {
 });
 
 test('test tsx in routeProps,whick comes from multiple sources and has deeper route.ts', () => {
-  const gatherDirPath = path.join('__tests__', 'gather', 'ignore-test-jsx-sources');
+  const gatherDirPath = path.join('__tests__', 'gather', 'test-fixtures', 'jsx-sources');
   const exist = gather({
     dirpath: path.join(gatherDirPath, 'pages'),
     relativeDirpath: path.relative(
@@ -375,7 +375,7 @@ test('test tsx in routeProps,whick comes from multiple sources and has deeper ro
 });
 
 test('test tsx in routeProps,whick set pathRewrite.', () => {
-  const gatherDirPath = path.join('__tests__', 'gather', 'ignore-test-jsx-sources');
+  const gatherDirPath = path.join('__tests__', 'gather', 'test-fixtures', 'jsx-sources');
   const exist = gather({
     dirpath: path.join(gatherDirPath, 'pages'),
     relativeDirpath: path.relative(
@@ -518,7 +518,7 @@ test('test tsx in routeProps,whick set pathRewrite.', () => {
 });
 
 test('gather fileNodes from normal document,includes layouts and pages.', () => {
-  const gatherDirPath = path.join('__tests__', 'gather', 'ignore-test-layout');
+  const gatherDirPath = path.join('__tests__', 'gather', 'test-fixtures', 'layout');
   const exist = gather({
     dirpath: path.join(gatherDirPath, 'pages'),
     relativeDirpath: path.relative(
@@ -560,7 +560,7 @@ test('gather fileNodes from normal document,includes layouts and pages.', () => 
 });
 
 test('gather fileNodes from normal document,includes empty layouts and pages.', () => {
-  const gatherDirPath = path.join('__tests__', 'gather', 'ignore-test-empty-layout');
+  const gatherDirPath = path.join('__tests__', 'gather', 'test-fixtures', 'empty-layout');
   const exist = gather({
     dirpath: path.join(gatherDirPath, 'pages'),
     relativeDirpath: path.relative(
@@ -583,10 +583,14 @@ test('gather fileNodes from normal document,includes empty layouts and pages.', 
 });
 
 test('test gather with hooks', () => {
-  const gatherDirPath = path.join('__tests__', 'gather', 'ignore-test-layout');
+  const gatherDirPath = path.join('__tests__', 'gather', 'test-fixtures', 'layout');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const beforeFn = jest.fn((dirpath: string, layoutDirPath: string) => {});
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const beforeEachFn = jest.fn((dirpath: string) => {});
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const afterEachFn = jest.fn((fileNode: FileNode | null, dirpath: string) => {});
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const afterFn = jest.fn((fileNodes: FileNode[]) => {});
   const dirpath = path.join(gatherDirPath, 'pages');
   const layoutDirPath = path.join(gatherDirPath, 'layouts');

@@ -12,7 +12,6 @@ function generateImportLines(imports: Imports): string {
 
   Object.entries(imports).forEach(([source, dependencies]) => {
     const notDefaultImport: string[] = [];
-    let defaultImport: string = '';
     dependencies.forEach((dependency) => {
       if (dependency.isDefault) {
         // import x1 from 'xxx'
@@ -31,12 +30,7 @@ function generateImportLines(imports: Imports): string {
         }
       }
     });
-    const importElementString = [
-      defaultImport,
-      notDefaultImport.length ? `{${notDefaultImport.join(',')}}` : '',
-    ]
-      .filter((item) => Boolean(item))
-      .join(',');
+    const importElementString = notDefaultImport.length ? `{${notDefaultImport.join(',')}}` : '';
     if (importElementString) {
       importLines.push(`const ${importElementString}  = await import("${source}");`);
     }
