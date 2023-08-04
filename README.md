@@ -1,5 +1,5 @@
 <p align="center">
-    <img alt="babel" src="./LOGO.png" width="200">
+    <img  src="./doc/images/LOGO.png" width="200">
 </p>
 
 <h1 align="center">Sagaroute</h1>

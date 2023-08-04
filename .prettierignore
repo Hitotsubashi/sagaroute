@@ -4,3 +4,6 @@ lib
 .nyc_output
 ignore-test-**
 output
+**.log
+yarn.lock
+images
