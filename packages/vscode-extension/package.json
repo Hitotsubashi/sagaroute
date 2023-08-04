@@ -53,17 +53,22 @@
     "vscode:prepublish": "yarn compile",
     "compile": "npx tsc -b",
     "watch": "npx tsc -b -w",
-    "lint:eslint": "eslint --cache ./client/src ./server/src --ext .ts,.tsx"
+    "lint:eslint": "eslint --cache ./client/src ./server/src --ext .ts,.tsx",
+    "test": "node ./client/out/tests/runTest.js"
   },
   "devDependencies": {
+    "@types/glob": "^7.1.1",
+    "@types/lodash": "^4.14.194",
     "@types/node": "16.x",
+    "@types/vscode": "^1.55.2",
     "@typescript-eslint/eslint-plugin": "^5.59.1",
     "@typescript-eslint/parser": "^5.59.1",
-    "@types/lodash": "^4.14.194",
-    "@types/vscode": "^1.55.2",
     "@vscode/test-electron": "^2.3.0",
     "eslint": "^8.39.0",
-    "typescript": "^5.0.4"
+    "glob": "^7.1.4",
+    "typescript": "^5.0.4",
+    "@types/jest-cli": "^24.3.0",
+    "jest-cli": "^29.6.2"
   },
   "dependencies": {
     "chokidar": "^3.5.3",
