@@ -7,7 +7,7 @@ import glob from 'glob';
 //   });
 // }
 
-// runWithJest();
+runWithJest();
 
 export function runWithJest(): Promise<void> {
   const testFiles: string[] = [];
