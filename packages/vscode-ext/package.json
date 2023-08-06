@@ -54,7 +54,7 @@
     "compile": "npx tsc -b",
     "watch": "npx tsc -b -w",
     "lint:eslint": "eslint --cache ./client/src ./server/src --ext .ts,.tsx",
-    "test": "node ./client/out/tests/runTest.js"
+    "test": "node ./client/out/test/runTest.js"
   },
   "devDependencies": {
     "@types/glob": "^7.1.1",
@@ -70,6 +70,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "@sagaroute/react": "^0.0.0",
     "chokidar": "^3.5.3",
     "lodash": "^4.17.21",
     "vscode-languageclient": "^8.1.0",

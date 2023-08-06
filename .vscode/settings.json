@@ -2,5 +2,6 @@
   "editor.codeActionsOnSave": {
     "source.fixAll": true
   },
-  "typescript.tsc.autoDetect": "off"
+  "typescript.tsc.autoDetect": "off",
+  "auto-rename-tag.activationOnLanguage": ["*"]
 }
