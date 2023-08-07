@@ -1,7 +1,9 @@
 {
     "folders":[
        {
-        "path":"normal"
+        "path":"normal",
+        "name": "normal"
        } 
-    ]
+    ],
+    "settings": {}
 }

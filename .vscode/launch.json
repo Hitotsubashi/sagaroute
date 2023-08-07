@@ -9,9 +9,8 @@
       "name": "Run Extension",
       "type": "extensionHost",
       "request": "launch",
-      "runtimeExecutable": "${execPath}",
-      "args": ["--extensionDevelopmentPath=${workspaceFolder}/packages/vscode-extension"],
-      "outFiles": ["${workspaceFolder}/packages/vscode-extension/client/out/**/*.js"],
+      "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
+      "outFiles": ["${workspaceRoot}/client/out/**/*.js"],
       "preLaunchTask": {
         "type": "npm",
         "script": "watch"
@@ -23,11 +22,16 @@
       "request": "launch",
       "runtimeExecutable": "${execPath}",
       "args": [
-        "--extensionDevelopmentPath=${workspaceRoot}",
-        "--extensionTestsPath=${workspaceRoot}/client/out/test/index",
-        "${workspaceRoot}/client/testFixture"
+        "${workspaceFolder}/client/test-fixtures/test.code-workspace",
+        "--disable-extensions",
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "--extensionTestsPath=${workspaceFolder}/client/out/test/suite/index"
       ],
-      "outFiles": ["${workspaceRoot}/packages/vscode-extension/client/out/test/**/*.js"]
+      "outFiles": ["${workspaceFolder}/client/out/test/**/*.js"],
+      "preLaunchTask": {
+        "type": "npm",
+        "script": "compile"
+      }
     }
   ]
 }
