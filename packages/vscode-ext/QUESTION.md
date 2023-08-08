@@ -9,7 +9,8 @@
    - 更改sagaroute.config.cjs
    - 删除sagaroute.config.cjs
    - 测试缓存机制，根据fs.stat.mtime
-   - 尝试写错routeFile触发onWarning，在纠正routeFile后重新写入
+   - 尝试写错routeFile触发onWarning，在纠正routeFile后重新执行
+   - 尝试写错sagaroute.config.cjs触发报错，在纠正sagaroute.config.cjs后重新执行
    - 尝试更改不属于layoutDirpath和dirpath的文件
 
 优化补充：
