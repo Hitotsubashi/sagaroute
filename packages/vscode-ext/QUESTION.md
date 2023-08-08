@@ -1,6 +1,16 @@
 测试补充：
 
 1. 尝试补充测试用例
+   - sagaroute.toggle命令
+   - 添加文件（多个）
+   - 更改文件（多个）
+   - 删除文件（多个）
+   - 新增sagaroute.config.cjs
+   - 更改sagaroute.config.cjs
+   - 删除sagaroute.config.cjs
+   - 测试缓存机制，根据fs.stat.mtime
+   - 尝试写错routeFile触发onWarning，在纠正routeFile后重新写入
+   - 尝试更改不属于layoutDirpath和dirpath的文件
 
 优化补充：
 
@@ -17,3 +27,4 @@
 文档补充：
 
 1. 补充 aggregate📇
+2. 补充ext插件的hook只运行到inject.before
