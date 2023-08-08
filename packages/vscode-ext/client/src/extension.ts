@@ -13,34 +13,28 @@ import getWarningManager from './WarningManager';
 let isEnabled: boolean;
 let routingWatcher: FSWatcher;
 let configWatcher: FSWatcher;
+let statusBarItem: vscode.StatusBarItem;
 
 const workspaceRootFolderPath = vscode.workspace.workspaceFolders![0].uri.fsPath;
+
+function adjustSagarouteBarItemSurface() {
+  if (isEnabled) {
+    statusBarItem.text = '$(debug-rerun) Sagaroute Watching';
+    statusBarItem.color = '#95de64';
+  } else {
+    statusBarItem.text = '$(close) Sagaroute Sleeping';
+    statusBarItem.color = '#ffffff';
+  }
+}
 
 function initStatusBar(context: vscode.ExtensionContext) {
   const settingConfiguration = vscode.workspace.getConfiguration('sagaroute');
 
-  function adjustSagarouteBarItemSurface() {
-    if (isEnabled) {
-      statusBarItem.text = '$(debug-rerun) Sagaroute Watching';
-      statusBarItem.color = '#95de64';
-    } else {
-      statusBarItem.text = '$(close) Sagaroute Sleeping';
-      statusBarItem.color = '#ffffff';
-    }
-  }
-
   function toggleStatus() {
-    isEnabled = !isEnabled;
-    const logging = getLogging();
-    logging.logMessage(`sagaroute ${isEnabled ? 'watching' : 'sleeping'}`);
-    if (isEnabled) {
-      working();
-    }
-    settingConfiguration.update('working', isEnabled);
-    adjustSagarouteBarItemSurface();
+    settingConfiguration.update('working', !isEnabled);
   }
 
-  const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 200);
+  statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 200);
   statusBarItem.show();
   statusBarItem.command = 'sagaroute.toggle';
   adjustSagarouteBarItemSurface();
@@ -172,22 +166,7 @@ function initLogging() {
   getLogging().show();
 }
 
-export function activate(context: vscode.ExtensionContext) {
-  const settingConfiguration = vscode.workspace.getConfiguration('sagaroute');
-  isEnabled = settingConfiguration.get('working') as boolean;
-  try {
-    initLogging();
-    initInputCommand(context);
-    initStatusBar(context);
-    initConfigWatcher();
-    initRoutingWatcher();
-    registerRouteCompletions();
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-function registerRouteCompletions() {
+function registerRouteCompletions(context: vscode.ExtensionContext) {
   const documentSelector: vscode.DocumentSelector = [
     { scheme: 'file', language: 'typescript' },
     { scheme: 'file', language: 'typescriptreact' },
@@ -195,33 +174,68 @@ function registerRouteCompletions() {
     { scheme: 'file', language: 'javascriptreact' },
   ];
   const pathCompletionItemManager = getPathCompletionItemManager();
-  vscode.languages.registerCompletionItemProvider(
-    documentSelector,
-    {
-      provideCompletionItems(document, position, token) {
-        const line = document.lineAt(position.line).text;
-        if (line.slice(0, position.character).endsWith('//')) {
-          const completions = pathCompletionItemManager.getCompletions();
-          completions.forEach((item) => {
-            item.additionalTextEdits = [
-              vscode.TextEdit.replace(
-                new vscode.Range(
-                  position.line,
-                  position.character - 2,
-                  position.line,
-                  position.character,
+
+  context.subscriptions.push(
+    vscode.languages.registerCompletionItemProvider(
+      documentSelector,
+      {
+        provideCompletionItems(document, position, token) {
+          const line = document.lineAt(position.line).text;
+          if (line.slice(0, position.character).endsWith('//')) {
+            const completions = pathCompletionItemManager.getCompletions();
+            completions.forEach((item) => {
+              item.additionalTextEdits = [
+                vscode.TextEdit.replace(
+                  new vscode.Range(
+                    position.line,
+                    position.character - 2,
+                    position.line,
+                    position.character,
+                  ),
+                  '',
                 ),
-                '',
-              ),
-            ];
-          });
-          return completions;
-        }
-        return undefined;
+              ];
+            });
+            return completions;
+          }
+          return undefined;
+        },
       },
-    },
-    '/',
+      '/',
+    ),
   );
+}
+
+function initListenWorkspaceConfiguration(context: vscode.ExtensionContext) {
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeConfiguration(async (event) => {
+      if (event.affectsConfiguration('sagaroute.working')) {
+        isEnabled = vscode.workspace.getConfiguration('sagaroute').get('working') as boolean;
+        const logging = getLogging();
+        logging.logMessage(`sagaroute ${isEnabled ? 'watching' : 'sleeping'}`);
+        if (isEnabled) {
+          working();
+        }
+        adjustSagarouteBarItemSurface();
+      }
+    }),
+  );
+}
+
+export function activate(context: vscode.ExtensionContext) {
+  const settingConfiguration = vscode.workspace.getConfiguration('sagaroute');
+  isEnabled = settingConfiguration.get('working') as boolean;
+  try {
+    initStatusBar(context);
+    initLogging();
+    initListenWorkspaceConfiguration(context);
+    initInputCommand(context);
+    initConfigWatcher();
+    initRoutingWatcher();
+    registerRouteCompletions(context);
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 export function deactivate() {
