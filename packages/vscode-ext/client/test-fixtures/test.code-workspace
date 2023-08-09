@@ -1,9 +1,10 @@
 {
     "folders":[
        {
-        "path":"normal",
-        "name": "normal"
-       } 
+        "path":"command-routing",
+       },
+    //    {
+    //     "path":"command-toggle",
+    //    } 
     ],
-    "settings": {}
 }

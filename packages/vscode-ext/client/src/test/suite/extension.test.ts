@@ -43,14 +43,27 @@ const compareWithExpectedFile = async (resultPath: string) => {
 };
 
 // @ts-ignore
+// suite('Test Command', () => {
+//   test('test sagaroute.toggle', async () => {
+//     const base = getWorkspaceFolderUri('command-toggle');
+//     const resultPath = path.join(base.fsPath, 'src', 'routes.tsx');
+//     // 重置result文件内容;
+//     await resetResultFile(resultPath);
+//     // 执行命令
+//     await vscode.commands.executeCommand('sagaroute.routing');
+//     await wait(600);
+//     // 对比result文件和expected文件的内容
+//     await compareWithExpectedFile(resultPath);
+//   });
+// });
+
+// @ts-ignore
 suite('Test Command', () => {
   test('test sagaroute.routing', async () => {
-    const base = getWorkspaceFolderUri('normal');
+    const base = getWorkspaceFolderUri('command-routing');
     const resultPath = path.join(base.fsPath, 'src', 'routes.tsx');
     // 重置result文件内容
     await resetResultFile(resultPath);
-    // 激活Sagaroute插件
-    // await vscode.workspace.openTextDocument(path.join(base.fsPath, 'src', 'pages', 'index.tsx'));
     // 执行命令
     await vscode.commands.executeCommand('sagaroute.routing');
     await wait(600);
