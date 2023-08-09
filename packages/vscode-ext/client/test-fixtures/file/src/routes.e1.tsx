@@ -1,18 +1,21 @@
 /* sagaroute-inject:imports */
 /* injected by sagaroute: start */
-import LayoutsIndex from "./layouts/index.tsx";
 import PagesIndex from "./pages/index.tsx";
+import PagesPermission from "./layouts/index.tsx";
 /* injected by sagaroute: end */
 
 // sagaroute-inject: routes
 const routes = [
   {
     "path": "/",
-    "element": <LayoutsIndex/>,
+    "element": <PagesIndex/>,
+  },
+  {
+    "path": "account",
     "children": [
       {
-        "index": true,
-        "element": <PagesIndex/>
+        "path": "permission",
+        "element": <PagesIndex/>,
       }
     ]
   }

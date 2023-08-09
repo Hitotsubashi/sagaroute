@@ -1,14 +1,17 @@
 测试补充：
 
 1. 尝试补充测试用例
+   <!-- 0 -->
    - sagaroute.toggle命令
-   - 添加文件（多个）
-   - 更改文件（多个）
-   - 删除文件（多个）
+   - sagaroute.routing命令
+   <!-- 1 -->
+   - 添加文件（多个）-1
+   - 更改文件（多个）-1
+   - 测试缓存机制，根据fs.stat.mtime-1
+   - 删除文件（多个）-1
    - 新增sagaroute.config.cjs
    - 更改sagaroute.config.cjs
    - 删除sagaroute.config.cjs
-   - 测试缓存机制，根据fs.stat.mtime
    - 尝试写错routeFile触发onWarning，在纠正routeFile后重新执行
    - 尝试写错sagaroute.config.cjs触发报错，在纠正sagaroute.config.cjs后重新执行
    - 尝试更改不属于layoutDirpath和dirpath的文件

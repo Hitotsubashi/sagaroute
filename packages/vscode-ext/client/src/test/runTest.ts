@@ -2,28 +2,41 @@ import * as path from 'path';
 
 import { runTests } from '@vscode/test-electron';
 
+const runList = [
+  {
+    workspacePath: path.resolve(__dirname, '../..', 'test-fixtures', 'command.code-workspace'),
+    extensionTestsPath: path.resolve(__dirname, './command/run.js'),
+  },
+  {
+    workspacePath: path.resolve(__dirname, '../..', 'test-fixtures', 'file.code-workspace'),
+    extensionTestsPath: path.resolve(__dirname, './file/run.js'),
+  },
+];
+
 async function main() {
-  try {
-    // The folder containing the Extension Manifest package.json
-    // Passed to `--extensionDevelopmentPath`
-    const extensionDevelopmentPath = path.resolve(__dirname, '../../../');
+  // The folder containing the Extension Manifest package.json
+  // Passed to `--extensionDevelopmentPath`
+  const extensionDevelopmentPath = path.resolve(__dirname, '../../../');
 
-    // The path to the extension test script
-    // Passed to --extensionTestsPath
-    const extensionTestsPath = path.resolve(__dirname, './suite/index.js');
-
-    // The path to the workspace file
-    const workspacePath = path.resolve(__dirname, '../..', 'test-fixtures', 'test.code-workspace');
-
-    // Download VS Code, unzip it and run the integration test
-    await runTests({
-      extensionDevelopmentPath,
+  // Download VS Code, unzip it and run the integration test
+  for (let i = 0; i < runList.length; i++) {
+    const {
+      // The path to the extension test script
+      // Passed to --extensionTestsPath
       extensionTestsPath,
-      launchArgs: [workspacePath, '--disable-extensions'],
-    });
-  } catch (err) {
-    console.error('Failed to run tests');
-    process.exit(1);
+      // The path to the workspace file
+      workspacePath,
+    } = runList[i];
+    try {
+      await runTests({
+        extensionDevelopmentPath,
+        extensionTestsPath,
+        launchArgs: [workspacePath, '--disable-extensions'],
+      });
+    } catch (err) {
+      console.error('Failed to run tests');
+      process.exit(1);
+    }
   }
 }
 

@@ -1,0 +1,10 @@
+{
+    "folders":[
+       {
+        "path":"file",
+       } 
+    ],
+    "settings": {
+        "sagaroute.working": true
+    },
+}
