@@ -5,10 +5,11 @@
    - sagaroute.toggle命令
    - sagaroute.routing命令
    <!-- 1 -->
-   - 添加文件（多个）-1
-   - 更改文件（多个）-1
-   - 测试缓存机制，根据fs.stat.mtime-1
-   - 删除文件（多个）-1
+   - 添加文件（多个）
+   - 更改文件（多个）
+   - 测试缓存机制，根据fs.stat.mtime
+   - 删除文件（多个）
+   - 重命名文件和文件夹（多个）
    - 新增sagaroute.config.cjs
    - 更改sagaroute.config.cjs
    - 删除sagaroute.config.cjs

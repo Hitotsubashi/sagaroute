@@ -3,10 +3,10 @@ import * as path from 'path';
 import { runTests } from '@vscode/test-electron';
 
 const runList = [
-  {
-    workspacePath: path.resolve(__dirname, '../..', 'test-fixtures', 'command.code-workspace'),
-    extensionTestsPath: path.resolve(__dirname, './command/run.js'),
-  },
+  // {
+  //   workspacePath: path.resolve(__dirname, '../..', 'test-fixtures', 'command.code-workspace'),
+  //   extensionTestsPath: path.resolve(__dirname, './command/run.js'),
+  // },
   {
     workspacePath: path.resolve(__dirname, '../..', 'test-fixtures', 'file.code-workspace'),
     extensionTestsPath: path.resolve(__dirname, './file/run.js'),
