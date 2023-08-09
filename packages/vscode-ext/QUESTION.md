@@ -9,7 +9,8 @@
    - 更改文件（多个）
    - 测试缓存机制，根据fs.stat.mtime
    - 删除文件（多个）
-   - 重命名文件和文件夹（多个）
+   - 重命名文件夹
+   <!-- 2 -->
    - 新增sagaroute.config.cjs
    - 更改sagaroute.config.cjs
    - 删除sagaroute.config.cjs
