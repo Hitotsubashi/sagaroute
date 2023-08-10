@@ -1,5 +1,4 @@
-import BundledSagaRoute from '@sagaroute/react';
-import SagaRoute, { RoutingOption } from '@sagaroute/react';
+import BundledSagaRoute, { RoutingOption } from '@sagaroute/react';
 import * as vscode from 'vscode';
 import mergeOption from '@sagaroute/react/lib/utils/mergeOption';
 import loggingHooks from './hooks/logging';
@@ -27,14 +26,18 @@ const sagaRouteConfig: RoutingOption = {
   },
 };
 
-export function getSagaRouteConfig() {
+function getSagaRouteConfig() {
   return cloneDeep(sagaRouteConfig);
 }
 
-let sagaRoute: SagaRoute;
+class Sagaroute extends BundledSagaRoute {
+  error?: boolean;
+}
+
+let sagaRoute: Sagaroute;
 const dependencyName = '@sagaroute/react';
 
-function getSagarouteClass(): typeof BundledSagaRoute {
+function getSagarouteClass(): typeof Sagaroute {
   const logging = getLogging();
   try {
     if (!vscode.workspace.isTrusted) {
@@ -78,10 +81,30 @@ function getSagarouteClass(): typeof BundledSagaRoute {
 }
 
 export default function getSagaRoute() {
+  const logging = getLogging();
   if (!sagaRoute) {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const SagaRoute = getSagarouteClass();
-    sagaRoute = new SagaRoute(getSagaRouteConfig());
+    try {
+      sagaRoute = new SagaRoute(getSagaRouteConfig());
+    } catch (error: any) {
+      logging.logMessage(`Init Sagaroute Error: ${error.message}.`, 'ERROR');
+      vscode.window.showErrorMessage(error.message);
+      sagaRoute.error = true;
+    }
+  }
+  return sagaRoute;
+}
+
+export function rebuildSagaroute() {
+  const logging = getLogging();
+  try {
+    sagaRoute.generateOptions(getSagaRouteConfig());
+    sagaRoute.error = false;
+  } catch (error: any) {
+    logging.logMessage(`Init Sagaroute Error: ${error.message}.`, 'ERROR');
+    vscode.window.showErrorMessage(error.message);
+    sagaRoute.error = true;
   }
   return sagaRoute;
 }

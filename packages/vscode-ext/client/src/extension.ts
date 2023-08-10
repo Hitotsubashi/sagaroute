@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import * as chokidar from 'chokidar';
 import * as path from 'path';
 import debounce from 'lodash/debounce';
-import getSagaRoute, { getSagaRouteConfig } from './SagaRoute';
+import getSagaRoute, { rebuildSagaroute } from './SagaRoute';
 import getLogging from './Logging';
 import { performance } from 'perf_hooks';
 import getCacheManager from './CacheManager';
@@ -43,7 +43,6 @@ function initStatusBar(context: vscode.ExtensionContext) {
 }
 
 function initInputCommand(context: vscode.ExtensionContext) {
-  const sagaRoute = getSagaRoute();
   const logging = getLogging();
   const routingCommand = vscode.commands.registerCommand('sagaroute.routing', () => {
     const cacheManger = getCacheManager();
@@ -51,7 +50,7 @@ function initInputCommand(context: vscode.ExtensionContext) {
     working();
   });
   const rebuildCommand = vscode.commands.registerCommand('sagaroute.rebuild', () => {
-    sagaRoute.generateOptions(getSagaRouteConfig());
+    rebuildSagaroute();
     initRoutingWatcher(true);
   });
   const openOutputCommand = vscode.commands.registerCommand('sagaroute.show', () => {
@@ -61,8 +60,6 @@ function initInputCommand(context: vscode.ExtensionContext) {
 }
 
 function initConfigWatcher() {
-  const logging = getLogging();
-  const sagaRoute = getSagaRoute();
   const sagaRouteConfigFiles = [
     path.join(workspaceRootFolderPath, 'sagaroute.config.js'),
     path.join(workspaceRootFolderPath, 'sagaroute.config.cjs'),
@@ -70,8 +67,9 @@ function initConfigWatcher() {
   configWatcher = chokidar
     .watch(sagaRouteConfigFiles, { ignoreInitial: true })
     .on('all', (event, filepath) => {
+      const logging = getLogging();
       logging.logMessage(`[watch] File ${filepath} has been ${event}`);
-      sagaRoute.generateOptions(getSagaRouteConfig());
+      rebuildSagaroute();
       initRoutingWatcher(true);
     });
 }
@@ -79,6 +77,9 @@ function initConfigWatcher() {
 function working() {
   const logging = getLogging();
   const sagaRoute = getSagaRoute();
+  if (sagaRoute.error) {
+    return;
+  }
   const cacheManger = getCacheManager();
   try {
     const startTime = performance.now();
@@ -111,19 +112,17 @@ function working() {
 }
 
 function initRoutingWatcher(immediate = false) {
-  const logging = getLogging();
-  const sagaRoute = getSagaRoute();
   const cacheManger = getCacheManager();
   cacheManger.clearAll();
 
-  const routing = debounce(working, 30);
+  const debounceWorking = debounce(working, 30);
 
   if (routingWatcher) {
     routingWatcher.close();
   }
 
   if (immediate) {
-    routing();
+    debounceWorking();
   }
 
   routingWatcher = chokidar
@@ -131,6 +130,10 @@ function initRoutingWatcher(immediate = false) {
       ignoreInitial: true,
       ignored: [
         (value: string) => {
+          const sagaRoute = getSagaRoute();
+          if (sagaRoute.error) {
+            return false;
+          }
           const normalizedPath = value.replaceAll('/', path.sep);
           const dirpath = sagaRoute.options.dirpath;
           const layoutDirPath = sagaRoute.options.layoutDirPath;
@@ -156,8 +159,9 @@ function initRoutingWatcher(immediate = false) {
           default:
             break;
         }
+        const logging = getLogging();
         logging.logMessage(`[watch] File ${filepath} has been ${event}`);
-        routing();
+        debounceWorking();
       }
     });
 }

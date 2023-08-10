@@ -1,0 +1,10 @@
+{
+    "folders":[
+       {
+        "path":"config",
+       } 
+    ],
+    "settings": {
+        "sagaroute.working": true
+    },
+}

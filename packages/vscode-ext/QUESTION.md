@@ -12,10 +12,11 @@
    - 重命名文件夹
    <!-- 2 -->
    - 新增sagaroute.config.cjs
+   - 尝试写错sagaroute.config.cjs触发报错，在纠正sagaroute.config.cjs后重新执行
    - 更改sagaroute.config.cjs
    - 删除sagaroute.config.cjs
+   <!-- 3 在有sagaroute.config.js的情况下 -->
    - 尝试写错routeFile触发onWarning，在纠正routeFile后重新执行
-   - 尝试写错sagaroute.config.cjs触发报错，在纠正sagaroute.config.cjs后重新执行
    - 尝试更改不属于layoutDirpath和dirpath的文件
 
 优化补充：
