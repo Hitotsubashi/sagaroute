@@ -11,9 +11,13 @@ const runList = [
   //   workspacePath: path.resolve(__dirname, '../..', 'test-fixtures', 'file.code-workspace'),
   //   extensionTestsPath: path.resolve(__dirname, './file/run.js'),
   // },
+  // {
+  //   workspacePath: path.resolve(__dirname, '../..', 'test-fixtures', 'config.code-workspace'),
+  //   extensionTestsPath: path.resolve(__dirname, './config/run.js'),
+  // },
   {
-    workspacePath: path.resolve(__dirname, '../..', 'test-fixtures', 'config.code-workspace'),
-    extensionTestsPath: path.resolve(__dirname, './config/run.js'),
+    workspacePath: path.resolve(__dirname, '../..', 'test-fixtures', 'boundary.code-workspace'),
+    extensionTestsPath: path.resolve(__dirname, './boundary/run.js'),
   },
 ];
 

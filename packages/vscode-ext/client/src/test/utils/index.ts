@@ -21,9 +21,9 @@ const readFileAsync: (filePath: string, encoding: 'utf8') => Promise<string> = p
 const writeFileAsync: (filePath: string, data: string, encoding: 'utf8') => Promise<void> =
   promisify(writeFile);
 
-export const resetResultFile = async (resultPath: string) => {
+export const resetResultFile = async (resultPath: string, resetName = 'origin') => {
   const { ext, name, dir } = path.parse(resultPath);
-  const originFileName = `${name}.origin${ext}`;
+  const originFileName = `${name}.${resetName}${ext}`;
   const originPath = path.join(dir, originFileName);
   const origin = await readFileAsync(originPath, 'utf8');
   await writeFileAsync(resultPath, origin, 'utf8');
