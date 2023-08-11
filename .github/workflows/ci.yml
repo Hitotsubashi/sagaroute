@@ -22,7 +22,7 @@ jobs:
       - name: Installing Lerna And Bootstrap
         if: steps.cache-dependencies.outputs.cache-hit != 'true'
         run: |
-          yarn global add lerna
+          yarn global add lerna@6
           lerna bootstrap
       - name: Running Lint
         run: yarn run lint
