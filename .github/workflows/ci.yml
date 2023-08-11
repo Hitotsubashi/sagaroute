@@ -4,7 +4,7 @@ on:
     branches: main
 jobs:
   CI:
-    runs-on: linux
+    runs-on: [linux, macos-latest]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
