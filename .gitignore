@@ -3,3 +3,8 @@ coverage/
 yarn-error.log
 lib/
 .nyc_output
+.vscode-test/
+out
+dist
+*.vsix
+.eslintcache

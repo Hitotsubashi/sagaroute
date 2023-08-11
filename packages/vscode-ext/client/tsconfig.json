@@ -10,6 +10,6 @@
     "allowSyntheticDefaultImports": true,
     "strict": true /* enable all strict type-checking options */
   },
-  "include": ["src", "test-fixtures/boundary/routes.origin.tsx"],
+  "include": ["src"],
   "exclude": ["node_modules", ".vscode-test"]
 }
