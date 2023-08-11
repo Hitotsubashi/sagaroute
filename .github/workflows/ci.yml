@@ -21,13 +21,13 @@ jobs:
           **/node_modules
         key: ${{runner.OS}}-${{hashFiles('**/yarn.lock')}}
     - name: Installing Lerna And Bootstrap
-        if: steps.cache-dependencies.outputs.cache-hit != 'true'
-        run: |
-          yarn global add lerna
-          lerna bootstrap
-     - name: Running Lint
-        run: yarn run lint
-      - name: Running Test
-        run: |
-          lerna run build
-          lerna run test
+      if: steps.cache-dependencies.outputs.cache-hit != 'true'
+      run: |
+        yarn global add lerna
+        lerna bootstrap
+    - name: Running Lint
+      run: yarn run lint
+    - name: Running Test
+      run: |
+        lerna run build
+        lerna run test
