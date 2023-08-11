@@ -52,6 +52,7 @@
   "scripts": {
     "vscode:prepublish": "yarn compile",
     "compile": "npx tsc -b",
+    "build": "npx tsc -b",
     "watch": "npx tsc -b -w",
     "test": "node ./client/out/test/runTest.js"
   },

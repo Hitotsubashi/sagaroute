@@ -16,6 +16,7 @@
   },
   "scripts": {
     "lint:eslint": "npx eslint --cache .",
-    "lint:prettier": "npx prettier --check . --end-of-line auto"
+    "lint:prettier": "npx prettier --check . --end-of-line auto",
+    "lint": "yarn lint:eslint && yarn lint:prettier"
   }
 }

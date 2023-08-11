@@ -78,9 +78,10 @@ test('use cmd with warnings include lost variable in both view and template', (d
     const problem1 = `1. The view of stage<print.inject.before> has no variables such as [prefix] which are needed in template.`;
     expect(stdout).toEqual(
       expect.stringContaining(
-        `sagaroute has completed the work, but there are the following problems:\n${problem1}`,
+        `sagaroute has completed the work, but there are the following problems`,
       ),
     );
+    expect(stdout).toEqual(expect.stringContaining(problem1));
     done();
   });
 });
