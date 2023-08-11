@@ -1,4 +1,5 @@
 {
+  "extends": "../../.eslintrc.cjs",
   "root": true,
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -12,7 +13,8 @@
     "curly": "warn",
     "eqeqeq": "warn",
     "no-throw-literal": "warn",
-    "semi": "off"
+    "semi": "off",
+    "@typescript-eslint/no-non-null-assertion": "off"
   },
-  "ignorePatterns": ["out", "dist", "**/*.d.ts"]
+  "ignorePatterns": ["out", "dist", "**/*.d.ts", "text-fixtures"]
 }

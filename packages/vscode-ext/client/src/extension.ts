@@ -156,6 +156,7 @@ function initRoutingWatcher(immediate = false) {
             break;
           case 'unlink':
             cacheManger.deleteCache(filepath);
+            break;
           default:
             break;
         }
@@ -183,7 +184,7 @@ function registerRouteCompletions(context: vscode.ExtensionContext) {
     vscode.languages.registerCompletionItemProvider(
       documentSelector,
       {
-        provideCompletionItems(document, position, token) {
+        provideCompletionItems(document, position) {
           const line = document.lineAt(position.line).text;
           if (line.slice(0, position.character).endsWith('//')) {
             const completions = pathCompletionItemManager.getCompletions();

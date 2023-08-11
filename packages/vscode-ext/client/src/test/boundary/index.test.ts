@@ -3,13 +3,10 @@ import * as vscode from 'vscode';
 import {
   compareWithExpectedFile,
   editFile,
-  getMTime,
   getWorkspaceFolderUri,
   resetResultFile,
   wait,
 } from '../utils';
-import { TextEncoder } from 'util';
-import * as assert from 'assert';
 
 // @ts-ignore
 suite('Test all kinds of boundary conditions', () => {

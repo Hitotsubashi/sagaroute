@@ -53,7 +53,6 @@
     "vscode:prepublish": "yarn compile",
     "compile": "npx tsc -b",
     "watch": "npx tsc -b -w",
-    "lint:eslint": "eslint --cache ./client/src ./server/src --ext .ts,.tsx",
     "test": "node ./client/out/test/runTest.js"
   },
   "devDependencies": {

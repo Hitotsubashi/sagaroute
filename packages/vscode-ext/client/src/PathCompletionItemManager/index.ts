@@ -5,7 +5,7 @@ const workspaceRootFolderPath = vscode.workspace.workspaceFolders![0].uri.fsPath
 
 function transformPathToSnippetLine(path: string) {
   let index = 1;
-  return path.replace(/((\:[^\/]+)|(\*))/g, (arg1) => {
+  return path.replace(/((:[^/]+)|(\*))/g, (arg1) => {
     return `\${${index++}:${arg1}}`;
   });
 }

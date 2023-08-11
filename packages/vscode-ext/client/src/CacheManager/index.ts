@@ -4,7 +4,7 @@ class CacheManger {
   dirty: string[] = [];
   cache: Record<string, FileNode> = {};
   preCount?: number;
-  curCount: number = 0;
+  curCount = 0;
 
   clearAll() {
     this.clearCache();
@@ -53,7 +53,7 @@ class CacheManger {
   }
 
   hasCache(path: string) {
-    return this.cache.hasOwnProperty(path);
+    return Object.prototype.hasOwnProperty.call(this.cache, path);
   }
 
   deleteCache(path: string) {
