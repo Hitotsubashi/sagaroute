@@ -3,31 +3,30 @@ on:
   pull_request:
     branches: main
 jobs:
-  runs-on: ubuntu-latest
-  steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-    - name: Use Node.js
-      uses: actions/setup-node@v3
-      with:
-        # vite 需要在node>=12 的环境下执行
-        # puppeteer 需要在node>=14.1.0 的环境下执行
-        node-version: '16.x'
-    - name: Cache
-      id: cache-dependencies
-      uses: actions/cache@v3
-      with:
-        path: |
-          **/node_modules
-        key: ${{runner.OS}}-${{hashFiles('**/yarn.lock')}}
-    - name: Installing Lerna And Bootstrap
-      if: steps.cache-dependencies.outputs.cache-hit != 'true'
-      run: |
-        yarn global add lerna
-        lerna bootstrap
-    - name: Running Lint
-      run: yarn run lint
-    - name: Running Test
-      run: |
-        lerna run build
-        lerna run test
+  CI:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+      - name: Cache
+        id: cache-dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            **/node_modules
+          key: ${{runner.OS}}-${{hashFiles('**/yarn.lock')}}
+      - name: Installing Lerna And Bootstrap
+        if: steps.cache-dependencies.outputs.cache-hit != 'true'
+        run: |
+          yarn global add lerna
+          lerna bootstrap
+      - name: Running Lint
+        run: yarn run lint
+      - name: Running Test
+        run: |
+          lerna run build
+          lerna run test
