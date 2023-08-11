@@ -18,6 +18,7 @@ jobs:
         with:
           path: |
             **/node_modules
+            **/.vscode-test
           key: ${{runner.OS}}-${{hashFiles('**/yarn.lock')}}
       - name: Installing Lerna And Bootstrap
         if: steps.cache-dependencies.outputs.cache-hit != 'true'
