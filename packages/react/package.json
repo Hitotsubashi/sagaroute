@@ -1,9 +1,17 @@
 {
   "name": "@sagaroute/react",
   "version": "0.0.0",
-  "description": "> TODO: description",
-  "author": "",
-  "homepage": "",
+  "description": "A conventional routing plugin for generating routes that suitable for React Router@6+",
+  "keywords": [
+    "routes",
+    "conventional routing",
+    "react router"
+  ],
+  "author": "Hitotsubashi",
+  "bugs": {
+    "url": "https://github.com/Hitotsubashi/sagaroute/issues"
+  },
+  "homepage": "https://github.com/Hitotsubashi/sagaroute/tree/main/packages/react",
   "license": "MIT",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -11,17 +19,13 @@
   "engines": {
     "node": ">= 16.10.0"
   },
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__",
-    "typings.ts": "typings.ts"
-  },
   "files": [
-    "lib",
-    "typings.ts"
+    "lib/*",
+    "doc/*"
   ],
-  "publishConfig": {
-    "registry": "https://registry.npmmirror.com/"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hitotsubashi/sagaroute.git"
   },
   "scripts": {
     "test": "jest",
