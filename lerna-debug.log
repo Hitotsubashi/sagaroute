@@ -1,5 +1,0 @@
-37 error TypeError: resolvedPrettier.resolveConfig.sync is not a function
-37 error     at maybeFormatFile (D:\MyWorks\sagaroute\node_modules\lerna\dist\cli.js:5774:53)
-37 error     at gitAdd (D:\MyWorks\sagaroute\node_modules\lerna\dist\cli.js:5797:9)
-37 error     at D:\MyWorks\sagaroute\node_modules\lerna\dist\cli.js:6620:36
-37 error     at async Promise.all (index 0)
