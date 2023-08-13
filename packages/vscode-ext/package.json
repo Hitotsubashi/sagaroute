@@ -1,6 +1,7 @@
 {
   "name": "@sagaroute/vscode-extension",
   "displayName": "Sagaroute",
+  "private": true,
   "author": "Hitotsubashi",
   "license": "MIT",
   "description": "A VSCode plugin based on @sagaroute/react for quickly generating  generating routes that suitable for React Router@6+",
