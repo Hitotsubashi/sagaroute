@@ -9,6 +9,9 @@
     "vscode": "^1.55.2",
     "node": ">= 16.10.0"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [
     "routes",
     "conventional routing",

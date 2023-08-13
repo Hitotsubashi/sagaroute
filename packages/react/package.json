@@ -11,6 +11,9 @@
   "bugs": {
     "url": "https://github.com/Hitotsubashi/sagaroute/issues"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "homepage": "https://github.com/Hitotsubashi/sagaroute/tree/main/packages/react",
   "license": "MIT",
   "main": "lib/index.js",
