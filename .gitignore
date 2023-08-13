@@ -1,6 +1,6 @@
 node_modules/
 coverage/
-yarn-error.log
+**.log
 lib/
 .nyc_output
 .vscode-test/

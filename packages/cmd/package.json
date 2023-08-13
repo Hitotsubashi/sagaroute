@@ -41,9 +41,9 @@
     "test": "npx nyc yarn jest"
   },
   "devDependencies": {
+    "@types/jest": "^29.4.0",
     "jest": "^29.5.0",
-    "nyc": "^15.1.0",
-    "@types/jest": "^29.4.0"
+    "nyc": "^15.1.0"
   },
   "dependencies": {
     "@sagaroute/react": "^0.0.0",

@@ -92,11 +92,11 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "glob": "^7.1.4",
-    "mocha": "^10.2.0",
     "@sagaroute/react": "^0.0.0",
     "chokidar": "^3.5.3",
+    "glob": "^7.1.4",
     "lodash": "^4.17.21",
+    "mocha": "^10.2.0",
     "vscode-languageclient": "^8.1.0",
     "vscode-languageserver": "^8.1.0",
     "vscode-languageserver-textdocument": "^1.0.8"
