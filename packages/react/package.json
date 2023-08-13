@@ -7,6 +7,9 @@
     "conventional routing",
     "react router"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Hitotsubashi",
   "bugs": {
     "url": "https://github.com/Hitotsubashi/sagaroute/issues"
