@@ -53,6 +53,7 @@
     "@babel/core": "^7.21.3",
     "@babel/generator": "^7.21.3",
     "@babel/parser": "^7.21.2",
+    "@babel/preset-typescript": "^7.22.5",
     "@babel/traverse": "^7.21.2",
     "@babel/types": "^7.21.3",
     "babel-plugin-jsx": "^1.2.0",

@@ -36,7 +36,7 @@ suite('Test sagaroute.config', () => {
     });
     await vscode.workspace.applyEdit(edit);
     // 执行命令
-    await wait(700);
+    await wait(900);
     // 对比result文件和expected文件的内容
     await compareWithExpectedFile(resultPath, 'e1');
   });
@@ -57,7 +57,7 @@ suite('Test sagaroute.config', () => {
       edit,
     );
     // 执行命令
-    await wait(600);
+    await wait(900);
     const afterMTime = await getMTime(resultPath);
     assert.equal(previousMTime, afterMTime);
   });
