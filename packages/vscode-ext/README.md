@@ -5,7 +5,7 @@
 `@sagaroute/vscode-extension`是一款基于`@sagaroute/react`开发的用于快速生成约定式路由列表的`VSCode`插件，它会监听**路由文件目录**的变化以动态生成约定式路由列表，并把生成结果插入到指定[**路由模板文件**](../react/doc/Template.md)
 
 <p align="center">
-    <img alt="overview-generate-after-save" src="./doc/images/overview-generate-after-save.gif" width="500">
+    <img alt="overview-generate-after-save" src="https://github.com/Hitotsubashi/sagaroute/blob/main/packages/vscode-ext/doc/images/overview-generate-after-save.gif" width="500">
     <div align="center">文件变化后触发路由列表更新</div>
 </p>
 
