@@ -28,7 +28,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Hitotsubashi/sagaroute.git"
+    "url": "https://github.com/Hitotsubashi/sagaroute.git",
+    "directory": "packages/react"
   },
   "scripts": {
     "test": "jest",
