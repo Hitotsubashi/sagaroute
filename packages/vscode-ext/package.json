@@ -5,7 +5,7 @@
   "author": "Hitotsubashi",
   "license": "MIT",
   "description": "A VSCode plugin based on @sagaroute/react for quickly generating  generating routes that suitable for React Router@6+",
-  "version": "0.0.0",
+  "version": "0.0.1-alpha.0",
   "engines": {
     "vscode": "^1.55.2",
     "node": ">= 16.10.0"
@@ -93,7 +93,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "@sagaroute/react": "^0.0.0",
+    "@sagaroute/react": "^0.0.1-alpha.0",
     "chokidar": "^3.5.3",
     "glob": "^7.1.4",
     "lodash": "^4.17.21",
