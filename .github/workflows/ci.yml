@@ -23,11 +23,11 @@ jobs:
       - name: Installing Lerna And Bootstrap
         if: steps.cache-dependencies.outputs.cache-hit != 'true'
         run: |
-          yarn global add lerna@6
-          lerna bootstrap
+          yarn install
+          npx lerna bootstrap
       - name: Running Lint
         run: yarn run lint
       - name: Running Test
         run: |
-          lerna run build
-          lerna run test
+          npx lerna run build --scope=@sagaroute/react --scope=@sagaroute/cmd
+          npx lerna run test
