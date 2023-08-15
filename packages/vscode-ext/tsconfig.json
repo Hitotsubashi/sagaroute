@@ -1,5 +1,4 @@
 {
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "module": "commonjs",
     "target": "ES2020",
@@ -16,6 +15,5 @@
     // "noUnusedParameters": true,  /* Report errors on unused parameters. */
   },
   "include": ["src"],
-  "exclude": ["node_modules", ".vscode-test"],
-  "references": [{ "path": "./client" }]
+  "exclude": ["node_modules", ".vscode-test"]
 }
