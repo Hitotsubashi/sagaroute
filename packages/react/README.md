@@ -170,7 +170,7 @@ module.exports = {
 `@sagaroute/react`从生成路由列表到将其插入到**路由模板文件**的整个过程中需要经历三个的执行阶段，分别是`gather`、`weave`和`print`，其分布图如下所示：
 
 <p align="center">
-    <img alt="babel" src="./doc/image/routing-life.png" >
+    <img alt="routing-life" src="./doc/image/routing-life.png" >
 </p>
 
 ### gather

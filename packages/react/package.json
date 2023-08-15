@@ -1,9 +1,20 @@
 {
   "name": "@sagaroute/react",
-  "version": "0.0.0",
-  "description": "> TODO: description",
-  "author": "",
-  "homepage": "",
+  "version": "0.0.1-alpha.0",
+  "description": "A conventional routing plugin for generating routes that suitable for React Router@6+",
+  "keywords": [
+    "routes",
+    "conventional routing",
+    "react router"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Hitotsubashi",
+  "bugs": {
+    "url": "https://github.com/Hitotsubashi/sagaroute/issues"
+  },
+  "homepage": "https://github.com/Hitotsubashi/sagaroute/tree/main/packages/react",
   "license": "MIT",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -11,17 +22,14 @@
   "engines": {
     "node": ">= 16.10.0"
   },
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__",
-    "typings.ts": "typings.ts"
-  },
   "files": [
-    "lib",
-    "typings.ts"
+    "lib/*",
+    "doc/*"
   ],
-  "publishConfig": {
-    "registry": "https://registry.npmmirror.com/"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hitotsubashi/sagaroute.git",
+    "directory": "packages/react"
   },
   "scripts": {
     "test": "jest",
@@ -37,14 +45,15 @@
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
     "tsc-alias": "^1.8.6",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^4.9.5",
-    "typescript-transform-paths": "^3.4.6",
-    "tsconfig-paths": "^4.2.0"
+    "typescript-transform-paths": "^3.4.6"
   },
   "dependencies": {
     "@babel/core": "^7.21.3",
     "@babel/generator": "^7.21.3",
     "@babel/parser": "^7.21.2",
+    "@babel/preset-typescript": "^7.22.5",
     "@babel/traverse": "^7.21.2",
     "@babel/types": "^7.21.3",
     "babel-plugin-jsx": "^1.2.0",

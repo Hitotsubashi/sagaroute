@@ -24,7 +24,7 @@ const runList = [
 async function main() {
   // The folder containing the Extension Manifest package.json
   // Passed to `--extensionDevelopmentPath`
-  const extensionDevelopmentPath = path.resolve(__dirname, '../../../');
+  const extensionDevelopmentPath = path.resolve(__dirname, '../../');
 
   // Download VS Code, unzip it and run the integration test
   for (let i = 0; i < runList.length; i++) {

@@ -10,28 +10,11 @@
       "type": "extensionHost",
       "request": "launch",
       "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
-      "outFiles": ["${workspaceRoot}/client/out/**/*.js"],
+      "outFiles": ["${workspaceRoot}/dist/**/*.js"],
       "preLaunchTask": {
         "type": "npm",
         "script": "watch"
       }
     }
-    // {
-    //   "name": "Extension Tests",
-    //   "type": "extensionHost",
-    //   "request": "launch",
-    //   "runtimeExecutable": "${execPath}",
-    //   "args": [
-    //     "${workspaceFolder}/client/test-fixtures/test.code-workspace",
-    //     "--disable-extensions",
-    //     "--extensionDevelopmentPath=${workspaceFolder}",
-    //     "--extensionTestsPath=${workspaceFolder}/client/out/test/suite/index"
-    //   ],
-    //   "outFiles": ["${workspaceFolder}/client/out/test/**/*.js"],
-    //   "preLaunchTask": {
-    //     "type": "npm",
-    //     "script": "compile"
-    //   }
-    // }
   ]
 }

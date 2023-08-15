@@ -3,5 +3,6 @@
     "source.fixAll": true
   },
   "typescript.tsc.autoDetect": "off",
-  "auto-rename-tag.activationOnLanguage": ["*"]
+  "auto-rename-tag.activationOnLanguage": ["*"],
+  "prettier.printWidth": 100
 }

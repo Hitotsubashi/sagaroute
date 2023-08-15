@@ -1,11 +1,25 @@
 {
   "name": "@sagaroute/cmd",
-  "version": "0.0.0",
-  "description": "> TODO: description",
-  "author": "",
-  "homepage": "",
-  "license": "ISC",
+  "version": "0.0.1-alpha.0",
+  "description": "A command-line tool for generating conventional routes built on top of @sagaroute/react",
+  "author": "Hitotsubashi",
+  "keywords": [
+    "routes",
+    "conventional routing",
+    "react router",
+    "command line",
+    "cmd"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "bugs": {
+    "url": "https://github.com/Hitotsubashi/sagaroute/issues"
+  },
+  "homepage": "https://github.com/Hitotsubashi/sagaroute/tree/main/packages/cmd",
+  "license": "MIT",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "type": "commonjs",
   "engines": {
     "node": ">= 16.10.0"
@@ -14,24 +28,27 @@
     "sagaroute": "bin/index.js"
   },
   "files": [
-    "bin"
+    "bin/*",
+    "lib/*",
+    "doc/*"
   ],
-  "publishConfig": {
-    "registry": "https://registry.npmmirror.com/"
-  },
   "repository": {
     "type": "git",
-    "url": "https://gitee.com/Hitotsubashi/sagaroute"
+    "url": "https://github.com/Hitotsubashi/sagaroute.git",
+    "directory": "packages/cmd"
   },
   "scripts": {
     "build": "tsc  && tsc-alias",
     "test": "npx nyc yarn jest"
   },
-  "dependencies": {
-    "@sagaroute/react": "^0.0.0",
-    "colorette": "^2.0.20",
+  "devDependencies": {
+    "@types/jest": "^29.4.0",
     "jest": "^29.5.0",
-    "nyc": "^15.1.0",
+    "nyc": "^15.1.0"
+  },
+  "dependencies": {
+    "@sagaroute/react": "^0.0.1-alpha.0",
+    "colorette": "^2.0.20",
     "single-line-log": "^1.1.2",
     "yargs": "^17.7.1"
   }
