@@ -25,7 +25,6 @@ jobs:
         with:
           path: |
             **/node_modules
-            **/.vscode-test
           key: ${{runner.OS}}-${{hashFiles('**/yarn.lock')}}
       - name: Installing Lerna And Bootstrap
         if: steps.cache-dependencies.outputs.cache-hit != 'true'
@@ -36,7 +35,7 @@ jobs:
         run: yarn lint
       - name: Running Test
         env:
-          WAIT_TIME: 1000
+          WAIT_TIME: 1500
           DISPLAY: ':99.0'
         run: |
           npx lerna run build --scope=@sagaroute/react --scope=@sagaroute/cmd
