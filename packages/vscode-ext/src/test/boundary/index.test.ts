@@ -26,19 +26,19 @@ export default App;`;
     // 打开js文件保存激活插件执行
     const edit = new vscode.WorkspaceEdit();
     await editFile(oneFilePath, oneFileContent, edit);
-    await wait(600);
+    await wait();
     // 对比result文件和expected文件的内容
     await compareWithExpectedFile(resultPath, 'e1');
   });
 
   test('test with correct routeFile', async () => {
-    await wait(300);
+    await wait();
     // 重置result文件内容;
     await resetResultFile(resultPath, 'correct');
     // 打开js文件保存激活插件执行
     const edit = new vscode.WorkspaceEdit();
     await editFile(oneFilePath, oneFileContent, edit);
-    await wait(600);
+    await wait();
     // 对比result文件和expected文件的内容
     await compareWithExpectedFile(resultPath, 'e2');
   });

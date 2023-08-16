@@ -22,7 +22,7 @@ suite('Test File Operate', () => {
     await resetResultFile(resultPath);
     // 执行命令
     await vscode.commands.executeCommand('sagaroute.routing');
-    await wait(600);
+    await wait();
     // 对比result文件和expected文件的内容
     await compareWithExpectedFile(resultPath, 'e1');
   });
@@ -84,7 +84,7 @@ export default AccountIndex;
     });
     await vscode.workspace.applyEdit(edit);
     // 执行命令
-    await wait(600);
+    await wait();
     // 对比result文件和expected文件的内容
     await compareWithExpectedFile(resultPath, 'e2');
   });
@@ -109,7 +109,7 @@ export default AccountIndex;
       edit,
     );
     // 执行命令
-    await wait(600);
+    await wait();
     // 对比result文件和expected文件的内容
     await compareWithExpectedFile(resultPath, 'e3');
   });
@@ -136,7 +136,7 @@ export default UserLayout;
       edit,
     );
     // 执行命令
-    await wait(600);
+    await wait();
     // 获取文件的修改时间
     const userLayoutFileAfterTime = await getMTime(userLayoutFilePath);
     const routeFileAfterTime = await getMTime(routeFilePath);
@@ -155,14 +155,14 @@ export default UserLayout;
     );
     await vscode.workspace.applyEdit(edit);
     // 执行命令
-    await wait(600);
+    await wait();
     // 对比result文件和expected文件的内容
     await compareWithExpectedFile(resultPath, 'e4');
   });
 
   // 删除文件
   test('test delete multiple file', async () => {
-    await wait(300);
+    await wait();
     const edit = new vscode.WorkspaceEdit();
     edit.deleteFile(vscode.Uri.file(path.join(base.fsPath, 'src/pages/404.tsx')));
     edit.deleteFile(vscode.Uri.file(path.join(base.fsPath, 'src/pages/user1')), {
@@ -172,7 +172,7 @@ export default UserLayout;
     edit.deleteFile(vscode.Uri.file(path.join(base.fsPath, 'src/pages/account/index.tsx')));
     await vscode.workspace.applyEdit(edit);
     // 执行命令
-    await wait(600);
+    await wait();
     // 对比result文件和expected文件的内容
     await compareWithExpectedFile(resultPath, 'e5');
   });
