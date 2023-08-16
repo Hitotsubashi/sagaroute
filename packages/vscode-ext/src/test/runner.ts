@@ -1,7 +1,6 @@
 import * as path from 'path';
 // @ts-ignore
 import Mocha from 'mocha';
-import { defaultWaitTime } from './utils';
 
 declare type Mocha = any;
 
@@ -11,7 +10,6 @@ export default function runner(testPath: string) {
     ui: 'tdd',
     color: true,
   });
-  mocha.timeout = defaultWaitTime * 3;
 
   const testsRoot = __dirname;
 

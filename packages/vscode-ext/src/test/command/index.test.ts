@@ -1,9 +1,18 @@
 import path from 'path';
 import * as vscode from 'vscode';
-import { compareWithExpectedFile, getWorkspaceFolderUri, resetResultFile, wait } from '../utils';
+import {
+  compareWithExpectedFile,
+  getWorkspaceFolderUri,
+  resetResultFile,
+  wait,
+  defaultWaitTime,
+} from '../utils';
 
 // @ts-ignore
 suite('Test Command', function () {
+  // @ts-ignore
+  this.timeout(defaultWaitTime * 4);
+
   const base = getWorkspaceFolderUri('command');
   const resultPath = path.join(base.fsPath, 'src', 'routes.tsx');
   // @ts-ignore

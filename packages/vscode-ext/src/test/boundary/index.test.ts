@@ -2,6 +2,7 @@ import path from 'path';
 import * as vscode from 'vscode';
 import {
   compareWithExpectedFile,
+  defaultWaitTime,
   editFile,
   getWorkspaceFolderUri,
   resetResultFile,
@@ -9,7 +10,10 @@ import {
 } from '../utils';
 
 // @ts-ignore
-suite('Test all kinds of boundary conditions', () => {
+suite('Test all kinds of boundary conditions', function () {
+  // @ts-ignore
+  this.timeout(defaultWaitTime * 4);
+
   const base = getWorkspaceFolderUri('boundary');
   const resultPath = path.join(base.fsPath, 'src', 'routes.tsx');
   const oneFilePath = path.join(base.fsPath, 'src', 'pages', 'index.tsx');

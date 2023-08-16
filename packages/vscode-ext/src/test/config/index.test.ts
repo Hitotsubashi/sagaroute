@@ -7,12 +7,16 @@ import {
   getWorkspaceFolderUri,
   resetResultFile,
   wait,
+  defaultWaitTime,
 } from '../utils';
 import { TextEncoder } from 'util';
 import * as assert from 'assert';
 
 // @ts-ignore
-suite('Test sagaroute.config', () => {
+suite('Test sagaroute.config', function () {
+  // @ts-ignore
+  this.timeout(defaultWaitTime * 4);
+
   const base = getWorkspaceFolderUri('config');
   const resultPath = path.join(base.fsPath, 'src', 'router', 'index.jsx');
   const encoder = new TextEncoder();

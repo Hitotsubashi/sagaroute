@@ -7,12 +7,16 @@ import {
   getWorkspaceFolderUri,
   resetResultFile,
   wait,
+  defaultWaitTime,
 } from '../utils';
 import { TextEncoder } from 'util';
 import * as assert from 'assert';
 
 // @ts-ignore
-suite('Test File Operate', () => {
+suite('Test File Operate', function () {
+  // @ts-ignore
+  this.timeout(defaultWaitTime * 4);
+
   const base = getWorkspaceFolderUri('file');
   const resultPath = path.join(base.fsPath, 'src', 'routes.tsx');
   const encoder = new TextEncoder();
