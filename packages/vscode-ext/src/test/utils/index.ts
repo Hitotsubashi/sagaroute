@@ -16,8 +16,7 @@ export const getWorkspaceFolderUri = (workspaceFolderName: string) => {
   return workspaceFolder!.uri;
 };
 
-export const defaultWaitTime: number =
-  typeof process.env.WAIT_TIME === 'number' ? process.env.WAIT_TIME : 600;
+export const defaultWaitTime: number = process.env.WAIT_TIME ? Number(process.env.WAIT_TIME) : 600;
 
 export const wait = (ms?: number) =>
   new Promise((resolve) => setTimeout(resolve, ms || defaultWaitTime));
