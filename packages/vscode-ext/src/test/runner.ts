@@ -10,7 +10,6 @@ export default function runner(testPath: string) {
     ui: 'tdd',
     color: true,
   });
-  mocha.timeout(5000);
 
   const testsRoot = __dirname;
 
