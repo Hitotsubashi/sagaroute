@@ -62,6 +62,7 @@ suite('Test sagaroute.config', function () {
     );
     // 执行命令
     await wait();
+    await wait();
     const afterMTime = await getMTime(resultPath);
     assert.equal(previousMTime, afterMTime);
   });
@@ -80,6 +81,7 @@ suite('Test sagaroute.config', function () {
       edit,
     );
     // 执行命令
+    await wait();
     await wait();
     // 对比result文件和expected文件的内容
     await compareWithExpectedFile(resultPath, 'e2');
