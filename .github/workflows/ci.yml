@@ -37,6 +37,8 @@ jobs:
       - name: Running Lint
         run: yarn lint
       - name: Running Test
+        env:
+          DISPLAY: ':99.0'
         run: |
           npx lerna run build --scope=@sagaroute/react --scope=@sagaroute/cmd
           npx lerna run test
