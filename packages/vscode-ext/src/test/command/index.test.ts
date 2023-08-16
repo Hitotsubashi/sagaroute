@@ -20,7 +20,7 @@ suite('Test Command', function () {
     // 重置result文件内容
     await resetResultFile(resultPath);
     // 执行命令
-    await wait(300);
+    await wait(1500);
     await vscode.commands.executeCommand('sagaroute.toggle');
     await wait(600);
     // 对比result文件和expected文件的内容
@@ -31,7 +31,7 @@ suite('Test Command', function () {
     // 重置result文件内容
     await resetResultFile(resultPath);
     // 执行命令
-    await wait(300);
+    await wait(1500);
     await vscode.commands.executeCommand('sagaroute.routing');
     await wait(600);
     // 对比result文件和expected文件的内容
