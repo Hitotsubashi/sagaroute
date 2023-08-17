@@ -36,15 +36,15 @@ jobs:
           npx lerna run test
       - name: Upload react coverage reports
         uses: codecov/codecov-action@v3
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-          files: packages/react/coverage/lcov.info
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./packages/react/coverage/lcov.info
           flags: react
           name: react
       - name: Upload cmd coverage reports
         uses: codecov/codecov-action@v3
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-          files: packages/cmd/coverage/lcov.info
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./packages/cmd/coverage/lcov.info
           flags: cmd
           name: cmd
