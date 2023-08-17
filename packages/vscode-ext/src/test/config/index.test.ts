@@ -63,6 +63,7 @@ suite('Test sagaroute.config', function () {
     );
     // 执行命令
     await wait();
+    await wait();
     const afterMTime = await getMTime(resultPath);
     assert.equal(previousMTime, afterMTime);
   });
@@ -94,6 +95,7 @@ suite('Test sagaroute.config', function () {
     edit.deleteFile(vscode.Uri.file(configPath));
     await vscode.workspace.applyEdit(edit);
     // 执行命令
+    await wait();
     await wait();
     const afterMTime = await getMTime(resultPath);
     assert.equal(previousMTime, afterMTime);
