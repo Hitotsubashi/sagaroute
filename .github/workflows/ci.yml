@@ -34,7 +34,17 @@ jobs:
         run: |
           npx lerna run build --scope=@sagaroute/react --scope=@sagaroute/cmd
           npx lerna run test
-      - name: Upload coverage reports to Codecov
+      - name: Upload react coverage reports
         uses: codecov/codecov-action@v3
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          files: ./packages/react/coverage/clover.xml
+          flags: react
+          name: react
+      - name: Upload cmd coverage reports
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          files: ./packages/cmd/coverage/clover.xml
+          flags: cmd
+          name: cmd
