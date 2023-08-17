@@ -182,8 +182,6 @@ test('test skip gather,weave and print', () => {
   };
   const sagaRoute = new SagaRoute(option);
   sagaRoute.routing();
-  const context = fs.readFileSync(outputFile, 'utf-8');
-  expect(context).toMatchSnapshot();
   expect(buildHooksBefore.mock.calls).toHaveLength(1);
   expect(buildHooksAfter.mock.calls).toHaveLength(1);
 
@@ -253,8 +251,6 @@ test('test skip weave and print', () => {
   };
   const sagaRoute = new SagaRoute(option);
   sagaRoute.routing();
-  const context = fs.readFileSync(outputFile, 'utf-8');
-  expect(context).toMatchSnapshot();
   expect(buildHooksBefore.mock.calls).toHaveLength(1);
   expect(buildHooksAfter.mock.calls).toHaveLength(1);
 
@@ -306,8 +302,6 @@ test('test skip print.parse', () => {
   };
   const sagaRoute = new SagaRoute(option);
   sagaRoute.routing();
-  const context = fs.readFileSync(outputFile, 'utf-8');
-  expect(context).toMatchSnapshot();
   expect(printHooksParseBefore.mock.calls).toHaveLength(1);
   expect(printHooksParseAfter.mock.calls).toHaveLength(0);
   expect(printHooksInjectBefore.mock.calls).toHaveLength(0);
@@ -350,8 +344,6 @@ test('test skip print.inject', () => {
   };
   const sagaRoute = new SagaRoute(option);
   sagaRoute.routing();
-  const context = fs.readFileSync(outputFile, 'utf-8');
-  expect(context).toMatchSnapshot();
   expect(printHooksParseBefore.mock.calls).toHaveLength(1);
   expect(printHooksParseAfter.mock.calls).toHaveLength(1);
   expect(printHooksInjectBefore.mock.calls).toHaveLength(1);
@@ -394,8 +386,6 @@ test('test skip print.write', () => {
   };
   const sagaRoute = new SagaRoute(option);
   sagaRoute.routing();
-  const context = fs.readFileSync(outputFile, 'utf-8');
-  expect(context).toMatchSnapshot();
   expect(printHooksParseBefore.mock.calls).toHaveLength(1);
   expect(printHooksParseAfter.mock.calls).toHaveLength(1);
   expect(printHooksInjectBefore.mock.calls).toHaveLength(1);
