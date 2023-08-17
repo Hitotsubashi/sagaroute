@@ -1,5 +1,5 @@
 {
   "check-coverage": true,
   "include": ["lib/**.js", "bin/**.js"],
-  "reporter": ["html", "json", "clover"]
+  "reporter": ["html", "text", "lcov"]
 }
