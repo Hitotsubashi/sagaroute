@@ -51,10 +51,6 @@ const config = {
   plugins: [nativeNodeModulesPlugin],
 };
 
-if (argv.watch) {
-  config.watch = argv.watch;
-}
-
 if (argv.sourcemap) {
   config.sourcemap = argv.sourcemap;
 }
@@ -65,4 +61,10 @@ if (argv.minify) {
 
 console.log('esbuild config: ', config);
 
-esbuild.build(config);
+if (argv.watch) {
+  esbuild.context(config).then((context) => {
+    context.watch();
+  });
+} else {
+  esbuild.build(config);
+}
