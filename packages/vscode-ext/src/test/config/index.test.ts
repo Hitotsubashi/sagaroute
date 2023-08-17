@@ -42,6 +42,7 @@ suite('Test sagaroute.config', function () {
     // 执行命令
     await wait();
     await wait();
+    await wait();
     // 对比result文件和expected文件的内容
     await compareWithExpectedFile(resultPath, 'e1');
   });
@@ -81,6 +82,7 @@ suite('Test sagaroute.config', function () {
       edit,
     );
     // 执行命令
+    await wait();
     await wait();
     await wait();
     // 对比result文件和expected文件的内容

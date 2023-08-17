@@ -16,18 +16,11 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '16.x'
+          cache: 'yarn'
       - run: /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 & echo "Started xvfb"
         shell: bash
         if: ${{ success() && matrix.os == 'ubuntu-latest' }}
-      - name: Cache
-        id: cache-dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            **/node_modules
-          key: ${{runner.OS}}-${{hashFiles('**/yarn.lock')}}
       - name: Installing Lerna And Bootstrap
-        if: steps.cache-dependencies.outputs.cache-hit != 'true'
         run: |
           yarn install
           npx lerna bootstrap
@@ -35,7 +28,7 @@ jobs:
         run: yarn lint
       - name: Running Test
         env:
-          WAIT_TIME: 2500
+          WAIT_TIME: 2000
           DISPLAY: ':99.0'
         run: |
           npx lerna run build --scope=@sagaroute/react --scope=@sagaroute/cmd
