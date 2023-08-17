@@ -28,7 +28,7 @@ jobs:
         run: yarn lint
       - name: Running Test
         env:
-          WAIT_TIME: 1500
+          WAIT_TIME: 2000
           DISPLAY: ':99.0'
         run: |
           npx lerna run build --scope=@sagaroute/react --scope=@sagaroute/cmd

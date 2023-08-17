@@ -31,7 +31,6 @@ export default App;`;
     const edit = new vscode.WorkspaceEdit();
     await editFile(oneFilePath, oneFileContent, edit);
     await wait();
-    await wait();
     // 对比result文件和expected文件的内容
     await compareWithExpectedFile(resultPath, 'e1');
   });
