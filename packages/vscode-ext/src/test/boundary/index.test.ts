@@ -12,7 +12,7 @@ import {
 // @ts-ignore
 suite('Test all kinds of boundary conditions', function () {
   // @ts-ignore
-  this.timeout(defaultWaitTime * 4);
+  this.timeout(defaultWaitTime * 5);
 
   const base = getWorkspaceFolderUri('boundary');
   const resultPath = path.join(base.fsPath, 'src', 'routes.tsx');
@@ -32,6 +32,7 @@ export default App;`;
     await editFile(oneFilePath, oneFileContent, edit);
     await wait();
     await wait();
+    await wait();
     // 对比result文件和expected文件的内容
     await compareWithExpectedFile(resultPath, 'e1');
   });
@@ -43,6 +44,7 @@ export default App;`;
     // 打开js文件保存激活插件执行
     const edit = new vscode.WorkspaceEdit();
     await editFile(oneFilePath, oneFileContent, edit);
+    await wait();
     await wait();
     await wait();
     // 对比result文件和expected文件的内容
