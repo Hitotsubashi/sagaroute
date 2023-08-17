@@ -26,6 +26,7 @@ test('test routing in normal', () => {
     routeFilePath: outputFile,
     pathRewrite: {
       '^./': '@/',
+      '.tsx$': '',
     },
     hooks: {
       build: {
@@ -70,7 +71,10 @@ test('test routing in normal', () => {
   expect(buildHooksAfter.mock.calls[0]).toStrictEqual([
     {
       ...option,
-      pathRewrite: [[new RegExp('^./'), '@/']],
+      pathRewrite: [
+        [new RegExp('^./'), '@/'],
+        [new RegExp('.tsx$'), ''],
+      ],
       relativeDirpath: path.join('..', 'pages'),
       relativeLayoutDirPath: path.join('..', 'layouts'),
       hooks: {

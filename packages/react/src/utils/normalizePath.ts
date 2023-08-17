@@ -18,7 +18,6 @@ export function pathRewriteExecute(fpath: string, pathRewrite?: [RegExp, string]
       const [reg, replaced] = pathRewrite[i];
       if (reg.test(newPath)) {
         newPath = newPath.replace(reg, replaced);
-        break;
       }
     }
   }
