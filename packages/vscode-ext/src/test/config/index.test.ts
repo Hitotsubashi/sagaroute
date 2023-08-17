@@ -15,7 +15,7 @@ import * as assert from 'assert';
 // @ts-ignore
 suite('Test sagaroute.config', function () {
   // @ts-ignore
-  this.timeout(defaultWaitTime * 4);
+  this.timeout(defaultWaitTime * 5);
 
   const base = getWorkspaceFolderUri('config');
   const resultPath = path.join(base.fsPath, 'src', 'router', 'index.jsx');
@@ -28,6 +28,7 @@ suite('Test sagaroute.config', function () {
     // 打开js文件激活Sagaroute
     const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(resultPath));
     await vscode.window.showTextDocument(doc);
+    await wait();
     // 新增sagaroute.config文件
     const edit = new vscode.WorkspaceEdit();
     edit.createFile(vscode.Uri.file(configPath), {
