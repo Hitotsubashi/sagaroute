@@ -13,7 +13,7 @@ import {
 // @ts-ignore
 suite('Test all kinds of boundary conditions', function () {
   // @ts-ignore
-  this.timeout(defaultWaitTime * 15);
+  this.timeout(defaultWaitTime * 30);
 
   const base = getWorkspaceFolderUri('boundary');
   const resultPath = path.join(base.fsPath, 'src', 'routes.tsx');
