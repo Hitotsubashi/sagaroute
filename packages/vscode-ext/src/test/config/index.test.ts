@@ -29,6 +29,7 @@ suite('Test sagaroute.config', function () {
     // 打开js文件激活Sagaroute
     const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(resultPath));
     await vscode.window.showTextDocument(doc);
+    await wait();
     // 新增sagaroute.config文件
     const edit = new vscode.WorkspaceEdit();
     edit.createFile(vscode.Uri.file(configPath), {
