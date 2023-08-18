@@ -3,6 +3,7 @@ import path from 'path';
 import { promisify } from 'util';
 import { readFile, writeFile } from 'fs';
 import * as vscode from 'vscode';
+import { debounce } from 'lodash';
 
 export const getWorkspaceFolderUri = (workspaceFolderName: string) => {
   const workspaceFolder = vscode.workspace.workspaceFolders!.find((folder) => {
@@ -86,11 +87,11 @@ export const waitUntilFileChange = (
         watcher.dispose();
       }, timeout);
     }
-    const handled = () => {
+    const handled = debounce(() => {
       console.timeEnd(filepath);
       watcher.dispose();
       resolve();
-    };
+    }, 50);
     if (!type || type === 'change') {
       watcher.onDidChange(handled);
     }

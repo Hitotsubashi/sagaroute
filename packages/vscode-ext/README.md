@@ -5,7 +5,7 @@
 `@sagaroute/vscode-extension`是一款基于`@sagaroute/react`开发的用于快速生成约定式路由列表的`VSCode`插件，它会监听**路由文件目录**的变化以动态生成约定式路由列表，并把生成结果插入到指定[**路由模板文件**](../react/doc/Template.md)
 
 <p align="center">
-    <img alt="overview-generate-after-save" src="https://github.com/Hitotsubashi/sagaroute/blob/main/packages/vscode-ext/doc/images/overview-generate-after-save.gif" width="500">
+    <img alt="overview-generate-after-save" src="./doc/images/overview-generate-after-save.gif" width="500">
     <div align="center">文件变化后触发路由列表更新</div>
 </p>
 
@@ -135,12 +135,12 @@ module.exports = {
 在`vscode`底部的状态栏中会有`Sagaroute`的状态控件，以显示`Sagaroute`是否处于监听**路由文件目录**中。如下所示：
 
 <p align="center">
-    <img alt="status-sleeping" src="./doc/images/status-sleeping.png" width="120">
+    <img alt="status-sleeping" src="./doc/images/status-sleeping.png" >
     <div align="center">白字代表Sagaroute没有监听</div>
 </p>
 
 <p align="center">
-    <img alt="status-watching" src="./doc/images/status-watching.png" width="130">
+    <img alt="status-watching" src="./doc/images/status-watching.png">
     <div align="center">绿字代表Sagaroute正在监听</div>
 </p>
 
