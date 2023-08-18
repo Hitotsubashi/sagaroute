@@ -22,12 +22,13 @@ suite('Test sagaroute.config', function () {
   const resultPath = path.join(base.fsPath, 'src', 'router', 'index.jsx');
   const encoder = new TextEncoder();
   const configPath = path.join(base.fsPath, 'sagaroute.config.cjs');
+  const oneFilePath = path.join(base.fsPath, 'src', 'views', 'index.jsx');
 
   test('test add sagaroute.config.cjs', async () => {
     // 重置result文件内容;
     await resetResultFile(resultPath);
     // 打开js文件激活Sagaroute
-    const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(resultPath));
+    const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(oneFilePath));
     await vscode.window.showTextDocument(doc);
     await wait();
     // 新增sagaroute.config文件

@@ -35,7 +35,7 @@ export default App;`;
     // 重置result文件内容;
     await resetResultFile(resultPath, 'error');
     // 打开js文件激活Sagaroute
-    const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(resultPath));
+    const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(oneFilePath));
     await vscode.window.showTextDocument(doc);
     await wait();
     // 打开js文件保存激活插件执行
