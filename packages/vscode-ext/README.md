@@ -1,7 +1,5 @@
 # @sagaroute/vscode-extension
 
-[![codecov](https://codecov.io/gh/Hitotsubashi/sagaroute/branch/feature_test_workflow/graph/badge.svg?token=JUSGSALPH6)](https://codecov.io/gh/Hitotsubashi/sagaroute)
-
 ## 介绍
 
 `@sagaroute/vscode-extension`是一款基于`@sagaroute/react`开发的用于快速生成约定式路由列表的`VSCode`插件，它会监听**路由文件目录**的变化以动态生成约定式路由列表，并把生成结果插入到指定[**路由模板文件**](../react/doc/Template.md)
