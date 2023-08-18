@@ -18,9 +18,15 @@ suite('Test all kinds of boundary conditions', function () {
   const base = getWorkspaceFolderUri('boundary');
   const resultPath = path.join(base.fsPath, 'src', 'routes.tsx');
   const oneFilePath = path.join(base.fsPath, 'src', 'pages', 'index.tsx');
-  const oneFileContent = `const App = () => {
+  const oneFileContent1 = `const App = () => {
     // @ts-ignore
-    return <div>App</div>;
+    return <div>App1</div>;
+};
+
+export default App;`;
+  const oneFileContent2 = `const App = () => {
+  // @ts-ignore
+  return <div>App</div>;
 };
 
 export default App;`;
@@ -30,7 +36,7 @@ export default App;`;
     await resetResultFile(resultPath, 'error');
     // 打开js文件保存激活插件执行
     const edit = new vscode.WorkspaceEdit();
-    await editFile(oneFilePath, oneFileContent, edit);
+    await editFile(oneFilePath, oneFileContent1, edit);
     await waitUntilFileChange(resultPath);
     // 对比result文件和expected文件的内容
     await compareWithExpectedFile(resultPath, 'e1');
@@ -42,7 +48,7 @@ export default App;`;
     await resetResultFile(resultPath, 'correct');
     // 打开js文件保存激活插件执行
     const edit = new vscode.WorkspaceEdit();
-    await editFile(oneFilePath, oneFileContent, edit);
+    await editFile(oneFilePath, oneFileContent2, edit);
     await waitUntilFileChange(resultPath);
     // 对比result文件和expected文件的内容
     await compareWithExpectedFile(resultPath, 'e2');
