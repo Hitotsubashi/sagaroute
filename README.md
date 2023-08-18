@@ -4,6 +4,11 @@
 
 <h1 align="center">Sagaroute</h1>
 
+<div align=center>
+    <img src="https://github.com/Hitotsubashi/sagaroute/actions/workflows/ci.yml/badge.svg"/> 
+    <img src="https://codecov.io/gh/Hitotsubashi/sagaroute/branch/feature_test_workflow/graph/badge.svg?token=JUSGSALPH6"/>
+</div>
+
 <div align="center">
 一套用于实现约定式路由的插件
 </div>
