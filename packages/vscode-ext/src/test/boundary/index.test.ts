@@ -12,7 +12,7 @@ import {
 // @ts-ignore
 suite('Test all kinds of boundary conditions', function () {
   // @ts-ignore
-  this.timeout(defaultWaitTime * 7);
+  this.timeout(defaultWaitTime * 8);
 
   const base = getWorkspaceFolderUri('boundary');
   const resultPath = path.join(base.fsPath, 'src', 'routes.tsx');
@@ -34,6 +34,7 @@ export default App;`;
     if (process.env.GITHUB_ACTION) {
       await wait();
       await wait();
+      await wait();
     }
     // 对比result文件和expected文件的内容
     await compareWithExpectedFile(resultPath, 'e1');
@@ -48,6 +49,7 @@ export default App;`;
     await editFile(oneFilePath, oneFileContent, edit);
     await wait();
     if (process.env.GITHUB_ACTION) {
+      await wait();
       await wait();
       await wait();
     }
