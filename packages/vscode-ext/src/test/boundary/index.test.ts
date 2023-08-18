@@ -37,6 +37,8 @@ export default App;`;
     if (process.env.GITHUB_ACTION) {
       await wait();
       await wait();
+      await wait();
+      await wait();
     }
     // 对比result文件和expected文件的内容
     await compareWithExpectedFile(resultPath, 'e1');
@@ -54,6 +56,8 @@ export default App;`;
     await editFile(oneFilePath, oneFileContent, edit);
     await wait();
     if (process.env.GITHUB_ACTION) {
+      await wait();
+      await wait();
       await wait();
       await wait();
     }
