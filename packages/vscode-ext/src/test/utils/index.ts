@@ -16,7 +16,10 @@ export const getWorkspaceFolderUri = (workspaceFolderName: string) => {
   return workspaceFolder!.uri;
 };
 
-export const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+export const defaultWaitTime: number = process.env.WAIT_TIME ? Number(process.env.WAIT_TIME) : 400;
+
+export const wait = (ms?: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms || defaultWaitTime));
 const readFileAsync: (filePath: string, encoding: 'utf8') => Promise<string> = promisify(readFile);
 const writeFileAsync: (filePath: string, data: string, encoding: 'utf8') => Promise<void> =
   promisify(writeFile);

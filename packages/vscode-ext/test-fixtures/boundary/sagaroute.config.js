@@ -1,10 +1,13 @@
+const path = require("path")
+
 module.exports = {
     pathRewrite: {'^./': '@/'},
     hooks: {
         gather: {
             beforeEach(fpath) {
-              // widgets文件夹下的文件不会被解析
-              if (fpath.includes('/form/')) {
+              // form文件夹下的文件不会被解析
+              // if (fpath.split(path.sep).includes('form')) {
+              if (fpath.includes(`${path.sep}form${path.sep}`)) {
                 return null;
               }
             },

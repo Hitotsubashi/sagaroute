@@ -12,7 +12,7 @@ import getWarningManager from './WarningManager';
 
 let isEnabled: boolean;
 let routingWatcher: FSWatcher;
-let configWatcher: FSWatcher;
+let configWatcher: vscode.FileSystemWatcher;
 let statusBarItem: vscode.StatusBarItem;
 
 const workspaceRootFolderPath = vscode.workspace.workspaceFolders![0].uri.fsPath;
@@ -60,18 +60,31 @@ function initInputCommand(context: vscode.ExtensionContext) {
 }
 
 function initConfigWatcher() {
-  const sagaRouteConfigFiles = [
-    path.join(workspaceRootFolderPath, 'sagaroute.config.js'),
-    path.join(workspaceRootFolderPath, 'sagaroute.config.cjs'),
-  ];
-  configWatcher = chokidar
-    .watch(sagaRouteConfigFiles, { ignoreInitial: true })
-    .on('all', (event, filepath) => {
-      const logging = getLogging();
-      logging.logMessage(`[watch] File ${filepath} has been ${event}`);
-      rebuildSagaroute();
-      initRoutingWatcher(true);
-    });
+  //   const sagaRouteConfigFiles = [
+  //     path.join(workspaceRootFolderPath, 'sagaroute.config.js'),
+  //     path.join(workspaceRootFolderPath, 'sagaroute.config.cjs'),
+  //   ];
+  //   configWatcher = chokidar
+  //     .watch(sagaRouteConfigFiles, { ignoreInitial: true })
+  //     .on('all', (event, filepath) => {
+  //       const logging = getLogging();
+  //       logging.logMessage(`[watch] File ${filepath} has been ${event}`);
+  //       rebuildSagaroute();
+  //       initRoutingWatcher(true);
+  //     });
+  const watchPath = path
+    .join(workspaceRootFolderPath, 'sagaroute.config.{js,cjs}')
+    .replace(path.sep, '/');
+  configWatcher = vscode.workspace.createFileSystemWatcher(watchPath);
+  const eventHandle = (type: string, uri: vscode.Uri) => {
+    const logging = getLogging();
+    logging.logMessage(`[watch] File ${uri.toString()} has been ${type}`);
+    rebuildSagaroute();
+    initRoutingWatcher(true);
+  };
+  configWatcher.onDidChange((uri) => eventHandle('change', uri));
+  configWatcher.onDidCreate((uri) => eventHandle('create', uri));
+  configWatcher.onDidDelete((uri) => eventHandle('delete', uri));
 }
 
 function working() {
@@ -244,6 +257,6 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {
-  configWatcher.close();
+  configWatcher.dispose();
   routingWatcher.close();
 }

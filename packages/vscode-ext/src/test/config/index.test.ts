@@ -7,12 +7,16 @@ import {
   getWorkspaceFolderUri,
   resetResultFile,
   wait,
+  defaultWaitTime,
 } from '../utils';
 import { TextEncoder } from 'util';
 import * as assert from 'assert';
 
 // @ts-ignore
-suite('Test sagaroute.config', () => {
+suite('Test sagaroute.config', function () {
+  // @ts-ignore
+  this.timeout(defaultWaitTime * 5);
+
   const base = getWorkspaceFolderUri('config');
   const resultPath = path.join(base.fsPath, 'src', 'router', 'index.jsx');
   const encoder = new TextEncoder();
@@ -36,9 +40,10 @@ suite('Test sagaroute.config', () => {
     });
     await vscode.workspace.applyEdit(edit);
     // 执行命令
-    await wait(900);
+    await wait();
+    await wait();
     // 对比result文件和expected文件的内容
-    await compareWithExpectedFile(resultPath, 'e1');
+    await compareWithExpectedFile(resultPath, process.env.OS === 'Windows' ? 'e1window' : 'e1');
   });
 
   test('test modify error data in sagaroute.config', async () => {
@@ -57,7 +62,8 @@ suite('Test sagaroute.config', () => {
       edit,
     );
     // 执行命令
-    await wait(900);
+    await wait();
+    await wait();
     const afterMTime = await getMTime(resultPath);
     assert.equal(previousMTime, afterMTime);
   });
@@ -76,9 +82,12 @@ suite('Test sagaroute.config', () => {
       edit,
     );
     // 执行命令
-    await wait(600);
+    await wait();
+    if (process.env.GITHUB_ACTION) {
+      await wait();
+    }
     // 对比result文件和expected文件的内容
-    await compareWithExpectedFile(resultPath, 'e2');
+    await compareWithExpectedFile(resultPath, process.env.OS === 'Windows' ? 'e2window' : 'e2');
   });
 
   test('test delete sagaroute.config', async () => {
@@ -88,7 +97,10 @@ suite('Test sagaroute.config', () => {
     edit.deleteFile(vscode.Uri.file(configPath));
     await vscode.workspace.applyEdit(edit);
     // 执行命令
-    await wait(600);
+    await wait();
+    if (process.env.GITHUB_ACTION) {
+      await wait();
+    }
     const afterMTime = await getMTime(resultPath);
     assert.equal(previousMTime, afterMTime);
   });

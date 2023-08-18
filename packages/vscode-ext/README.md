@@ -1,5 +1,7 @@
 # @sagaroute/vscode-extension
 
+[![codecov](https://codecov.io/gh/Hitotsubashi/sagaroute/branch/feature_test_workflow/graph/badge.svg?token=JUSGSALPH6)](https://codecov.io/gh/Hitotsubashi/sagaroute)
+
 ## 介绍
 
 `@sagaroute/vscode-extension`是一款基于`@sagaroute/react`开发的用于快速生成约定式路由列表的`VSCode`插件，它会监听**路由文件目录**的变化以动态生成约定式路由列表，并把生成结果插入到指定[**路由模板文件**](../react/doc/Template.md)
@@ -36,7 +38,7 @@
 例如存在**路由模板文件**，其内容如下：
 
 ```js
-import React from "react";
+import React from 'react';
 
 const routes = [];
 const router = createBrowserRouter(routes);
@@ -46,8 +48,8 @@ export default router;
 我们需要对上述文件用注释进行标记，标记后如下所示：
 
 ```js
-import React from "react";
-import { createBrowserRouter } from "react-router-dom";
+import React from 'react';
+import { createBrowserRouter } from 'react-router-dom';
 /* sagaroute-inject:imports */
 
 /* sagaroute-inject:routes */
@@ -85,16 +87,16 @@ export default router;
 
 配置项中所有参数的简要说明如下所示：
 
-| 名称                                               | 说明                             | 类型                              | 默认值          |
-| -------------------------------------------------- | -------------------------------- | --------------------------------- | --------------- |
-| [dirpath](../react/doc/API.md#dirpath)             | **页面文件目录**路径             | string                            | 'src/pages'     |
-| [layoutDirPath](../react/doc/API.md#layoutdirpath) | 全局路由目录路径                 | string                            | 'src/layouts'   |
-| [routeFilePath](../react/doc/API.md#routeFilePath) | 指定路由模板文件的路径           | string                            | 'src/route.tsx' |
-| [lazy](../react/doc/API.md#lazy)                   | 路由是否懒加载                   | boolean/Function(string): boolean | false           |
-| [hooks](../react/doc/API.md#hooks)                 | 执行周期的钩子函数               | object                            | --              |
-| [pathRewrite](../react/doc/API.md#pathRewrite)     | 用于对 import 语句的路径进行替换 | Object{string: string}            | --              |
-| [rootPath](../react/doc/API.md#rootPath)           | 项目路径                         | string                            | process.cwd()   |
-| [onWarning](./doc/API.md#onwarning)                | 触发警告时的回调函数             | function(message: string): void   | --              |
+| 名称 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| [dirpath](../react/doc/API.md#dirpath) | **页面文件目录**路径 | string | 'src/pages' |
+| [layoutDirPath](../react/doc/API.md#layoutdirpath) | 全局路由目录路径 | string | 'src/layouts' |
+| [routeFilePath](../react/doc/API.md#routeFilePath) | 指定路由模板文件的路径 | string | 'src/route.tsx' |
+| [lazy](../react/doc/API.md#lazy) | 路由是否懒加载 | boolean/Function(string): boolean | false |
+| [hooks](../react/doc/API.md#hooks) | 执行周期的钩子函数 | object | -- |
+| [pathRewrite](../react/doc/API.md#pathRewrite) | 用于对 import 语句的路径进行替换 | Object{string: string} | -- |
+| [rootPath](../react/doc/API.md#rootPath) | 项目路径 | string | process.cwd() |
+| [onWarning](./doc/API.md#onwarning) | 触发警告时的回调函数 | function(message: string): void | -- |
 
 对上述配置参数中更详细的说明可看[API](../react/doc/API.md)
 
@@ -105,9 +107,9 @@ export default router;
 ```js
 module.exports = {
   // 指定页面文件目录
-  dirpath: "src/views",
+  dirpath: 'src/views',
   // 指定路由模板文件
-  routeFilePath: "src/router/index.jsx",
+  routeFilePath: 'src/router/index.jsx',
 };
 ```
 

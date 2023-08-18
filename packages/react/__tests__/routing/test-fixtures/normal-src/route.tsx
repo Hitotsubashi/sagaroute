@@ -1,9 +1,9 @@
 // @ts-nocheck
 /* sagaroute-inject:imports */
 /* injected by sagaroute: start */
-import LayoutsIndex from "@/layouts/index.tsx";
-import PagesIndex from "@/pages/index.tsx";
-import Pages404 from "@/pages/404.tsx";
+import LayoutsIndex from "@/layouts/index";
+import PagesIndex from "@/pages/index";
+import Pages404 from "@/pages/404";
 /* injected by sagaroute: end */
 
 // sagaroute-inject: routes
