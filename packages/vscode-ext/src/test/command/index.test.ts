@@ -4,7 +4,6 @@ import {
   compareWithExpectedFile,
   getWorkspaceFolderUri,
   resetResultFile,
-  wait,
   defaultWaitTime,
   waitUntilFileChange,
 } from '../utils';
