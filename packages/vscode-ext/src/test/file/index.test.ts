@@ -88,8 +88,12 @@ export default AccountIndex;
       ),
     });
     await vscode.workspace.applyEdit(edit);
-    // 等待至result文件变化
-    await waitUntilFileChange(resultPath);
+    // 等待
+    await wait();
+    if (process.env.GITHUB_ACTION) {
+      await wait();
+      await wait();
+    }
     // 对比result文件和expected文件的内容
     await compareWithExpectedFile(resultPath, 'e2');
   });
