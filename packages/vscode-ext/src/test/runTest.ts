@@ -21,6 +21,10 @@ const runList = [
   },
 ];
 
+if (process.env.GITHUB_ACTION) {
+  runList.pop();
+}
+
 async function main() {
   // The folder containing the Extension Manifest package.json
   // Passed to `--extensionDevelopmentPath`
