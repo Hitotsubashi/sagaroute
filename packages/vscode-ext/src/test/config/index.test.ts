@@ -83,7 +83,9 @@ suite('Test sagaroute.config', function () {
     );
     // 执行命令
     await wait();
-    await wait();
+    if (process.env.GITHUB_ACTION) {
+      await wait();
+    }
     // 对比result文件和expected文件的内容
     await compareWithExpectedFile(resultPath, 'e2');
   });
@@ -96,7 +98,9 @@ suite('Test sagaroute.config', function () {
     await vscode.workspace.applyEdit(edit);
     // 执行命令
     await wait();
-    await wait();
+    if (process.env.GITHUB_ACTION) {
+      await wait();
+    }
     const afterMTime = await getMTime(resultPath);
     assert.equal(previousMTime, afterMTime);
   });
