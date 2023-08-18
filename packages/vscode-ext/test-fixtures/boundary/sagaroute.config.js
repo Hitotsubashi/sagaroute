@@ -1,4 +1,4 @@
-const path = require("path");
+const path = require("path")
 
 module.exports = {
     pathRewrite: {'^./': '@/'},
@@ -6,7 +6,7 @@ module.exports = {
         gather: {
             beforeEach(fpath) {
               // form文件夹下的文件不会被解析
-              if (fpath.split(path.sep).includes('form')) {
+              if (fpath.includes(`${path.sep}form${path.sep}`)) {
                 return null;
               }
             },
