@@ -12,7 +12,7 @@ import {
 // @ts-ignore
 suite('Test all kinds of boundary conditions', function () {
   // @ts-ignore
-  this.timeout(defaultWaitTime * 5);
+  this.timeout(defaultWaitTime * 6);
 
   const base = getWorkspaceFolderUri('boundary');
   const resultPath = path.join(base.fsPath, 'src', 'routes.tsx');
@@ -31,12 +31,12 @@ export default App;`;
     const edit = new vscode.WorkspaceEdit();
     await editFile(oneFilePath, oneFileContent, edit);
     await wait();
-    await wait();
+    if (process.env.GITHUB_ACTION) {
+      await wait();
+      await wait();
+    }
     // 对比result文件和expected文件的内容
-    await compareWithExpectedFile(
-      resultPath,
-      process.env.OS === 'windows-latest' ? 'e1window' : 'e1',
-    );
+    await compareWithExpectedFile(resultPath, process.env.OS === 'Windows' ? 'e1window' : 'e1');
   });
 
   test('test with correct routeFile', async () => {
@@ -47,11 +47,11 @@ export default App;`;
     const edit = new vscode.WorkspaceEdit();
     await editFile(oneFilePath, oneFileContent, edit);
     await wait();
-    await wait();
+    if (process.env.GITHUB_ACTION) {
+      await wait();
+      await wait();
+    }
     // 对比result文件和expected文件的内容
-    await compareWithExpectedFile(
-      resultPath,
-      process.env.OS === 'windows-latest' ? 'e2window' : 'e2',
-    );
+    await compareWithExpectedFile(resultPath, process.env.OS === 'Windows' ? 'e2window' : 'e2');
   });
 });
