@@ -30,6 +30,7 @@ export const resetResultFile = async (resultPath: string, resetName = 'origin') 
   const originPath = path.join(dir, originFileName);
   const origin = await readFileAsync(originPath, 'utf8');
   await writeFileAsync(resultPath, origin, 'utf8');
+  await wait();
 };
 
 export const compareWithExpectedFile = async (resultPath: string, expectedName = 'expected') => {
@@ -64,4 +65,40 @@ export const getMTime = async (filepath: string) => {
   const filePathUri = vscode.Uri.file(filepath);
   const { mtime } = await vscode.workspace.fs.stat(filePathUri);
   return mtime;
+};
+
+export const waitUntilFileChange = (
+  filepath: string,
+  timeout?: number,
+  done?: any,
+  type?: 'change' | 'create' | 'delete',
+) => {
+  console.time(filepath);
+  return new Promise<void>((resolve, reject) => {
+    const watcher = vscode.workspace.createFileSystemWatcher(filepath);
+    let timer: NodeJS.Timer | undefined = undefined;
+    if (timeout) {
+      timer = setInterval(() => {
+        const error = new Error(`File: ${filepath} timeout ${timeout}`);
+        done(error);
+        reject(error);
+        clearInterval(timer);
+        watcher.dispose();
+      }, timeout);
+    }
+    const handled = () => {
+      console.timeEnd(filepath);
+      watcher.dispose();
+      resolve();
+    };
+    if (!type || type === 'change') {
+      watcher.onDidChange(handled);
+    }
+    if (!type || type === 'create') {
+      watcher.onDidCreate(handled);
+    }
+    if (!type || type === 'delete') {
+      watcher.onDidDelete(handled);
+    }
+  });
 };
