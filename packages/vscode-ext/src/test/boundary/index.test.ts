@@ -36,7 +36,7 @@ export default App;`;
       await wait();
     }
     // 对比result文件和expected文件的内容
-    await compareWithExpectedFile(resultPath, process.env.OS === 'Windows' ? 'e1window' : 'e1');
+    await compareWithExpectedFile(resultPath, 'e1');
   });
 
   test('test with correct routeFile', async () => {
@@ -52,6 +52,6 @@ export default App;`;
       await wait();
     }
     // 对比result文件和expected文件的内容
-    await compareWithExpectedFile(resultPath, process.env.OS === 'Windows' ? 'e2window' : 'e2');
+    await compareWithExpectedFile(resultPath, 'e2');
   });
 });
