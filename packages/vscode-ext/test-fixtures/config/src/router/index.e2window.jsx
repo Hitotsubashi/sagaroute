@@ -19,13 +19,13 @@ const {default : ViewsIndex}  = await import("../views/index.jsx");
       {
         "index": true,
         "lazy": async function() {
-      const {default: ComponentsErrorBoundary}  = await import("../components/ErrorBoundary");
-      const {default : ViewsUserIndex}  = await import("../views/user/index.jsx");
-      return {
-      "Component": ViewsUserIndex,
-      "errorElement": <ComponentsErrorBoundary />
-      };
-      }
+    const {default: ComponentsErrorBoundary}  = await import("../components/ErrorBoundary");
+const {default : ViewsUserIndex}  = await import("../views/user/index.jsx");
+    return {
+  "Component": ViewsUserIndex,
+  "errorElement": <ComponentsErrorBoundary />
+};
+  }
       },
       {
         "path": ":role",
