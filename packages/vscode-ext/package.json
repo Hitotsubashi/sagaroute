@@ -101,7 +101,7 @@
     "yargs": "^17.7.1"
   },
   "dependencies": {
-    "@sagaroute/react": "^0.0.1",
+    "@sagaroute/react": "^0.0.2",
     "chokidar": "^3.5.3",
     "glob": "^7.1.4",
     "lodash": "^4.17.21",
