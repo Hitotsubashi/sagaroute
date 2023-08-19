@@ -6,7 +6,7 @@
 
 <div align=center>
     <img src="https://github.com/Hitotsubashi/sagaroute/actions/workflows/ci.yml/badge.svg"/> 
-    <img src="https://codecov.io/gh/Hitotsubashi/sagaroute/branch/feature_test_workflow/graph/badge.svg?token=JUSGSALPH6"/>
+    <img src="https://codecov.io/gh/Hitotsubashi/sagaroute/branch/main/graph/badge.svg?token=JUSGSALPH6"/>
 </div>
 
 <div align="center">

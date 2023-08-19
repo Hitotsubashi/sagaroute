@@ -384,6 +384,7 @@ export default function Users() {
 }
 
 // 设置routeProps
+/** @type {import('react-router-dom').RouteObject} */
 Users.routeProps = {
   caseSensitive: false,
 };

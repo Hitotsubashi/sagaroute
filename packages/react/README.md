@@ -1,5 +1,7 @@
 # @sagaroute/react
 
+![NPM](https://img.shields.io/npm/v/%40sagaroute%2Freact) ![NPM](https://img.shields.io/npm/l/%40sagaroute%2Freact) ![codecov](https://codecov.io/gh/Hitotsubashi/sagaroute/branch/main/graph/badge.svg?token=JUSGSALPH6&flag=react) ![npm type definitions](https://img.shields.io/npm/types/%40sagaroute%2Freact)
+
 一款根据约定式[路由规则](./doc/Routing.md)生成路由列表的插件，生成的路由列表可直接用于[`react-router@6+`](https://github.com/remix-run/react-router)中
 
 ## 快速上手
@@ -160,6 +162,7 @@ interface RoutingOption {
 支持往项目中添加`sagaroute.config.js`或`sagaroute.config.cjs`作为配置文件，在文件中以`CommonJS`的格式编写和导出部分上述[配置项](#配置介绍)，例如：
 
 ```js
+/** @type {import('@sagaroute/react').RoutingOption} */
 module.exports = {
   lazy: function (filepath) {
     return filepath.includes('charts');

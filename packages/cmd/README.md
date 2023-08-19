@@ -1,5 +1,7 @@
 # @sagaroute/cmd
 
+![NPM](https://img.shields.io/npm/v/%40sagaroute%2Fcmd) ![NPM](https://img.shields.io/npm/l/%40sagaroute%2Fcmd) ![codecov](https://codecov.io/gh/Hitotsubashi/sagaroute/branch/main/graph/badge.svg?token=JUSGSALPH6&flag=cmd)
+
 ## 介绍
 
 `@sagaroute/cmd`是一个基于[`@sagaroute/react`](../react/README.md)开发的进行快速生成约定式路由列表的命令行工具
@@ -94,6 +96,7 @@ sagaroute --dirpath=src/views --routeFilePath=src/router/index.jsx
 往项目中添加`sagaroute.config.js`或`sagaroute.config.cjs`作为配置文件，在文件中以`CommonJS`的格式编写和导出部分上述[配置项](#配置参数)，例如：
 
 ```js
+/** @type {import('@sagaroute/react').RoutingOption} */
 module.exports = {
   // 指定页面文件目录
   dirpath: 'src/views',

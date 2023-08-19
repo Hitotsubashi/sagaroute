@@ -17,7 +17,7 @@
 8. 添加 onWarning ✅
    - 显示 view 中缺失的 templateVariable
    - 显示 template 中缺失的 templateVariable
-9. 补充package.json中的keyword，description
+9. 补充package.json中的keyword，description ✅
 
 文档补充：
 
@@ -27,5 +27,6 @@
 4. 寻找/_PURE_/去除 tree-shaking 阶段 ❌
 5. 补充 onWarning ✅
 6. 补充 readonly 的概念 ❌
-7. 补充推荐使用 local class 的说明
-8. /form/筛选例子中补充window和其他系统的分隔符不一致的前提
+7. 补充推荐使用 local class 的说明 ✅
+8. /form/筛选例子中补充window和其他系统的分隔符不一致的前提 ✅
+9. 类型判断添加

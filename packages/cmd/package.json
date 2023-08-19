@@ -4,9 +4,9 @@
   "description": "A command-line tool for generating conventional routes built on top of @sagaroute/react",
   "author": "Hitotsubashi",
   "keywords": [
-    "routes",
-    "conventional routing",
-    "react router",
+    "routing",
+    "react-router",
+    "file-system-based",
     "command line",
     "cmd"
   ],
