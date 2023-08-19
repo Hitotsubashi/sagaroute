@@ -4,8 +4,8 @@
   "description": "A conventional routing plugin for generating routes that suitable for React Router@6+",
   "keywords": [
     "routes",
-    "conventional routing",
-    "react router"
+    "react-router",
+    "file-system-based"
   ],
   "publishConfig": {
     "access": "public"

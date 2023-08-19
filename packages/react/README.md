@@ -1,6 +1,8 @@
 # @sagaroute/react
 
-一款根据约定式[路由规则](./doc/Routing.md)生成路由列表的插件，生成的路由列表可直接用于[`react-router@6+`](https://github.com/remix-run/react-router)中。
+![NPM](https://img.shields.io/npm/v/%40sagaroute%2Freact) ![NPM](https://img.shields.io/npm/l/%40sagaroute%2Freact) ![codecov](https://codecov.io/gh/Hitotsubashi/sagaroute/branch/main/graph/badge.svg?token=JUSGSALPH6&flag=react) ![npm type definitions](https://img.shields.io/npm/types/%40sagaroute%2Freact)
+
+一款根据约定式[路由规则](./doc/Routing.md)生成路由列表的插件，生成的路由列表可直接用于[`react-router@6+`](https://github.com/remix-run/react-router)中
 
 ## 快速上手
 
@@ -12,7 +14,7 @@ npm install @sagaroute/react
 
 ### 2. 在路由模板文件中用注释做标记注入
 
-[**路由模板文件**](./doc/Template.md)是指要被注入路由列表的文件，我们需要通过注释来指明**路由模板文件**中哪个位置被注入**路由列表**和**依赖**。
+[**路由模板文件**](./doc/Template.md)是指要被注入路由列表的文件，我们需要通过注释来指明**路由模板文件**中哪个位置被注入**路由列表**和**依赖**
 
 例如存在**路由模板文件**，其内容如下：
 
@@ -41,6 +43,8 @@ export default router;
 
 ### 3. 生成且注入路由
 
+在项目目录中运行以下代码：
+
 ```js
 import SagaRoute from '@sagaroute/react';
 
@@ -55,7 +59,7 @@ const sagaRoute = new SagaRoute({
 sagaRoute.routing();
 ```
 
-最后经注入后的`"src/router/index.js"`的内容如下所示：
+运行成功后，`"src/router/index.js"`文件的内容如下所示：
 
 ```jsx
 import React from 'react';
@@ -158,6 +162,7 @@ interface RoutingOption {
 支持往项目中添加`sagaroute.config.js`或`sagaroute.config.cjs`作为配置文件，在文件中以`CommonJS`的格式编写和导出部分上述[配置项](#配置介绍)，例如：
 
 ```js
+/** @type {import('@sagaroute/react').RoutingOption} */
 module.exports = {
   lazy: function (filepath) {
     return filepath.includes('charts');
@@ -175,7 +180,7 @@ module.exports = {
 
 ### gather
 
-`gather`阶段会遍历**路由文件目录**下的所有文件，根据[约定式路由规则](./Routing.md)过滤出符合条件的文件，并把每个符合条件的 **文件对象（即包括文件和文件夹）** 转换成`FileNode`节点，最后组成`FileNodes`列表。
+`gather`阶段会遍历**路由文件目录**下的所有文件，根据[约定式路由规则](./Routing.md)过滤出符合条件的文件，并把每个符合条件的 **文件对象（即包括文件和文件夹）** 转换成`FileNode`节点，最后组成`FileNodes`列表
 
 `FileNode`的类型如下所示：
 
@@ -203,13 +208,13 @@ interface FileNode {
 - `children`: 如果节点对应文件夹，则`children`为该文件夹下的**文件对象**转换后的节点列表
 - `type`: `dir`代表**文件对象**为文件夹，`file`代表文件对象为文件
 - `layoutNode`: 代表**文件对象**是否为**全局路由文件**
-- `props`: 包含文件中导出的与路由相关的两个属性[routeProps](./Routing.md/#routeprops)和[routeOptions](./Routing.md#routeoptions)
+- `props`: 包含文件中导出的与路由相关的两个属性[routeProps](./doc/Routing.md/#routeprops)和[routeOptions](./doc/Routing.md#routeoptions)
 - `path`: 文件对象的绝对路径
 - `dependencies`: `props`中包含的属性所附带的依赖
 
 ### weave
 
-`weave`阶段会遍历`gather`生成的`FileNode`数组，根据`react-router`的规则`Routes`生成路由列表和`Routes`的依赖集合`Imports`。
+`weave`阶段会遍历`gather`生成的`FileNode`数组，根据`react-router`的规则`Routes`生成路由列表和`Routes`的依赖集合`Imports`
 
 `Routes`的类型等同于`react-router`的[`RouteObject`](https://reactrouter.com/en/main/route/route#type-declaration)类型，如下所示：
 
@@ -234,8 +239,8 @@ interface RouteObject {
 
 ### print
 
-`print`阶段会把`weave`生成的`Routes`和`Imports`作为**模板变量**插入到**路由模板文件**对应的位置上，从而完成注册路由从扫描、生成到覆写的过程。关于**路由模板文件**的解释可看[此处](./doc/Routing.md)。
+`print`阶段会把`weave`生成的`Routes`和`Imports`作为**模板变量**插入到**路由模板文件**对应的位置上，从而完成注册路由从扫描、生成到覆写的过程。关于**路由模板文件**的解释可看[此处](./doc/Routing.md)
 
 ### 钩子函数
 
-`gather`、`weave`、`print`三个阶段都可以注册钩子函数去调整整个路由列表生成的过程，详细可看[钩子函数](./doc/Hook.md)。
+`gather`、`weave`、`print`三个阶段都可以注册钩子函数去调整整个路由列表生成的过程，详细可看[钩子函数](./doc/Hook.md)

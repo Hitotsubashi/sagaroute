@@ -1,14 +1,14 @@
 ## 钩子函数
 
-**阅读本章节前需要先了解`@sagaroute/react`经历的三个执行阶段，详情可查看[深入原理: 三个阶段](../README.md#深入原理-三个阶段)**。
+**阅读本章节前需要先了解`@sagaroute/react`经历的三个执行阶段，详情可查看[深入原理: 三个阶段](../README.md#深入原理-三个阶段)**
 
-`@sagaroute/react`实例在创建到生成路由列表都需要经历一系列的步骤，比如获取合并配置、生成 `FileNode` 列表、生成路由列表、注入路由列表。在此过程中，它会运行注册在某个步骤下的钩子函数，让开发者由机会在该步骤中运行自己的代码去更改每个阶段生成的结果，以及决定是否终止流程的执行。
+`@sagaroute/react`实例在创建到生成路由列表都需要经历一系列的步骤，比如获取合并配置、生成 `FileNode` 列表、生成路由列表、注入路由列表。在此过程中，它会运行注册在某个步骤下的钩子函数，让开发者由机会在该步骤中运行自己的代码去更改每个阶段生成的结果，以及决定是否终止流程的执行
 
 ### 注册钩子函数
 
 举例来说，`weave.afterEach`会在单个路由生成后运行，那么，我们可以通过代码使路由路径从驼峰式命名（如`RoleList`）换成小写横杠分割命名（如`role-list`），如下所示：
 
-```ts
+```js
 new Sagaroute({
   hooks: {
     weave: {
@@ -23,23 +23,23 @@ new Sagaroute({
 });
 ```
 
-还有其他的钩子，会在实例初始化或执行时的不同阶段被调用，最常用的是[`weave.beforeEach`](#weavebeforeeach)和[`gather.beforeEach`](#gatherbeforeeach)。所有的钩子函数的完整参考及其用法请参考[钩子函数 API 介绍](#api-介绍)。
+还有其他的钩子，会在实例初始化或执行时的不同阶段被调用，最常用的是[`weave.beforeEach`](#weavebeforeeach)和[`gather.beforeEach`](#gatherbeforeeach)。所有的钩子函数的完整参考及其用法请参考[钩子函数 API 介绍](#api-介绍)
 
 ### 钩子函数执行阶段图示
 
-下面是实例初始化和执行的图表，其中包含所有在不同步骤前后执行的钩子函数。你现在并不需要完全理解图中的所有内容，但以后它将是一个有用的参考。
+下面是实例初始化和执行的图表，其中包含所有在不同步骤前后执行的钩子函数。你现在并不需要完全理解图中的所有内容，但以后它将是一个有用的参考
 
 <p align="center">
     <img alt="babel" src="./image/hooks.png" >
 </p>
 
-有关所有钩子函数及其各自用例的详细信息，请看[钩子函数 API 介绍](#api-介绍)。
+有关所有钩子函数及其各自用例的详细信息，请看[钩子函数 API 介绍](#api-介绍)
 
 ### API 介绍
 
 #### build.before
 
-- 执行阶段：在`Sagaroute`实例初始化时，读取[配置文件](../README.md/#配置文件)，获取和整理配置前执行。
+- 执行阶段：在`Sagaroute`实例初始化时，读取[配置文件](../README.md/#配置文件)，获取和整理配置前执行
 - 类型
   ```ts
   /**
@@ -77,7 +77,7 @@ new Sagaroute({
 
 #### build.after
 
-- 执行阶段：在实例`Sagaroute`实例初始化时，完成读取[配置文件](../README.md/#配置文件)以及整理配置后执行。
+- 执行阶段：在实例`Sagaroute`实例初始化时，完成读取[配置文件](../README.md/#配置文件)以及整理配置后执行
 - 类型
   ```ts
   /**
@@ -88,7 +88,7 @@ new Sagaroute({
 
 #### gather.before
 
-- 执行阶段：在`Sagaroute`实例开始遍历**路由文件目录**前执行。
+- 执行阶段：在`Sagaroute`实例开始遍历**路由文件目录**前执行
 - 类型：
   ```ts
   /**
@@ -101,7 +101,7 @@ new Sagaroute({
 
 #### gather.beforeEach
 
-- 执行阶段：在`Sagaroute`实例遍历**路由文件目录**过程中，解析每个 **文件节点（即文件和文件夹）** 之前执行。
+- 执行阶段：在`Sagaroute`实例遍历**路由文件目录**过程中，解析每个 **文件节点（即文件和文件夹）** 之前执行
 - 类型：
   ```ts
   /**
@@ -113,13 +113,17 @@ new Sagaroute({
   function gatherBeforeEach(fpath: string): void | FileNode | null;
   ```
 - 示例：如果要实现特定名称的文件夹下的文件不会被解析成路由，可借此钩子函数实现
+
   ```ts
+  const path = require('path');
+
   new Sagaroute({
     hooks: {
       gather: {
         beforeEach(fpath) {
           // widgets文件夹下的文件不会被解析
-          if (fpath.includes('/widgets/')) {
+          // window和unix的文件分隔符不同，需要用path.sep去获取
+          if (fpath.split(path.sep).includes('widgets')) {
             return null;
           }
         },
@@ -130,7 +134,7 @@ new Sagaroute({
 
 #### gather.afterEach
 
-- 执行阶段：在`Sagaroute`实例遍历**路由文件目录**过程中，解析每个文件节点生成`FileNode`后执行。
+- 执行阶段：在`Sagaroute`实例遍历**路由文件目录**过程中，解析每个文件节点生成`FileNode`后执行
 - 类型：
   ```ts
   /**
@@ -193,11 +197,15 @@ new Sagaroute({
 - 示例：如果要实现特定名称的文件夹下的文件不会被解析成路由，除了[gather.beforeEach](#gatherbeforeeach)，也可借助此钩子函数实现：
 
   ```ts
+  const path = require('path');
+
   new Sagaroute({
     hooks: {
       weave: {
         beforeEach(fileNode) {
-          if (fileNode.path.includes('/widgets/')) {
+          // widgets文件夹下的文件不会被解析
+          // window和unix的文件分隔符不同，需要用path.sep去获取
+          if (fileNode.path.split(path.sep).includes('widgets')) {
             return null;
           }
         },
@@ -250,10 +258,7 @@ new Sagaroute({
        hooks: {
          weave: {
            afterEach(route) {
-             route.path = route.path
-               ?.replace(/([A-Z])/g, '-$1')
-               .replace(/^-/, '')
-               .toLocaleLowerCase();
+             route.caseSensitive = true;
            },
          },
        },
@@ -383,11 +388,11 @@ new Sagaroute({
   });
   ```
 
-  经过上述代码后便可实现路由分割。
+  经过上述代码后便可实现路由分割
 
 #### print.inject.after
 
-- 执行阶段：在把**模板变量**渲染到**渲染模板**以生成**渲染结果**后执行。
+- 执行阶段：在把**模板变量**渲染到**渲染模板**以生成**渲染结果**后执行
 - 类型：
   ```ts
   /**
@@ -400,7 +405,7 @@ new Sagaroute({
 
 #### print.write.before
 
-- 执行阶段：在把**渲染结果**覆写在**路由模板文件**之前执行。
+- 执行阶段：在把**渲染结果**覆写在**路由模板文件**之前执行
 - 类型：
 
   ```ts
@@ -426,7 +431,7 @@ new Sagaroute({
 
 ---
 
-注意：除了`build.before`外，所有阶段的`before`和`beforeEach`钩子函数都可以通过返回`null`值来终止流程的执行。
+注意：除了`build.before`外，所有阶段的`before`和`beforeEach`钩子函数都可以通过返回`null`值来终止流程的执行
 
 ### 多个钩子函数与执行顺序
 
@@ -459,6 +464,6 @@ new Sagaroute({
 });
 ```
 
-对象中的`order`代表钩子函数的执行顺序，`handler`代表钩子函数自身。`order`越小越先执行，例如上述代码中的`fn1`会比`fn2`早执行，如果直接传入钩子函数而不是对象，则默认该钩子函数的`order`为`50`。
+对象中的`order`代表钩子函数的执行顺序，`handler`代表钩子函数自身。`order`越小越先执行，例如上述代码中的`fn1`会比`fn2`早执行，如果直接传入钩子函数而不是对象，则默认该钩子函数的`order`为`50`
 
-`order`原则上是`number`值，因此可传入任意数字，`@sagaroute/react`中建议用户设立的`order`值范围为`0~100`，其余的数字值供开发插件使用。
+`order`原则上是`number`值，因此可传入任意数字，`@sagaroute/react`中建议用户设立的`order`值范围为`0~100`，其余的数字值供开发插件使用

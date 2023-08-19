@@ -1,10 +1,10 @@
 # 约定式路由
 
-> 本插件的约定式路由规则是基于[`umi`](https://v3.umijs.org/zh-CN/docs/convention-routing)(主要)和[`next`](https://nextjs.org/docs/pages/building-your-application/routing)上完善的。
+> 本插件的约定式路由规则是基于[`umi`](https://v3.umijs.org/zh-CN/docs/convention-routing)(主要)和[`next`](https://nextjs.org/docs/pages/building-your-application/routing)上完善的
 
-约定式路由也叫文件路由，即根据文件系统里的文件夹和文件生成的路由配置。
+约定式路由也叫文件路由，即根据文件系统里的文件夹和文件生成的路由配置
 
-在`@sagaroute/react`实例的运行过程中，会扫描文件系统里的文件夹和文件，根据每个文件夹和文件的命名、文件里的内容去生成路由列表。文件系统的路径可通过[`dirpath`](./API.md#dirpath)来指定。
+在`@sagaroute/react`实例的运行过程中，会扫描文件系统里的文件夹和文件，根据每个文件夹和文件的命名、文件里的内容去生成路由列表。文件系统的路径可通过[`dirpath`](./API.md#dirpath)来指定
 
 比如存在路径为`src/pages`的文件系统，其文件结构如下所示：
 
@@ -23,7 +23,7 @@
 ];
 ```
 
-上述路由列表可直接用于`react-router`中。
+上述路由列表可直接用于`react-router`中
 
 需要注意的是，符合以下条件的文件和目录不会被注册为路由：
 
@@ -36,7 +36,7 @@
 
 ## 动态路由
 
-约定当文件或目录命名用`[]`包裹时，生成的路由会是动态路由。
+约定当文件或目录命名用`[]`包裹时，生成的路由会是动态路由
 
 比如：
 
@@ -79,7 +79,7 @@
 
 ## 动态可选路由
 
-约定当文件或目录命名用`[$]`包裹时，生成的路由会是动态可选路由。
+约定当文件或目录命名用`[$]`包裹时，生成的路由会是动态可选路由
 
 比如：
 
@@ -118,7 +118,7 @@
 
 ## 索引路由
 
-约定目录下存在命名为`index`的`jsx`或`tsx`文件时，如果该`index`文件所对应路由为二级路由，则把该路由设为索引路由，即将其路由的`index`属性设为`true`。
+约定目录下存在命名为`index`的`jsx`或`tsx`文件时，如果该`index`文件所对应路由为二级路由，则把该路由设为索引路由，即将其路由的`index`属性设为`true`
 
 比如以下文件结构：
 
@@ -384,6 +384,7 @@ export default function Users() {
 }
 
 // 设置routeProps
+/** @type {import('react-router-dom').RouteObject} */
 Users.routeProps = {
   caseSensitive: false,
 };
@@ -476,7 +477,7 @@ interface RouteObject {
    };
    ```
 
-   如果属性的值需要引用到外部变量，则请用下面第 2 条规则实现。
+   如果属性的值需要引用到外部变量，则请用下面第 2 条规则实现
 
 3. **高级属性**的值可以是变量，使用时请通过`import`语句从其他文件中引入该变量，`@sagaroute/react`会在生成注册路由过程中将其作为依赖引入：
 

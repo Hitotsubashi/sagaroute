@@ -8,6 +8,7 @@ import {
   resetResultFile,
   wait,
   defaultWaitTime,
+  waitUntilFileChange,
 } from '../utils';
 import { TextEncoder } from 'util';
 import * as assert from 'assert';
@@ -15,7 +16,7 @@ import * as assert from 'assert';
 // @ts-ignore
 suite('Test File Operate', function () {
   // @ts-ignore
-  this.timeout(defaultWaitTime * 4);
+  this.timeout(defaultWaitTime * 6);
 
   const base = getWorkspaceFolderUri('file');
   const resultPath = path.join(base.fsPath, 'src', 'routes.tsx');
@@ -24,9 +25,9 @@ suite('Test File Operate', function () {
   test('test routing files', async () => {
     // 重置result文件内容;
     await resetResultFile(resultPath);
-    // 执行命令
+    // 等待至result文件变化
     await vscode.commands.executeCommand('sagaroute.routing');
-    await wait();
+    await waitUntilFileChange(resultPath);
     // 对比result文件和expected文件的内容
     await compareWithExpectedFile(resultPath, 'e1');
   });
@@ -87,8 +88,12 @@ export default AccountIndex;
       ),
     });
     await vscode.workspace.applyEdit(edit);
-    // 执行命令
+    // 等待
     await wait();
+    if (process.env.GITHUB_ACTION) {
+      await wait();
+      await wait();
+    }
     // 对比result文件和expected文件的内容
     await compareWithExpectedFile(resultPath, 'e2');
   });
@@ -112,8 +117,8 @@ export default AccountIndex;
 `,
       edit,
     );
-    // 执行命令
-    await wait();
+    // 等待至result文件变化
+    await waitUntilFileChange(resultPath);
     // 对比result文件和expected文件的内容
     await compareWithExpectedFile(resultPath, 'e3');
   });
@@ -158,8 +163,8 @@ export default UserLayout;
       { overwrite: true },
     );
     await vscode.workspace.applyEdit(edit);
-    // 执行命令
-    await wait();
+    // 等待至result文件变化
+    await waitUntilFileChange(resultPath);
     // 对比result文件和expected文件的内容
     await compareWithExpectedFile(resultPath, 'e4');
   });

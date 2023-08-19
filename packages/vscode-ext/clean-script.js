@@ -7,6 +7,6 @@ const folders = ['./dist', './out'];
 folders.forEach((folder) => {
   const dir = path.join(__dirname, folder);
   if (fs.existsSync(dir)) {
-    fs.rmdirSync(dir, { recursive: true });
+    fs.rmSync(dir, { recursive: true });
   }
 });

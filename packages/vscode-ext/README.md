@@ -1,11 +1,15 @@
-# @sagaroute/vscode-extension
+# sagaroute-vscode
+
+![Visual Studio Marketplace Version (including pre-releases)](https://img.shields.io/visual-studio-marketplace/v/ocean-sagaroute.sagaroute-vscode) ![NPM](https://img.shields.io/npm/l/%40sagaroute%2Freact)
+
+**❗注意: 在`vscode extension marketplace`中该文档会存在图片和链接不能查看的情况，请前往[github](https://github.com/Hitotsubashi/sagaroute/tree/main/packages/vscode-ext)或[gitee](https://gitee.com/Hitotsubashi/sagaroute/tree/main/packages/vscode-ext)进行阅读**
 
 ## 介绍
 
-`@sagaroute/vscode-extension`是一款基于`@sagaroute/react`开发的用于快速生成约定式路由列表的`VSCode`插件，它会监听**路由文件目录**的变化以动态生成约定式路由列表，并把生成结果插入到指定[**路由模板文件**](../react/doc/Template.md)
+`sagaroute-vscode`是一款基于`@sagaroute/react`开发的用于快速生成约定式路由列表的`VSCode`插件，它会监听**路由文件目录**的变化以动态生成约定式路由列表，并把生成结果插入到指定[**路由模板文件**](../react/doc/Template.md)
 
 <p align="center">
-    <img alt="overview-generate-after-save" src="https://github.com/Hitotsubashi/sagaroute/blob/main/packages/vscode-ext/doc/images/overview-generate-after-save.gif" width="500">
+    <img alt="overview-generate-after-save" src="./doc/images/overview-generate-after-save.gif" width="500">
     <div align="center">文件变化后触发路由列表更新</div>
 </p>
 
@@ -19,19 +23,29 @@
 - 🌴 广泛性: 生成的**约定式路由列表**遵循`ES6 Module`格式，适用于任何开发环境
 - 🎯 智能提示: 具有路由路径智能提示机制
 - 🚀 快且稳: 合理利用缓存机制，使第二次的生成速度更快。若生成结果与上次相同，则不会更改**路由模板文件**
-- 📲 实用性:采用近似于[`umi`](https://v3.umijs.org/zh-CN/docs/convention-routing)的[约定式路由规则](../react/doc/Routing.md)，更贴近实际开发场景
+- 📲 实用性: 采用近似于[`umi`](https://v3.umijs.org/zh-CN/docs/convention-routing)的[约定式路由规则](../react/doc/Routing.md)，更贴近实际开发场景
 - 📇 样式一致: 生成**路由列表**保存后会自动触发代码风格约束插件的格式化(如`prettier`、`eslint`，取决于`vscode`安装了哪些插件)
-- 🎉 可扩展: 内部具有完整的执行周期，可通过[配置项](#配置)进行扩展
+- 🎉 可扩展: 支持[配置文件](../react/README.md#配置文件)，可通过钩子函数控制工作流程或增强路由对象
 
 ## 使用
 
 ### 1. 安装插件
 
-<!-- TODO：上传后才编写 -->
+从`vscode`的`EXTENSTIONS: MARKETPLACE`中下载，如下所示👇：
 
-### 2. 在路由模板文件中用注释做标记注入
+![download](./doc/images/download-marketplace.png)
 
-[**路由模板文件**](../react/doc/Template.md)是指要被注入路由列表的文件，我们需要通过注释来指明**路由模板文件**中哪个位置被注入**路由列表**和**依赖**。
+### 2. 在项目中下载`@sagaroute/react`(非必须但推荐)
+
+```bash
+npm install @sagaroute/react
+```
+
+**_在`sagaroute-vscode`中有内嵌的`@sagaroute/react`，因此即使不做这一步也不会影响运行。但这里推荐做做这一步是因为这样确保不同开发者在同一项目中使用的`@sagaroute/react`的版本是一致的，避免因版本不同导致的差异化情况。_**
+
+### 3. 在路由模板文件中用注释做标记注入
+
+[**路由模板文件**](../react/doc/Template.md)是指要被注入路由列表的文件，我们需要通过注释来指明**路由模板文件**中哪个位置被注入**路由列表**和**依赖**
 
 例如存在**路由模板文件**，其内容如下：
 
@@ -58,9 +72,9 @@ export default router;
 
 其中`/* sagaroute-inject:imports */`用于标记**依赖**注入的位置，`/* sagaroute-inject:routes */`用于标记**路由列表**注入的位置。关于这些注释的含义和**路由模板文件**的更多说明可看[此处](../react/doc/Routing.md)
 
-### 3. 生成路由列表
+### 4. 生成路由列表
 
-`@sagaorute/vscode-extension`会监听**页面文件目录**里的文件，当文件变化时开始执行生成路由，同时你也可以使用命令要求本插件开始生成路由，即(CMD/CTRL + Shift + P)唤出命令面板后输入`Sagaroute: routing`，如下 👇 所示：
+`@sagaorute/vscode-extension`会监听**页面文件目录**里的文件，当更改的文件`CRTL+S`保存时开始执行生成路由，同时你也可以使用命令要求本插件开始生成路由，即(CMD/CTRL + Shift + P)唤出命令面板后输入`Sagaroute: routing`，如下 👇 所示：
 
 <p align="center">
     <img alt="command-routing" src="./doc/images/command-routing.gif" width="500">
@@ -75,9 +89,9 @@ export default router;
     <div align="center">支持智能提示路由路径</div>
 </p>
 
-选择后，`"//"`会被替换成所选择的路由路径。
+选择后，`"//"`会被替换成所选择的路由路径
 
-**注意：在`vscode`项目首次打开时，要先做保存操作或者强制`Sagaroute: routing`后，才会有开启路由路径智能拼写。**
+**注意：在`vscode`项目首次打开时，要先做保存操作或者强制`Sagaroute: routing`后，才会有开启路由路径智能拼写**
 
 ### 配置参数
 
@@ -96,6 +110,8 @@ export default router;
 | [rootPath](../react/doc/API.md#rootPath) | 项目路径 | string | process.cwd() |
 | [onWarning](./doc/API.md#onwarning) | 触发警告时的回调函数 | function(message: string): void | -- |
 
+**注意❗：在该插件中，`hooks`的[`print.inject.after`](../react/doc/Hook.md#printinjectafter)、[`print.write.before`](../react/doc/Hook.md#printwritebefore)、[`print.write.after`](../react/doc/Hook.md#printwriteafter)不会被执行。**
+
 对上述配置参数中更详细的说明可看[API](../react/doc/API.md)
 
 ### 配置设置方式
@@ -103,6 +119,7 @@ export default router;
 往项目中添加`sagaroute.config.js`或`sagaroute.config.cjs`作为配置文件，在文件中以`CommonJS`的格式编写和导出部分上述[配置项](#配置参数)，例如：
 
 ```js
+/** @type {import('@sagaroute/react').RoutingOption} */
 module.exports = {
   // 指定页面文件目录
   dirpath: 'src/views',
@@ -113,7 +130,7 @@ module.exports = {
 
 ## 命令
 
-`@sagaroute/vscode-extension`提供了以下命令，可通过(CMD/CTRL + Shift + P)唤出命令面板后输入使用：
+`sagaroute-vscode`提供了以下命令，可通过(CMD/CTRL + Shift + P)唤出命令面板后输入使用：
 
 - `Sagaroute: routing`: 生成路由列表，若存在缓存，则无视缓存重新构建
 - `Sagaroute: rebuild`: 重新根据[配置文件](#配置设置方式)构建配置，并执行生成路由列表的操作
@@ -135,13 +152,13 @@ module.exports = {
 在`vscode`底部的状态栏中会有`Sagaroute`的状态控件，以显示`Sagaroute`是否处于监听**路由文件目录**中。如下所示：
 
 <p align="center">
-    <img alt="status-sleeping" src="./doc/images/status-sleeping.png" width="120">
+    <img alt="status-sleeping" src="./doc/images/status-sleeping.png" >
     <div align="center">白字代表Sagaroute没有监听</div>
 </p>
 
 <p align="center">
-    <img alt="status-watching" src="./doc/images/status-watching.png" width="130">
+    <img alt="status-watching" src="./doc/images/status-watching.png">
     <div align="center">绿字代表Sagaroute正在监听</div>
 </p>
 
-你也可以通过点击该状态控件来切换监听状态。监听状态会同步到`.vscode/settings.json`的`sagaroute.working`变量中。
+你也可以通过点击该状态控件来切换监听状态。监听状态会同步到`.vscode/settings.json`的`sagaroute.working`变量中

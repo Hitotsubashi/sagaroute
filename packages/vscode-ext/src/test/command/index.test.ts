@@ -4,14 +4,14 @@ import {
   compareWithExpectedFile,
   getWorkspaceFolderUri,
   resetResultFile,
-  wait,
   defaultWaitTime,
+  waitUntilFileChange,
 } from '../utils';
 
 // @ts-ignore
 suite('Test Command', function () {
   // @ts-ignore
-  this.timeout(defaultWaitTime * 4);
+  this.timeout(defaultWaitTime * 6);
 
   const base = getWorkspaceFolderUri('command');
   const resultPath = path.join(base.fsPath, 'src', 'routes.tsx');
@@ -29,9 +29,8 @@ suite('Test Command', function () {
     // 重置result文件内容
     await resetResultFile(resultPath);
     // 执行命令
-    await wait();
     await vscode.commands.executeCommand('sagaroute.toggle');
-    await wait();
+    await waitUntilFileChange(resultPath);
     // 对比result文件和expected文件的内容
     await compareWithExpectedFile(resultPath);
   });
@@ -40,9 +39,8 @@ suite('Test Command', function () {
     // 重置result文件内容
     await resetResultFile(resultPath);
     // 执行命令
-    await wait();
     await vscode.commands.executeCommand('sagaroute.routing');
-    await wait();
+    await waitUntilFileChange(resultPath);
     // 对比result文件和expected文件的内容
     await compareWithExpectedFile(resultPath);
   });
