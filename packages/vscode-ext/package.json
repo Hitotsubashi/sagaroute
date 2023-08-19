@@ -5,7 +5,7 @@
   "license": "MIT",
   "publisher": "ocean-sagaroute",
   "description": "A VSCode plugin based on @sagaroute/react for quickly generating  generating routes that suitable for React Router@6+",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "icon": "LOGO.png",
   "engines": {
     "vscode": "^1.55.2",
@@ -84,7 +84,8 @@
     "compile-tests": "yarn clean && npx tsc -b && yarn esbuild-base",
     "watch-tests": "npx tsc -b -w",
     "pretest": "yarn run compile-tests",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "vscode-publish": "vsce publish --yarn"
   },
   "devDependencies": {
     "@types/glob": "^7.1.1",
@@ -100,7 +101,7 @@
     "yargs": "^17.7.1"
   },
   "dependencies": {
-    "@sagaroute/react": "^0.0.1-alpha.0",
+    "@sagaroute/react": "^0.0.1",
     "chokidar": "^3.5.3",
     "glob": "^7.1.4",
     "lodash": "^4.17.21",

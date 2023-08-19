@@ -1,6 +1,6 @@
 {
   "name": "@sagaroute/cmd",
-  "version": "0.0.1-alpha.0",
+  "version": "0.0.2",
   "description": "A command-line tool for generating conventional routes built on top of @sagaroute/react",
   "author": "Hitotsubashi",
   "keywords": [
@@ -39,7 +39,8 @@
   },
   "scripts": {
     "build": "tsc  && tsc-alias",
-    "test": "npx nyc yarn jest"
+    "test": "npx nyc yarn jest",
+    "prepublish": "yarn build"
   },
   "devDependencies": {
     "@types/jest": "^29.4.0",
@@ -47,7 +48,7 @@
     "nyc": "^15.1.0"
   },
   "dependencies": {
-    "@sagaroute/react": "^0.0.1-alpha.0",
+    "@sagaroute/react": "^0.0.1",
     "colorette": "^2.0.20",
     "single-line-log": "^1.1.2",
     "yargs": "^17.7.1"
