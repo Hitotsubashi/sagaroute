@@ -17,6 +17,7 @@
 8. 添加 onWarning ✅
    - 显示 view 中缺失的 templateVariable
    - 显示 template 中缺失的 templateVariable
+9. 补充package.json中的keyword，description
 
 文档补充：
 

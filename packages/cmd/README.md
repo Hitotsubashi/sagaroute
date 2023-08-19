@@ -2,7 +2,7 @@
 
 ## 介绍
 
-`@sagaroute/cmd`是一个基于[`@sagaroute/react`](../react/README.md)开发的进行快速生成约定式路由列表的命令行工具。
+`@sagaroute/cmd`是一个基于[`@sagaroute/react`](../react/README.md)开发的进行快速生成约定式路由列表的命令行工具
 
 <p align="center">
     <img alt="overview" src="./doc/images/overview.gif" width="500">

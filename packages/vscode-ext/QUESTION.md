@@ -31,8 +31,10 @@
 6. 修复 vscode.engine 为 invalid 的情况📇
 7. 考虑是否把@sagaroute/react 提取出来📇
 8. launch.json可以放到根目录上运行
+9. 补充package.json中的keyword，description
 
 文档补充：
 
 1. 补充 aggregate📇
 2. 补充ext插件的hook只运行到inject.before
+3. 补充@sagaroute/react提取出来

@@ -1,6 +1,6 @@
 # 路由模板文件
 
-在生成路由列表后，`@sagaroute/react`会提取**路由模板文件**的内容，然后根据注释把内容转换为**渲染模板**，然后通过[`Mustache`](https://mustache.github.io/)把路由列表等**模板变量**通过相关的`API`注入以生成路由文件代码(其原理是基于`Mustache.render({渲染模板},{模板变量})`实现的)。
+在生成路由列表后，`@sagaroute/react`会提取**路由模板文件**的内容，然后根据注释把内容转换为**渲染模板**，然后通过[`Mustache`](https://mustache.github.io/)把路由列表等**模板变量**通过相关的`API`注入以生成路由文件代码(其原理是基于`Mustache.render({渲染模板},{模板变量})`实现的)
 
 例如存在**路由模板文件**，其内容如下所示：
 
@@ -27,7 +27,7 @@ const router = createBrowserRouter(routes);
 export default router;
 ```
 
-注释支持行内注释`// sagaroute-inject:xxx`和块级注释`/* sagaroute-inject:xxx */`，但注释内容的格式必须为`sagaroute-inject:var`，其中`var`可以为任意变量名称，该名称最终会和**渲染模板**中的**模板变量**名称一致。
+注释支持行内注释`// sagaroute-inject:xxx`和块级注释`/* sagaroute-inject:xxx */`，但注释内容的格式必须为`sagaroute-inject:var`，其中`var`可以为任意变量名称，该名称最终会和**渲染模板**中的**模板变量**名称一致
 
 例如在**路由模板文件**中有以下代码：
 
