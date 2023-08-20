@@ -243,4 +243,10 @@ interface RouteObject {
 
 ### 钩子函数
 
-`gather`、`weave`、`print`三个阶段都可以注册钩子函数去调整整个路由列表生成的过程，详细可看[钩子函数](./doc/Hook.md)
+`gather`、`weave`、`print`三个阶段都可以注册钩子函数去调整整个路由列表生成的过程，利用这些钩子函数，可以实现以下场景需求：
+
+- [忽略某个文件或文件夹，不生成对应的注册路由](./doc/Hook.md#gatherbeforeeach)
+- [统一设置路由属性](./doc/Hook.md#weaveaftereach)
+- [分割路由列表](./doc/Hook.md#printinjectbefore)
+
+更多详细可看[钩子函数](./doc/Hook.md)

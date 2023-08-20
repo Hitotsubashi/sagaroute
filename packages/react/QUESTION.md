@@ -18,6 +18,7 @@
    - 显示 view 中缺失的 templateVariable
    - 显示 template 中缺失的 templateVariable
 9. 补充package.json中的keyword，description ✅
+10. 根据url反推页面文件并打开
 
 文档补充：
 
