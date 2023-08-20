@@ -180,10 +180,6 @@ function initRoutingWatcher(immediate = false) {
     });
 }
 
-function initLogging() {
-  getLogging().show();
-}
-
 function registerRouteCompletions(context: vscode.ExtensionContext) {
   const documentSelector: vscode.DocumentSelector = [
     { scheme: 'file', language: 'typescript' },
@@ -245,7 +241,6 @@ export function activate(context: vscode.ExtensionContext) {
   isEnabled = settingConfiguration.get('working') as boolean;
   try {
     initStatusBar(context);
-    initLogging();
     initListenWorkspaceConfiguration(context);
     initInputCommand(context);
     initConfigWatcher();
