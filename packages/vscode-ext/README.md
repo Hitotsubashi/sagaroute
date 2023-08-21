@@ -20,9 +20,9 @@
 
 ## 特点
 
-- 🌴 广泛性: 生成的**约定式路由列表**遵循`ES6 Module`格式，适用于任何开发环境
+- 🌴 泛用性: 生成的**约定式路由列表**遵循`ES6 Module`格式，适用于任何开发环境
 - 🎯 智能提示: 具有路由路径智能提示机制
-- 🚀 快且稳: 合理利用缓存机制，使第二次的生成速度更快。若生成结果与上次相同，则不会更改**路由模板文件**
+- 🚀 快且稳: 合理利用[缓存机制](#缓存)，使第二次的生成速度更快。若生成结果与上次相同，则不会更改**路由模板文件**
 - 📲 实用性: 采用近似于[`umi`](https://v3.umijs.org/zh-CN/docs/convention-routing)的[约定式路由规则](../react/doc/Routing.md)，更贴近实际开发场景
 - 📇 样式一致: 生成**路由列表**保存后会自动触发代码风格约束插件的格式化(如`prettier`、`eslint`，取决于`vscode`安装了哪些插件)
 - 🎉 可扩展: 支持[配置文件](../react/README.md#配置文件)，可通过钩子函数控制工作流程或增强路由对象
@@ -41,7 +41,9 @@
 npm install @sagaroute/react
 ```
 
-**_在`sagaroute-vscode`中有内嵌的`@sagaroute/react`，因此即使不做这一步也不会影响运行。但这里推荐做做这一步是因为这样确保不同开发者在同一项目中使用的`@sagaroute/react`的版本是一致的，避免因版本不同导致的差异化情况。_**
+**_与`prettier-vscode`一样，在`sagaroute-vscode`中有内嵌的`@sagaroute/react`，因此即使不做这一步也不会影响运行。但这里推荐做做这一步是因为这样确保不同开发者在同一项目中使用的`@sagaroute/react`的版本是一致的，避免因版本不同导致的差异化情况_**
+
+**执行该步骤后需要重启`Vscode`才会生效**
 
 ### 3. 在路由模板文件中用注释做标记注入
 
@@ -77,23 +79,47 @@ export default router;
 `@sagaorute/vscode-extension`会监听**页面文件目录**里的文件，当更改的文件`CRTL+S`保存时开始执行生成路由，同时你也可以使用命令要求本插件开始生成路由，即(CMD/CTRL + Shift + P)唤出命令面板后输入`Sagaroute: routing`，如下 👇 所示：
 
 <p align="center">
-    <img alt="command-routing" src="./doc/images/command-routing.gif" width="500">
+    <img alt="command-routing" src="./doc/images/command-routing.gif" >
 </p>
 
-## 路由路径智能拼写
+## 支持设置路由属性
 
-你可以在项目中通过键入`"//"`，`sagaroute`插件会提供所有所有路由的路径提示，如下所示：
+你可以在组件的[`routeProps`](../react/doc/Routing.md#routeprops)字段中设置属性，`routeProps`上的所有属性会复制到**注册路由**上：
 
-<p align="center">
-    <img alt="overview-completion" src="./doc/images/overview-completion.gif" width="400">
-    <div align="center">支持智能提示路由路径</div>
-</p>
+假如存在`src/pages/users.tsx`文件，其文件内容如下所示：
 
-选择后，`"//"`会被替换成所选择的路由路径
+```jsx
+import ErrorBoundary from '@/components/ErrorBoundary';
 
-**注意：在`vscode`项目首次打开时，要先做保存操作或者强制`Sagaroute: routing`后，才会有开启路由路径智能拼写**
+export default function Users() {
+  return <div>Users...</div>;
+}
 
-### 配置参数
+// 设置routeProps
+/** @type {import('react-router-dom').RouteObject} */
+Users.routeProps = {
+  caseSensitive: false,
+};
+```
+
+生成的注册路由如下所示：
+
+```jsx
+{
+  path:'user',
+  element:<PagesUsers/>,
+  caseSensitive: false,
+  ErrorBoundary: ComponentsErrorBoundary
+}
+```
+
+可看以下效果图：
+
+![edit-routeProps](./doc/images/edit-routeProps.gif)
+
+`routeProps`属性的设置值支持任意类型，不过要遵循编码规则，详情请看[此处](../react/doc/Routing.md#routeprops)
+
+## 配置参数
 
 `@sagaroute/cmd`中支持指定的配置项如下所示：
 
@@ -162,3 +188,69 @@ module.exports = {
 </p>
 
 你也可以通过点击该状态控件来切换监听状态。监听状态会同步到`.vscode/settings.json`的`sagaroute.working`变量中
+
+## 高级特性
+
+### 路由路径智能拼写
+
+你可以在项目中通过键入`"//"`，`sagaroute`插件会提供所有所有路由的路径提示，如下所示：
+
+<p align="center">
+    <img alt="overview-completion" src="./doc/images/overview-completion.gif" >
+    <div align="center">支持智能提示路由路径</div>
+</p>
+
+选择后，`"//"`会被替换成所选择的路由路径
+
+**注意：在`vscode`项目首次打开时，要先做保存操作或者强制`Sagaroute: routing`后，才会有开启路由路径智能拼写**
+
+### 支持批量生成`lazy`路由
+
+[`lazy`](https://reactrouter.com/en/main/route/lazy#lazy)是`react-router@6.4`新增的路由属性，用于路由文件的懒加载，`lazy`有多种写法，如下所示：
+
+```js
+[
+  // 写法1: 只对路由文件进行懒加载
+  {
+    path: 'projects',
+    loader: ({ request }) => fetchDataForUrl(request.url),
+    lazy: () => import('./projects'),
+  },
+  // 写法2: 对路由文件及其路由属性变量进行懒加载
+  {
+    path: 'messages',
+    async lazy() {
+      let { messagesLoader, Messages } = await import('./pages/Dashboard');
+      return {
+        loader: messagesLoader,
+        Component: Messages,
+      };
+    },
+  },
+];
+```
+
+本插件可以通过设置[`lazy`配置项](https://gitee.com/Hitotsubashi/sagaroute/blob/main/packages/react/doc/API.md#lazy)统一生成上述 👆 第 2 种写法的`lazy`路由，如下 👇 效果图：
+
+![save-with-lazy](./doc/images/save-with-lazy.gif)
+
+### 缓存
+
+本插件内部实现了路由对象的缓存机制，因此存在以下优点：
+
+1. 加速二次生成路由的速度：对内容未更改的文件会直接取缓存作为生成结果，加快生成整个路由列表的生成速度
+2. 只在路由列表变化时更新文件：对每个非缓存的新路由，会与缓存中的路由进行对比，如果所有对比结果与上次相同且没有增删的路由，则不会更改文件内容，避免频繁的热更新
+
+可看以下👇效果图：
+
+<p align="center">
+  <img src="./doc/images/save-but-no-change.gif" >
+  <div align="center">1. 生成路由与上次一致时，不会更改路由文件的内容</div>
+</p>
+
+<p align="center">
+  <img src="./doc/images/edit-routeProps.gif" >
+  <div align="center">2. 生成路由与上次不一致时，才会更改路由文件的内容</div>
+</p>
+
+若要无视缓存强制生成路由列表，则可使用[`Sagaroute: routing`命令](#命令)
