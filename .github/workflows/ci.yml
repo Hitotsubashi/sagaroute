@@ -3,11 +3,11 @@ on:
   push:
     paths-ignore:
       - 'doc/**'
-      - '**.md'
+      - '*.md'
   pull_request:
     paths-ignore:
       - 'doc/**'
-      - '**.md'
+      - '*.md'
 jobs:
   CI:
     runs-on: ${{ matrix.os }}

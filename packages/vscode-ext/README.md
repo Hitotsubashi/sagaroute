@@ -33,7 +33,23 @@
 
 从`vscode`的`EXTENSTIONS: MARKETPLACE`中下载，如下所示👇：
 
-![download](./doc/images/download-marketplace.png)
+<p align="center">
+    <img alt="status-sleeping" src="./doc/images/download-marketplace.png" >
+</p>
+
+下载`Sagaroute`后会发现`Vscode`右下角的状态栏出现了一个如下的控件：
+
+<p align="center">
+    <img alt="status-sleeping" src="./doc/images/status-sleeping.png" >
+    <div align="center">此时代表Sagaroute没有开启监听</div>
+</p>
+
+`Sagaroute`在每个项目中是默认不开启监听工作的，需要开发者手动点击上面 👆 的控件切换监听状态，当开启监听后控件会如下所示
+
+<p align="center">
+    <img alt="status-watching" src="./doc/images/status-watching.png" >
+    <div align="center">此时代表Sagaroute已开启监听</div>
+</p>
 
 ### 2. 在项目中下载`@sagaroute/react`(非必须但推荐)
 
