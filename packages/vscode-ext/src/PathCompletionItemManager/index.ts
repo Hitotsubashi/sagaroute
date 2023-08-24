@@ -17,6 +17,7 @@ export class PathCompletionItemManager {
   private completions: CompletionItem[] = [];
   private routeToFilePathMap = new Map<RouteObject, string>();
   private paths: { route: string; fpath?: string }[] = [];
+  private baseUri = vscode.Uri.file(path.join(workspaceRootFolderPath, 'package.json'));
 
   private transformPathToCompletionItem(route: string, fpath?: string) {
     const completion = new vscode.CompletionItem(route, vscode.CompletionItemKind.Keyword);
@@ -27,7 +28,7 @@ export class PathCompletionItemManager {
           .replace(workspaceRootFolderPath, '.')
           .replaceAll(path.sep, '/')})`,
       );
-      md.baseUri = vscode.Uri.file(path.join(workspaceRootFolderPath, 'package.json'));
+      md.baseUri = this.baseUri;
       completion.documentation = md;
     }
     return completion;
