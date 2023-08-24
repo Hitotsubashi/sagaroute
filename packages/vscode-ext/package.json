@@ -105,6 +105,8 @@
     "chokidar": "^3.5.3",
     "glob": "^7.1.4",
     "lodash": "^4.17.21",
-    "mocha": "^10.2.0"
+    "mocha": "^10.2.0",
+    "vscode-languageclient": "^8.1.0",
+    "vscode-languageserver": "^8.1.0"
   }
 }
