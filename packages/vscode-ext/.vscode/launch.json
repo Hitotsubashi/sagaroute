@@ -10,11 +10,7 @@
       "type": "extensionHost",
       "request": "launch",
       "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
-      "outFiles": ["${workspaceRoot}/dist/**/*.js"],
-      "preLaunchTask": {
-        "type": "npm",
-        "script": "watch"
-      }
+      "outFiles": ["${workspaceRoot}/dist/**/*.js"]
     }
   ]
 }

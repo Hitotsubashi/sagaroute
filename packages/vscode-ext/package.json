@@ -80,7 +80,7 @@
     "vscode:prepublish": "yarn run esbuild-base -- --minify",
     "esbuild-base": "node esbuild-script.js",
     "esbuild": "yarn run esbuild-base -- --sourcemap",
-    "esbuild-watch": "yarn run esbuild-base -- --sourcemap --watch",
+    "watch": "yarn run esbuild-base -- --sourcemap --watch",
     "compile-tests": "yarn clean && npx tsc -b && yarn esbuild-base",
     "watch-tests": "npx tsc -b -w",
     "pretest": "yarn run compile-tests",
