@@ -80,7 +80,7 @@
     "vscode:prepublish": "yarn run esbuild-base -- --minify",
     "esbuild-base": "node esbuild-script.js",
     "esbuild": "yarn run esbuild-base -- --sourcemap",
-    "esbuild-watch": "yarn run esbuild-base -- --sourcemap --watch",
+    "watch": "yarn run esbuild-base -- --sourcemap --watch",
     "compile-tests": "yarn clean && npx tsc -b && yarn esbuild-base",
     "watch-tests": "npx tsc -b -w",
     "pretest": "yarn run compile-tests",
@@ -105,6 +105,8 @@
     "chokidar": "^3.5.3",
     "glob": "^7.1.4",
     "lodash": "^4.17.21",
-    "mocha": "^10.2.0"
+    "mocha": "^10.2.0",
+    "vscode-languageclient": "^8.1.0",
+    "vscode-languageserver": "^8.1.0"
   }
 }
