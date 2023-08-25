@@ -32,6 +32,7 @@
 7. 考虑是否把@sagaroute/react 提取出来📇
 8. launch.json可以放到根目录上运行
 9. 补充package.json中的keyword，description ✅
+10. 补充editor.quickSuggestions的开启
 
 文档补充：
 
