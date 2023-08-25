@@ -2,9 +2,11 @@ import { RoutingOption } from '@sagaroute/react';
 import { RouteObject } from '@sagaroute/react/lib/weave';
 import getRouteFileRelationManager from '../../RouteFileRelationManager';
 import getPathCompletionItemManager from '../../PathCompletionItemManager';
+import getPathParseManager from '../../PathParseManager';
 
 const routeFileRelationManager = getRouteFileRelationManager();
 const pathCompletionItemManager = getPathCompletionItemManager();
+const pathParseManager = getPathParseManager();
 
 const statisticPathHooks: RoutingOption['hooks'] = {
   weave: {
@@ -28,6 +30,7 @@ const statisticPathHooks: RoutingOption['hooks'] = {
         handler() {
           routeFileRelationManager.buildMap();
           pathCompletionItemManager.generateCompletions();
+          pathParseManager.compute();
         },
       },
     },

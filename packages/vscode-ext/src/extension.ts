@@ -12,6 +12,7 @@ import getWarningManager from './WarningManager';
 import getJSDocManager from './JSDocManager';
 import urlRegex from 'url-regex';
 import getRouteFileRelationManager from './RouteFileRelationManager';
+import getPathParseManager from './PathParseManager';
 
 let isEnabled: boolean;
 let routingWatcher: FSWatcher;
@@ -252,7 +253,16 @@ function initParseUrlCommand(context: vscode.ExtensionContext) {
           return;
         }
         const url = new URL(input);
-        console.log(url);
+        const pathParseManager = getPathParseManager();
+        const fpath = pathParseManager.parse(url.pathname);
+        if (!fpath) {
+          vscode.window.showErrorMessage(
+            `The file matching the entered url <${input}> could not be found.`,
+          );
+          return;
+        }
+        const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(fpath));
+        vscode.window.showTextDocument(doc);
       }
     }),
   );
