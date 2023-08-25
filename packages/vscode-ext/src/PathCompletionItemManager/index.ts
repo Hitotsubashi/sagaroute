@@ -1,8 +1,7 @@
-import { FileNode } from '@sagaroute/react/lib/gather';
-import { RouteObject } from '@sagaroute/react/lib/weave';
 import { CompletionItem } from 'vscode';
 import * as vscode from 'vscode';
 import path from 'path';
+import getRouteFileRelationManager, { RouteFileRelationManager } from '../RouteFileRelationManager';
 
 const workspaceRootFolderPath = vscode.workspace.workspaceFolders![0].uri.fsPath;
 
@@ -14,38 +13,19 @@ function transformPathToSnippetLine(path: string) {
 }
 
 export class PathCompletionItemManager {
-  private routeAndFileNodeRelations: [RouteObject, FileNode][] = [];
-  private routes: RouteObject[] = [];
+  private routeFileRelationManager: RouteFileRelationManager;
   private completions: CompletionItem[] = [];
-  private routeToFilePathMap = new Map<RouteObject, string>();
-  private routePathToFilePathMap: Record<string, string | undefined> = {};
   private baseUri = vscode.Uri.file(path.join(workspaceRootFolderPath, 'package.json'));
 
-  setRoutes(routes: RouteObject[]) {
-    this.routes = routes;
-  }
-
-  addRelation(relation: PathCompletionItemManager['routeAndFileNodeRelations'][0]) {
-    this.routeAndFileNodeRelations.push(relation);
-  }
-
-  findFpath(route: string) {
-    return this.routePathToFilePathMap[route];
+  constructor(routeFileRelationManager: RouteFileRelationManager) {
+    this.routeFileRelationManager = routeFileRelationManager;
   }
 
   generateCompletions() {
-    this.routeAndFileNodeRelations.forEach(([route, fileNode]) => {
-      this.establishMapWithRouteAndFilePath(route, fileNode);
-    });
-    this.routeAndFileNodeRelations = [];
-    this.routePathToFilePathMap = {};
-    this.routes.forEach((route) => {
-      this.traverseRoute(route);
-    });
-    this.completions = Object.keys(this.routePathToFilePathMap).map((route) =>
+    const routePathToFilePathMap = this.routeFileRelationManager.getRoutePathToFilePathMap();
+    this.completions = Object.keys(routePathToFilePathMap).map((route) =>
       this.transformPathToCompletionItem(route),
     );
-    this.routeToFilePathMap.clear();
   }
 
   getCompletions() {
@@ -60,8 +40,9 @@ export class PathCompletionItemManager {
   }
 
   private assignCompletionsWithDocumentaion() {
+    const routePathToFilePathMap = this.routeFileRelationManager.getRoutePathToFilePathMap();
     this.completions.forEach((completion) => {
-      const fpath = this.routePathToFilePathMap[completion.label as string];
+      const fpath = routePathToFilePathMap[completion.label as string];
       if (fpath) {
         const md = new vscode.MarkdownString(
           `related to file: [${fpath.replace(workspaceRootFolderPath, '')}](${fpath
@@ -73,59 +54,14 @@ export class PathCompletionItemManager {
       }
     });
   }
-
-  private establishMapWithRouteAndFilePath(route: RouteObject, fileNode: FileNode) {
-    if (fileNode.type === 'dir') {
-      const layoutFileNode = fileNode.children?.find(
-        ({ name }) => path.parse(name).name === '_layout',
-      );
-      if (layoutFileNode) {
-        this.routeToFilePathMap.set(route, layoutFileNode.path);
-      } else {
-        const indexFileNode = fileNode.children?.find(
-          ({ props, name }) =>
-            props?.routeProps?.index === true ||
-            (path.parse(name).name === 'index' && props?.routeProps?.index !== false),
-        );
-        if (indexFileNode) {
-          this.routeToFilePathMap.set(route, indexFileNode.path);
-        }
-      }
-    } else {
-      this.routeToFilePathMap.set(route, fileNode.path);
-    }
-  }
-
-  private traverseRoute(route: RouteObject, parentPath = '') {
-    let routePath = route.path ? `${parentPath}/${route.path}` : parentPath;
-    if (!routePath.startsWith('/')) {
-      routePath = '/' + routePath;
-    }
-    routePath = routePath.replace(/^\/\//, '/');
-    const routeAvaliable =
-      route.path &&
-      (route.element ||
-        route.Component ||
-        route.lazy ||
-        route.children?.some(({ index }) => index === true));
-
-    if (routeAvaliable) {
-      this.routePathToFilePathMap[routePath] = this.routeToFilePathMap.get(route);
-    }
-
-    if (route.children?.length) {
-      route.children.forEach((item) => {
-        this.traverseRoute(item, routePath);
-      });
-    }
-  }
 }
 
 let pathCompletionItemManager: PathCompletionItemManager;
 
 export default function getPathCompletionItemManager() {
   if (!pathCompletionItemManager) {
-    pathCompletionItemManager = new PathCompletionItemManager();
+    const routeFileRelationManager = getRouteFileRelationManager();
+    pathCompletionItemManager = new PathCompletionItemManager(routeFileRelationManager);
   }
   return pathCompletionItemManager;
 }

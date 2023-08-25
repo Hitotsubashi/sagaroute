@@ -58,6 +58,18 @@ function findJSDoc(ast: ParseResult<t.File>): string | null {
           traversePath.stop();
         }
       },
+      VariableDeclaration(traversePath) {
+        const { node } = traversePath;
+        const { declarations } = node;
+        if (
+          declarations.some(
+            (declarator) => t.isIdentifier(declarator.id) && declarator.id.name === componentName,
+          )
+        ) {
+          comments = node.leadingComments;
+          traversePath.stop();
+        }
+      },
     });
   }
   if (comments?.length) {

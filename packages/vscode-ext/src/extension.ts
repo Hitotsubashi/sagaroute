@@ -10,6 +10,8 @@ import getCacheManager from './CacheManager';
 import getPathCompletionItemManager from './PathCompletionItemManager';
 import getWarningManager from './WarningManager';
 import getJSDocManager from './JSDocManager';
+import urlRegex from 'url-regex';
+import getRouteFileRelationManager from './RouteFileRelationManager';
 
 let isEnabled: boolean;
 let routingWatcher: FSWatcher;
@@ -61,18 +63,6 @@ function initInputCommand(context: vscode.ExtensionContext) {
 }
 
 function initConfigWatcher() {
-  //   const sagaRouteConfigFiles = [
-  //     path.join(workspaceRootFolderPath, 'sagaroute.config.js'),
-  //     path.join(workspaceRootFolderPath, 'sagaroute.config.cjs'),
-  //   ];
-  //   configWatcher = chokidar
-  //     .watch(sagaRouteConfigFiles, { ignoreInitial: true })
-  //     .on('all', (event, filepath) => {
-  //       const logging = getLogging();
-  //       logging.logMessage(`[watch] File ${filepath} has been ${event}`);
-  //       rebuildSagaroute();
-  //       initRoutingWatcher(true);
-  //     });
   const watchPath = path
     .join(workspaceRootFolderPath, 'sagaroute.config.{js,cjs}')
     .replace(path.sep, '/');
@@ -189,6 +179,7 @@ function registerRouteCompletions(context: vscode.ExtensionContext) {
     { scheme: 'file', language: 'javascriptreact' },
   ];
   const pathCompletionItemManager = getPathCompletionItemManager();
+  const routeFileRelationManager = getRouteFileRelationManager();
 
   context.subscriptions.push(
     vscode.languages.registerCompletionItemProvider(
@@ -217,7 +208,7 @@ function registerRouteCompletions(context: vscode.ExtensionContext) {
         },
         async resolveCompletionItem(item) {
           const route = item.label as string;
-          const fpath = pathCompletionItemManager.findFpath(route);
+          const fpath = routeFileRelationManager.getRoutePathToFilePathMap()[route];
           if (fpath) {
             const jsDocManager = getJSDocManager();
             const jsdoc = await jsDocManager.getJSDoc(fpath);
@@ -249,11 +240,30 @@ function initListenWorkspaceConfiguration(context: vscode.ExtensionContext) {
   );
 }
 
+function initParseUrlCommand(context: vscode.ExtensionContext) {
+  context.subscriptions.push(
+    vscode.commands.registerCommand('sagaroute.parse', async () => {
+      const input = await vscode.window.showInputBox({ placeHolder: 'Please enter the url.' });
+      if (typeof input === 'string') {
+        if (!urlRegex().test(input)) {
+          vscode.window.showErrorMessage(
+            `The  content <${input}> you entered does not match the url format.`,
+          );
+          return;
+        }
+        const url = new URL(input);
+        console.log(url);
+      }
+    }),
+  );
+}
+
 export function activate(context: vscode.ExtensionContext) {
   const settingConfiguration = vscode.workspace.getConfiguration('sagaroute');
   isEnabled = settingConfiguration.get('working') as boolean;
   try {
     initStatusBar(context);
+    initParseUrlCommand(context);
     initListenWorkspaceConfiguration(context);
     initInputCommand(context);
     initConfigWatcher();

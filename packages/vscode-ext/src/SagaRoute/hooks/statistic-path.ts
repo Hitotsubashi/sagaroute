@@ -1,7 +1,9 @@
 import { RoutingOption } from '@sagaroute/react';
 import { RouteObject } from '@sagaroute/react/lib/weave';
+import getRouteFileRelationManager from '../../RouteFileRelationManager';
 import getPathCompletionItemManager from '../../PathCompletionItemManager';
 
+const routeFileRelationManager = getRouteFileRelationManager();
 const pathCompletionItemManager = getPathCompletionItemManager();
 
 const statisticPathHooks: RoutingOption['hooks'] = {
@@ -9,13 +11,13 @@ const statisticPathHooks: RoutingOption['hooks'] = {
     afterEach: {
       order: 105,
       handler(route, imports, fileNode) {
-        pathCompletionItemManager.addRelation([route, fileNode]);
+        routeFileRelationManager.addRelation([route, fileNode]);
       },
     },
     after: {
       order: 105,
       handler(routes: RouteObject[]) {
-        pathCompletionItemManager.setRoutes(routes);
+        routeFileRelationManager.setRoutes(routes);
       },
     },
   },
@@ -24,6 +26,7 @@ const statisticPathHooks: RoutingOption['hooks'] = {
       before: {
         order: 110,
         handler() {
+          routeFileRelationManager.buildMap();
           pathCompletionItemManager.generateCompletions();
         },
       },

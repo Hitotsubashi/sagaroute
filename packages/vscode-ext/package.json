@@ -72,6 +72,10 @@
       {
         "command": "sagaroute.show",
         "title": "Sagaroute: show"
+      },
+      {
+        "command": "sagaroute.parse",
+        "title": "Sagaroute: parse"
       }
     ]
   },
@@ -101,13 +105,14 @@
     "yargs": "^17.7.1"
   },
   "dependencies": {
+    "@babel/parser": "^7.21.2",
+    "@babel/traverse": "^7.21.2",
+    "@babel/types": "^7.21.3",
     "@sagaroute/react": "^0.0.2",
     "chokidar": "^3.5.3",
     "glob": "^7.1.4",
     "lodash": "^4.17.21",
     "mocha": "^10.2.0",
-    "@babel/parser": "^7.21.2",
-    "@babel/traverse": "^7.21.2",
-    "@babel/types": "^7.21.3"
+    "url-regex": "^5.0.0"
   }
 }
