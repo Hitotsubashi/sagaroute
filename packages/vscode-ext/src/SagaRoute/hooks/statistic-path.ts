@@ -9,18 +9,23 @@ const statisticPathHooks: RoutingOption['hooks'] = {
     afterEach: {
       order: 105,
       handler(route, imports, fileNode) {
-        process.nextTick(() => {
-          pathCompletionItemManager.establishMapWithRouteAndFilePath(route, fileNode);
-        });
+        pathCompletionItemManager.addRelation([route, fileNode]);
       },
     },
     after: {
       order: 105,
       handler(routes: RouteObject[]) {
-        // 放到宏任务里执行，避免阻塞生成路由列表
-        process.nextTick(() => {
-          pathCompletionItemManager.generateCompletions(routes);
-        });
+        pathCompletionItemManager.setRoutes(routes);
+      },
+    },
+  },
+  print: {
+    write: {
+      before: {
+        order: 110,
+        handler() {
+          pathCompletionItemManager.generateCompletions();
+        },
       },
     },
   },

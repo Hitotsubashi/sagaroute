@@ -9,6 +9,7 @@ import { performance } from 'perf_hooks';
 import getCacheManager from './CacheManager';
 import getPathCompletionItemManager from './PathCompletionItemManager';
 import getWarningManager from './WarningManager';
+import getJSDocManager from './JSDocManager';
 
 let isEnabled: boolean;
 let routingWatcher: FSWatcher;
@@ -213,6 +214,18 @@ function registerRouteCompletions(context: vscode.ExtensionContext) {
             return completions;
           }
           return undefined;
+        },
+        async resolveCompletionItem(item) {
+          const route = item.label as string;
+          const fpath = pathCompletionItemManager.findFpath(route);
+          if (fpath) {
+            const jsDocManager = getJSDocManager();
+            const jsdoc = await jsDocManager.getJSDoc(fpath);
+            if (jsdoc) {
+              (item.documentation as vscode.MarkdownString).appendCodeblock(jsdoc, 'javascript');
+            }
+          }
+          return item;
         },
       },
       '/',

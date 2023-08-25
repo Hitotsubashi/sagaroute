@@ -152,7 +152,7 @@ Users.routeProps = {
 | [rootPath](../react/doc/API.md#rootPath) | 项目路径 | string | process.cwd() |
 | [onWarning](./doc/API.md#onwarning) | 触发警告时的回调函数 | function(message: string): void | -- |
 
-**注意❗：在该插件中，`hooks`的[`print.inject.after`](../react/doc/Hook.md#printinjectafter)、[`print.write.before`](../react/doc/Hook.md#printwritebefore)、[`print.write.after`](../react/doc/Hook.md#printwriteafter)不会被执行。**
+**注意❗：在该插件中，`hooks`的[`print.write.after`](../react/doc/Hook.md#printwriteafter)不会被执行。**
 
 对上述配置参数中更详细的说明可看[API](../react/doc/API.md)
 
