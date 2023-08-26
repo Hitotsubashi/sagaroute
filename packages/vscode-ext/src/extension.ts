@@ -254,7 +254,9 @@ function initParseUrlCommand(context: vscode.ExtensionContext) {
         }
         const url = new URL(input);
         const pathParseManager = getPathParseManager();
-        const fpath = pathParseManager.parse(url.pathname);
+        const fpath = pathParseManager.parse(
+          url.hash.startsWith('#/') ? url.hash.slice(1) : url.pathname,
+        );
         if (!fpath) {
           vscode.window.showErrorMessage(
             `The file matching the entered url <${input}> could not be found.`,

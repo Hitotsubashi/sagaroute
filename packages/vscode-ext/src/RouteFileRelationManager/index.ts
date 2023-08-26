@@ -7,6 +7,7 @@ export class RouteFileRelationManager {
   private routes: RouteObject[] = [];
   private routeObjectToFilePathMap = new Map<RouteObject, string>();
   private routePathToFilePathMap: Record<string, string | undefined> = {};
+  private routePathToRouteObjectMap: Record<string, RouteObject> = {};
 
   getRouteObjectToFilePathMap() {
     return this.routeObjectToFilePathMap;
@@ -14,6 +15,10 @@ export class RouteFileRelationManager {
 
   getRoutePathToFilePathMap() {
     return this.routePathToFilePathMap;
+  }
+
+  getRoutePathToRouteObjectMap() {
+    return this.routePathToRouteObjectMap;
   }
 
   addRelation(relation: RouteFileRelationManager['relations'][0]) {
@@ -58,6 +63,7 @@ export class RouteFileRelationManager {
       routePath = '/' + routePath;
     }
     routePath = routePath.replace(/^\/\//, '/');
+    this.routePathToRouteObjectMap[routePath] = route;
     const routeAvaliable =
       route.path &&
       (route.element ||
@@ -80,6 +86,7 @@ export class RouteFileRelationManager {
   buildMap() {
     this.routeObjectToFilePathMap.clear();
     this.routePathToFilePathMap = {};
+    this.routePathToRouteObjectMap = {};
     this.relations.forEach(([route, fileNode]) => {
       this.establishMapWithRouteAndFilePath(route, fileNode);
     });
