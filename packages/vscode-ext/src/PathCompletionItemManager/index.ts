@@ -44,10 +44,14 @@ export class PathCompletionItemManager {
     this.completions.forEach((completion) => {
       const fpath = routePathToFilePathMap[completion.label as string];
       if (fpath) {
+        const relatedFileText = fpath
+          .replace(workspaceRootFolderPath, '')
+          .replaceAll(path.sep, '/');
+        const relatedFileLink = fpath
+          .replace(workspaceRootFolderPath, '.')
+          .replaceAll(path.sep, '/');
         const md = new vscode.MarkdownString(
-          `related to file: [${fpath.replace(workspaceRootFolderPath, '')}](${fpath
-            .replace(workspaceRootFolderPath, '.')
-            .replaceAll(path.sep, '/')})`,
+          `related to file: [${relatedFileText}](${relatedFileLink})`,
         );
         md.baseUri = this.baseUri;
         completion.documentation = md;

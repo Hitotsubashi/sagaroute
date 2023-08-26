@@ -263,11 +263,15 @@ function initParseUrlCommand(context: vscode.ExtensionContext) {
           );
           return;
         }
-        const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(fpath));
-        vscode.window.showTextDocument(doc);
+        showFile(fpath);
       }
     }),
   );
+}
+
+async function showFile(fpath: string) {
+  const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(fpath));
+  vscode.window.showTextDocument(doc);
 }
 
 export function activate(context: vscode.ExtensionContext) {
