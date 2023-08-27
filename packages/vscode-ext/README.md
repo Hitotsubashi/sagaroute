@@ -6,7 +6,7 @@
 
 ## 介绍
 
-`sagaroute-vscode`是一款基于`@sagaroute/react`开发的用于快速生成约定式路由列表的`VSCode`插件，它会监听**路由文件目录**的变化以动态生成约定式路由列表，并把生成结果插入到指定[**路由模板文件**](../react/doc/Template.md)
+`sagaroute-vscode`是一款基于`@sagaroute/react`开发的约定式路由管理插件，它能**监听文件变化以快速更新路由列表**，且会根据路由列表提供[**快捷提示路由信息**](#快捷选择路由路径)和[**快速定位路由页面**](#支持通过url快速定位文件)的交互优化。运行效果可看以下展示：
 
 <p align="center">
     <img alt="overview-generate-after-save" src="./doc/images/overview-generate-after-save.gif" width="500">
@@ -14,13 +14,19 @@
 </p>
 
 <p align="center">
-    <!-- TODO: 智能提示重新截图 -->
+    <!-- TODO: 快捷键快速选择路由重新截图 -->
     <img alt="overview-completion" src="./doc/images/overview-completion.gif" width="500">
-    <div align="center">支持快捷键调出可选路由</div>
+    <div align="center">支持通过快捷键快速查看和选择路由</div>
 </p>
 
 <p align="center">
-  <!-- TODO: parse截图 -->
+    <!-- TODO: 悬浮提示路由信息截图 -->
+    <img alt="overview-completion" src="./doc/images/overview-completion.gif" width="500">
+    <div align="center">支持鼠标悬浮查看路由文件信息</div>
+</p>
+
+<p align="center">
+    <!-- TODO: parse截图 -->
     <img alt="overview-completion" src="./doc/images/overview-completion.gif" width="500">
     <div align="center">支持快速打开url对应的页面文件</div>
 </p>
@@ -28,12 +34,12 @@
 ## 特点
 
 - 🌴 泛用性: 生成的**约定式路由列表**遵循`ES6 Module`格式，适用于任何开发环境
-- 🎯 路由提示: 支持快捷键调出可选路由
+- 🎯 路由提示: 支持快速选择路由和查看路由组件信息
 - 🚀 快速稳定: 合理利用[缓存机制](#缓存)，使第二次的生成速度更快。若生成结果与上次相同，则不会更改**路由模板文件**
 - 📇 样式一致: 生成**路由列表**保存后会自动触发代码风格约束插件的格式化(如`prettier`、`eslint`，取决于`vscode`安装了哪些插件)
-- 📲 快捷定位: 支持快速打开url对应的页面文件
-- <!-- - 📲 实用性: 采用近似于[`umi`](https://v3.umijs.org/zh-CN/docs/convention-routing)的[约定式路由规则](../react/doc/Routing.md)，更贴近实际开发场景 -->
-  <!-- - 🎉 可扩展: 支持[配置文件](../react/README.md#配置文件)，可通过钩子函数控制工作流程或增强路由对象 -->
+- 📲 快捷定位: 支持快速打开`url`对应的页面文件
+  <!-- - 📲 实用性: 采用近似于[`umi`](https://v3.umijs.org/zh-CN/docs/convention-routing)的[约定式路由规则](../react/doc/Routing.md)，更贴近实际开发场景 -->
+    <!-- - 🎉 可扩展: 支持[配置文件](../react/README.md#配置文件)，可通过钩子函数控制工作流程或增强路由对象 -->
 
 ## 使用
 
@@ -123,6 +129,7 @@ export default function Users() {
 /** @type {import('react-router-dom').RouteObject} */
 Users.routeProps = {
   caseSensitive: false,
+  ErrorBoundary: ErrorBoundary,
 };
 ```
 
@@ -185,7 +192,7 @@ module.exports = {
 - `Sagaroute: routing`: 生成路由列表，若存在缓存，则无视缓存重新构建
 - `Sagaroute: rebuild`: 重新根据[配置文件](#配置设置方式)构建配置，并执行生成路由列表的操作
 - `Sagaroute: show`: 打开`Sagaroute`的`output`输出面板
-- `Sagaroute.parse`: 用于根据`url`快速定位文件，详情请看[高级特性-通过url快速定位文件](#支持通过url快速定位文件)
+- `Sagaroute: parse`: 用于根据`url`快速定位文件，详情请看[高级特性-通过url快速定位文件](#支持通过url快速定位文件)
 
 ## `.vscode/settings.json`中的`Sagaroute`设定
 
@@ -216,15 +223,13 @@ module.exports = {
 
 ## 高级特性
 
-### 快捷选择路由路径
+### 快捷选择路由
 
 你可以在项目中通过键入快捷键`"//"`调出所有可选路由，如下所示：
 
 <!-- TODO:替换图片 -->
-<p align="center">
-    <img alt="overview-completion" src="./doc/images/overview-completion.gif" >
-    <div align="center">快捷选择路由路径</div>
-</p>
+
+![overview-completion](./doc/images/overview-completion.gif)
 
 选择后，`"//"`会被替换成所选择的路由路径
 
@@ -236,6 +241,16 @@ module.exports = {
 2. 路由对应的文件中的默认导出组件的注释（如果存在）
 
 **注意: 在`vscode`项目首次打开时，要先做保存操作或者强制`Sagaroute: routing`触发路由列表刷新后，才会有开启快捷选择路由路径**
+
+### 快捷查看路由对应的文件信息
+
+<!-- TODO:如果实现了路由高亮，则去掉cannot not find match route的功能，否则就保持 -->
+
+你可以通过鼠标停留路由字符串查看路由信息，此时路由信息会以悬浮冒泡的形式展示，如下所示：
+
+<!-- TODO: 补充悬浮显示路由信息的gif图，用``作为路由格式-->
+
+所展示路由信息的内容与[快捷选择路由](#快捷选择路由)的一致
 
 ### 支持通过url快速定位文件
 
