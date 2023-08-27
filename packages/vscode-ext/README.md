@@ -250,7 +250,11 @@ module.exports = {
 
 <!-- TODO: 补充悬浮显示路由信息的gif图，用``作为路由格式-->
 
-所展示路由信息的内容与[快捷选择路由](#快捷选择路由)的一致
+所展示路由信息的内容与[快捷选择路由](#快捷选择路由)的一致。若该路由字符串不存在能与之匹配的路由，则会显示以下信息：
+
+![no-route-matched](./doc/images/no-route-matched.png)
+
+**注意: 在`vscode`项目首次打开时，要先做保存操作或者强制`Sagaroute: routing`触发路由列表刷新后，才会有开启快捷选择路由路径**
 
 ### 支持通过url快速定位文件
 
@@ -259,6 +263,8 @@ module.exports = {
 <!-- TODO 添加sagaroute.parse效果图 -->
 
 **_开发者无须关心`url`对应的路由模式是`hash`还是`browser`，`sagaroute-vscode`会自行判断处理_**
+
+**注意: 在`vscode`项目首次打开时，要先做保存操作或者强制`Sagaroute: routing`触发路由列表刷新后，才会有开启快捷选择路由路径**
 
 ### 支持批量生成`lazy`路由
 
