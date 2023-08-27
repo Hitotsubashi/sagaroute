@@ -12,13 +12,23 @@ function transformPathToSnippetLine(path: string) {
   });
 }
 
+const baseUri = vscode.Uri.file(path.join(workspaceRootFolderPath, 'package.json'));
 export class PathCompletionItemManager {
   private routeFileRelationManager: RouteFileRelationManager;
   private completions: CompletionItem[] = [];
-  private baseUri = vscode.Uri.file(path.join(workspaceRootFolderPath, 'package.json'));
 
   constructor(routeFileRelationManager: RouteFileRelationManager) {
     this.routeFileRelationManager = routeFileRelationManager;
+  }
+
+  static makeBasicMarkdown(fpath: string) {
+    const relatedFileText = fpath.replace(workspaceRootFolderPath, '').replaceAll(path.sep, '/');
+    const relatedFileLink = fpath.replace(workspaceRootFolderPath, '.').replaceAll(path.sep, '/');
+    const md = new vscode.MarkdownString(
+      `related to file: [${relatedFileText}](${relatedFileLink})`,
+    );
+    md.baseUri = baseUri;
+    return md;
   }
 
   generateCompletions() {
@@ -44,17 +54,7 @@ export class PathCompletionItemManager {
     this.completions.forEach((completion) => {
       const fpath = routePathToFilePathMap[completion.label as string];
       if (fpath) {
-        const relatedFileText = fpath
-          .replace(workspaceRootFolderPath, '')
-          .replaceAll(path.sep, '/');
-        const relatedFileLink = fpath
-          .replace(workspaceRootFolderPath, '.')
-          .replaceAll(path.sep, '/');
-        const md = new vscode.MarkdownString(
-          `related to file: [${relatedFileText}](${relatedFileLink})`,
-        );
-        md.baseUri = this.baseUri;
-        completion.documentation = md;
+        completion.documentation = PathCompletionItemManager.makeBasicMarkdown(fpath);
       }
     });
   }

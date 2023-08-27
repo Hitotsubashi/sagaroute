@@ -7,7 +7,9 @@ import getSagaRoute, { rebuildSagaroute } from './SagaRoute';
 import getLogging from './Logging';
 import { performance } from 'perf_hooks';
 import getCacheManager from './CacheManager';
-import getPathCompletionItemManager from './PathCompletionItemManager';
+import getPathCompletionItemManager, {
+  PathCompletionItemManager,
+} from './PathCompletionItemManager';
 import getWarningManager from './WarningManager';
 import getJSDocManager from './JSDocManager';
 import urlRegex from 'url-regex';
@@ -269,6 +271,43 @@ function initParseUrlCommand(context: vscode.ExtensionContext) {
   );
 }
 
+function registerRouteDecorator(context: vscode.ExtensionContext) {
+  const documentSelector: vscode.DocumentSelector = [
+    { scheme: 'file', language: 'typescript' },
+    { scheme: 'file', language: 'typescriptreact' },
+    { scheme: 'file', language: 'javascript' },
+    { scheme: 'file', language: 'javascriptreact' },
+  ];
+  const pathParseManager = getPathParseManager();
+  context.subscriptions.push(
+    vscode.languages.registerHoverProvider(documentSelector, {
+      async provideHover(document, position) {
+        const range =
+          document.getWordRangeAtPosition(position, /"\/([^"]*)"/) ||
+          document.getWordRangeAtPosition(position, /`\/([^`]*)`/) ||
+          document.getWordRangeAtPosition(position, /'\/([^']*)'/);
+
+        if (range) {
+          const pathname = document.getText(range).slice(1, -1);
+          const fpath = pathParseManager.parse(pathname);
+          let markdown: vscode.MarkdownString;
+          if (fpath) {
+            markdown = PathCompletionItemManager.makeBasicMarkdown(fpath);
+            const jsDocManager = getJSDocManager();
+            const jsdoc = await jsDocManager.getJSDoc(fpath);
+            if (jsdoc) {
+              markdown.appendCodeblock(jsdoc, 'javascript');
+            }
+          } else {
+            markdown = new vscode.MarkdownString('No page matching this route was found');
+          }
+          return new vscode.Hover(markdown);
+        }
+      },
+    }),
+  );
+}
+
 async function showFile(fpath: string) {
   const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(fpath));
   vscode.window.showTextDocument(doc);
@@ -285,6 +324,7 @@ export function activate(context: vscode.ExtensionContext) {
     initConfigWatcher();
     initRoutingWatcher();
     registerRouteCompletions(context);
+    registerRouteDecorator(context);
   } catch (err) {
     console.log(err);
   }
