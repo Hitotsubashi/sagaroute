@@ -113,6 +113,9 @@
     "glob": "^7.1.4",
     "lodash": "^4.17.21",
     "mocha": "^10.2.0",
-    "url-regex": "^5.0.0"
+    "url-regex": "^5.0.0",
+    "vscode-languageclient": "^8.1.0",
+    "vscode-languageserver": "^8.1.0",
+    "vscode-languageserver-textdocument": "^1.0.8"
   }
 }

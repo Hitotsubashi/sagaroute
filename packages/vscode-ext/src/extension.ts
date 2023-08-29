@@ -15,6 +15,12 @@ import getJSDocManager from './JSDocManager';
 import urlRegex from 'url-regex';
 import getRouteFileRelationManager from './RouteFileRelationManager';
 import getPathParseManager from './PathParseManager';
+import {
+  LanguageClient,
+  LanguageClientOptions,
+  ServerOptions,
+  TransportKind,
+} from 'vscode-languageclient/node';
 
 let isEnabled: boolean;
 let routingWatcher: FSWatcher;
@@ -323,10 +329,51 @@ async function setDecorationTest() {
   }
 }
 
+let client: LanguageClient;
+
+async function initClient(context: vscode.ExtensionContext) {
+  const serverModule = context.asAbsolutePath(path.join('dist', 'server.js'));
+  const serverOptions: ServerOptions = {
+    run: { module: serverModule, transport: TransportKind.ipc },
+    debug: {
+      module: serverModule,
+      transport: TransportKind.ipc,
+    },
+  };
+  // Options to control the language client
+  const clientOptions: LanguageClientOptions = {
+    // Register the server for plain text documents
+    documentSelector: [
+      { scheme: 'file', language: 'typescript' },
+      { scheme: 'file', language: 'typescriptreact' },
+      { scheme: 'file', language: 'javascript' },
+      { scheme: 'file', language: 'javascriptreact' },
+    ],
+  };
+
+  client = new LanguageClient(
+    'RangeLanguageServer',
+    'Range Language Server',
+    serverOptions,
+    clientOptions,
+  );
+
+  client.start();
+  client.sendNotification('123', '123');
+}
+
+function stopClient() {
+  if (!client) {
+    return undefined;
+  }
+  return client.stop();
+}
+
 export function activate(context: vscode.ExtensionContext) {
   const settingConfiguration = vscode.workspace.getConfiguration('sagaroute');
   isEnabled = settingConfiguration.get('working') as boolean;
   try {
+    initClient(context);
     setDecorationTest();
     initStatusBar(context);
     initParseUrlCommand(context);
@@ -344,4 +391,5 @@ export function activate(context: vscode.ExtensionContext) {
 export function deactivate() {
   configWatcher.dispose();
   routingWatcher.close();
+  return stopClient();
 }
