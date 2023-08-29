@@ -313,10 +313,21 @@ async function showFile(fpath: string) {
   vscode.window.showTextDocument(doc);
 }
 
+async function setDecorationTest() {
+  const activeEditor = vscode.window.activeTextEditor;
+  const decorationType = vscode.window.createTextEditorDecorationType({
+    textDecoration: 'underline',
+  });
+  if (activeEditor) {
+    activeEditor.setDecorations(decorationType, [new vscode.Range(0, 0, 1, 0)]);
+  }
+}
+
 export function activate(context: vscode.ExtensionContext) {
   const settingConfiguration = vscode.workspace.getConfiguration('sagaroute');
   isEnabled = settingConfiguration.get('working') as boolean;
   try {
+    setDecorationTest();
     initStatusBar(context);
     initParseUrlCommand(context);
     initListenWorkspaceConfiguration(context);
