@@ -8,7 +8,6 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import ts from 'typescript';
 import fs from 'fs';
-import path from 'path';
 // import * as vscode from 'vscode';
 
 let service: ts.LanguageService;
