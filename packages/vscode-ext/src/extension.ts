@@ -249,6 +249,32 @@ function initListenWorkspaceConfiguration(context: vscode.ExtensionContext) {
   );
 }
 
+function initSendServerWithActiveTextEditor(context: vscode.ExtensionContext) {
+  function getUriFromDocument(document?: vscode.TextDocument) {
+    if (document) {
+      const fsPath = document.uri.fsPath;
+      const { ext } = path.parse(fsPath);
+      if (['.js', '.ts', '.tsx', '.jsx'].includes(ext)) {
+        return `file://${fsPath}`;
+      }
+    }
+    return undefined;
+  }
+
+  const activeUri = getUriFromDocument(vscode.window.activeTextEditor?.document);
+  if (activeUri) {
+    client.sendNotification('window/activeTextEditor', activeUri);
+  }
+  context.subscriptions.push(
+    vscode.window.onDidChangeActiveTextEditor((e) => {
+      const activeUri = getUriFromDocument(e?.document);
+      if (activeUri) {
+        client.sendNotification('window/activeTextEditor', activeUri);
+      }
+    }),
+  );
+}
+
 function initParseUrlCommand(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand('sagaroute.parse', async () => {
@@ -322,11 +348,28 @@ async function showFile(fpath: string) {
 async function setDecorationTest() {
   const activeEditor = vscode.window.activeTextEditor;
   const decorationType = vscode.window.createTextEditorDecorationType({
+    cursor: 'pointer',
     textDecoration: 'underline',
   });
   if (activeEditor) {
-    activeEditor.setDecorations(decorationType, [new vscode.Range(0, 0, 1, 0)]);
+    activeEditor.setDecorations(decorationType, [
+      { range: new vscode.Range(0, 0, 1, 0), hoverMessage: '123' },
+    ]);
   }
+  vscode.languages.registerDefinitionProvider([{ scheme: 'file', language: 'typescriptreact' }], {
+    provideDefinition(document, position) {
+      if (position.line === 0) {
+        return [
+          new vscode.Location(
+            vscode.Uri.file(
+              '/Users/admin/Desktop/work/MyStudy/project-vite-for-sagaroute-react/src/pages/user/e.tsx',
+            ),
+            new vscode.Range(0, 0, 0, 0),
+          ),
+        ];
+      }
+    },
+  });
 }
 
 let client: LanguageClient;
@@ -352,14 +395,13 @@ async function initClient(context: vscode.ExtensionContext) {
   };
 
   client = new LanguageClient(
-    'RangeLanguageServer',
-    'Range Language Server',
+    'SagarouteLanguageServer',
+    'Sagaroute Language Server',
     serverOptions,
     clientOptions,
   );
 
   client.start();
-  client.sendNotification('123', '123');
 }
 
 function stopClient() {
@@ -374,6 +416,7 @@ export function activate(context: vscode.ExtensionContext) {
   isEnabled = settingConfiguration.get('working') as boolean;
   try {
     initClient(context);
+    initSendServerWithActiveTextEditor(context);
     setDecorationTest();
     initStatusBar(context);
     initParseUrlCommand(context);

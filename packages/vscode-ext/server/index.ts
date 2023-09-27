@@ -1,42 +1,115 @@
 import {
   createConnection,
   TextDocuments,
-  Diagnostic,
-  DiagnosticSeverity,
   ProposedFeatures,
-  InitializeParams,
-  DidChangeConfigurationNotification,
-  CompletionItem,
-  CompletionItemKind,
-  TextDocumentPositionParams,
   TextDocumentSyncKind,
   InitializeResult,
-  DidChangeTextDocumentNotification,
 } from 'vscode-languageserver/node';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import ts from 'typescript';
+import fs from 'fs';
+// import * as vscode from 'vscode';
 
-const connection = createConnection(ProposedFeatures.all);
-const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
+let service: ts.LanguageService;
+let workspaceRootFolderPath: string;
+let currentTextDocument: TextDocument;
+let activeDocumentUri: string;
 
-connection.onInitialize(() => {
-  const result: InitializeResult = {
-    capabilities: {
-      textDocumentSync: TextDocumentSyncKind.Incremental,
-    },
+function initTSService() {
+  const compilerOptions: ts.CompilerOptions = {
+    allowNonTsExtensions: true,
+    allowJs: true,
+    lib: ['lib.es2020.full.d.ts'],
+    target: ts.ScriptTarget.Latest,
+    moduleResolution: ts.ModuleResolutionKind.Classic,
+    experimentalDecorators: false,
   };
-  return result;
-});
+  service = ts.createLanguageService({
+    getCompilationSettings: () => compilerOptions,
+    getScriptFileNames: () => [currentTextDocument.uri],
+    getScriptKind: (fileName) => {
+      return fileName.substr(fileName.length - 2) === 'ts' ? ts.ScriptKind.TS : ts.ScriptKind.JS;
+    },
+    getScriptVersion: (fileName: string) => {
+      if (fileName === currentTextDocument.uri) {
+        return String(currentTextDocument.version);
+      }
+      return '1';
+    },
+    getScriptSnapshot: (fileName: string) => {
+      let text = '';
+      if (fileName === currentTextDocument.uri) {
+        text = currentTextDocument.getText();
+        return {
+          getText: (start, end) => text.substring(start, end),
+          getLength: () => text.length,
+          getChangeRange: () => undefined,
+        };
+      } else {
+        if (!fs.existsSync(fileName)) {
+          return undefined;
+        }
+        return ts.ScriptSnapshot.fromString(fs.readFileSync(fileName).toString());
+      }
+    },
+    getCurrentDirectory: () => workspaceRootFolderPath,
+    getDefaultLibFileName: () => 'es2020.full',
+    readFile: function (path: string, _encoding?: string | undefined): string | undefined {
+      if (path === currentTextDocument.uri) {
+        return currentTextDocument.getText();
+      } else {
+        // eslint-disable-next-line prefer-rest-params
+        return ts.sys.readFile.apply(null, arguments);
+      }
+    },
+    fileExists: ts.sys.fileExists,
+  });
+}
 
-documents.onDidOpen((e) => {
-  console.log('open', e.document.uri);
-  console.log('open', e.document.getText());
-});
+function initConnection() {
+  const connection = createConnection(ProposedFeatures.all);
+  const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
+  connection.onInitialize((params) => {
+    workspaceRootFolderPath = params.workspaceFolders![0].uri;
+    const result: InitializeResult = {
+      capabilities: {
+        textDocumentSync: TextDocumentSyncKind.Incremental,
+      },
+    };
+    return result;
+  });
 
-documents.onDidChangeContent((e) => {
-  console.log('change', e.document.uri);
-  console.log('change', e.document.getText());
-});
+  documents.onDidOpen((e) => {
+    console.log('onDidOpen', e.document.uri);
+    if (activeDocumentUri === e.document.uri) {
+      currentTextDocument = e.document;
+      console.log('open', e.document.uri);
+    }
+    // console.log('open', e.document.getText());
+  });
 
-documents.listen(connection);
+  documents.onDidChangeContent(() => {
+    // console.log('change', e.document.uri);
+    // console.log('change', e.document.getText());
+    // test();
+  });
 
-connection.listen();
+  connection.onNotification('window/activeTextEditor', (uri) => {
+    console.log('window/activeTextEditor', uri);
+    activeDocumentUri = uri;
+  });
+
+  documents.listen(connection);
+
+  connection.listen();
+}
+
+function test() {
+  const program = service.getProgram();
+  // const typeChecker = program?.getTypeChecker();
+  const sourceFile = program?.getSourceFile(currentTextDocument.uri) as ts.SourceFile;
+  console.log(sourceFile.getFullText());
+}
+
+initTSService();
+initConnection();
