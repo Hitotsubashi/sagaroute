@@ -263,7 +263,9 @@ function initSendServerWithActiveTextEditor(context: vscode.ExtensionContext) {
 
   const activeUri = getUriFromDocument(vscode.window.activeTextEditor?.document);
   if (activeUri) {
-    client.sendNotification('window/activeTextEditor', activeUri);
+    setTimeout(() => {
+      client.sendNotification('window/activeTextEditor', activeUri);
+    }, 1000);
   }
   context.subscriptions.push(
     vscode.window.onDidChangeActiveTextEditor((e) => {

@@ -8,6 +8,7 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import ts from 'typescript';
 import fs from 'fs';
+import path from 'path';
 // import * as vscode from 'vscode';
 
 let service: ts.LanguageService;
@@ -79,13 +80,13 @@ function initConnection() {
     return result;
   });
 
-  documents.onDidOpen((e) => {
-    console.log('onDidOpen', e.document.uri);
-    if (activeDocumentUri === e.document.uri) {
-      currentTextDocument = e.document;
-      console.log('open', e.document.uri);
+  connection.onNotification('window/activeTextEditor', (uri) => {
+    console.log('window/activeTextEditor', uri);
+    const activeDocument = documents.get(uri);
+    console.log('activeDocument', activeDocument?.uri);
+    if (activeDocument) {
+      currentTextDocument = activeDocument;
     }
-    // console.log('open', e.document.getText());
   });
 
   documents.onDidChangeContent(() => {
@@ -94,22 +95,17 @@ function initConnection() {
     // test();
   });
 
-  connection.onNotification('window/activeTextEditor', (uri) => {
-    console.log('window/activeTextEditor', uri);
-    activeDocumentUri = uri;
-  });
-
   documents.listen(connection);
 
   connection.listen();
 }
 
-function test() {
-  const program = service.getProgram();
-  // const typeChecker = program?.getTypeChecker();
-  const sourceFile = program?.getSourceFile(currentTextDocument.uri) as ts.SourceFile;
-  console.log(sourceFile.getFullText());
-}
+// function test() {
+//   const program = service.getProgram();
+//   // const typeChecker = program?.getTypeChecker();
+//   const sourceFile = program?.getSourceFile(currentTextDocument.uri) as ts.SourceFile;
+//   console.log(sourceFile.getFullText());
+// }
 
 initTSService();
 initConnection();
