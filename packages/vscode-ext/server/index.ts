@@ -13,7 +13,6 @@ import fs from 'fs';
 let service: ts.LanguageService;
 let workspaceRootFolderPath: string;
 let currentTextDocument: TextDocument;
-let activeDocumentUri: string;
 
 function initTSService() {
   const compilerOptions: ts.CompilerOptions = {
@@ -54,7 +53,7 @@ function initTSService() {
     },
     getCurrentDirectory: () => workspaceRootFolderPath,
     getDefaultLibFileName: () => 'es2020.full',
-    readFile: function (path: string, _encoding?: string | undefined): string | undefined {
+    readFile: function (path: string): string | undefined {
       if (path === currentTextDocument.uri) {
         return currentTextDocument.getText();
       } else {
@@ -80,15 +79,16 @@ function initConnection() {
   });
 
   connection.onNotification('window/activeTextEditor', (uri) => {
-    console.log('window/activeTextEditor', uri);
     const activeDocument = documents.get(uri);
-    console.log('activeDocument', activeDocument?.uri);
     if (activeDocument) {
+      console.log(activeDocument.version);
       currentTextDocument = activeDocument;
     }
   });
 
   documents.onDidChangeContent(() => {
+    console.log(currentTextDocument?.version);
+
     // console.log('change', e.document.uri);
     // console.log('change', e.document.getText());
     // test();
@@ -101,7 +101,7 @@ function initConnection() {
 
 // function test() {
 //   const program = service.getProgram();
-//   // const typeChecker = program?.getTypeChecker();
+//   const typeChecker = program?.getTypeChecker();
 //   const sourceFile = program?.getSourceFile(currentTextDocument.uri) as ts.SourceFile;
 //   console.log(sourceFile.getFullText());
 // }
