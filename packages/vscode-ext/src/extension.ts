@@ -265,7 +265,7 @@ function initSendServerWithActiveTextEditor(context: vscode.ExtensionContext) {
   if (activeUri) {
     setTimeout(() => {
       client.sendNotification('window/activeTextEditor', activeUri);
-    }, 1000);
+    }, 1500);
   }
   context.subscriptions.push(
     vscode.window.onDidChangeActiveTextEditor((e) => {
@@ -419,7 +419,7 @@ export function activate(context: vscode.ExtensionContext) {
   try {
     initClient(context);
     initSendServerWithActiveTextEditor(context);
-    setDecorationTest();
+    // setDecorationTest();
     initStatusBar(context);
     initParseUrlCommand(context);
     initListenWorkspaceConfiguration(context);
