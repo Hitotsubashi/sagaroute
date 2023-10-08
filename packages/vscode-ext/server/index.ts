@@ -15,6 +15,7 @@ import getRouteRangeRecorder, { RouteRange } from './RouteRangeRecorder';
 let service: ts.LanguageService;
 let workspaceRootFolderPath: string;
 let currentTextDocument: TextDocument;
+let currentTextDocumentUriWithoutFilePrefix: string;
 let alreadyInitTSServer = false;
 
 // function getAllTsFiles(dirPath: string) {
@@ -54,21 +55,21 @@ function initTSService() {
   };
   service = ts.createLanguageService({
     getCompilationSettings: () => compilerOptions,
-    getScriptFileNames: () => [removeFilePrefix(currentTextDocument.uri)],
+    getScriptFileNames: () => [currentTextDocumentUriWithoutFilePrefix],
     // getAllTsFiles(path.join(removeFilePrefix(workspaceRootFolderPath), 'src')),
     getScriptKind: (fileName) => {
       return fileName.substr(fileName.length - 2) === 'ts' ? ts.ScriptKind.TS : ts.ScriptKind.JS;
     },
     // TODO: 思考非currentTextDocument的文件版本恒为1时时候会出现问题
     getScriptVersion: (fileName: string) => {
-      if (fileName === removeFilePrefix(currentTextDocument.uri)) {
+      if (fileName === currentTextDocumentUriWithoutFilePrefix) {
         return String(currentTextDocument.version);
       }
       return '0';
     },
     getScriptSnapshot: (fileName: string) => {
       console.log('getScriptSnapshot', fileName);
-      if (fileName === removeFilePrefix(currentTextDocument.uri)) {
+      if (fileName === currentTextDocumentUriWithoutFilePrefix) {
         const text = currentTextDocument.getText();
         return {
           getText: (start, end) => text.substring(start, end),
@@ -86,7 +87,7 @@ function initTSService() {
     getDefaultLibFileName: (options) => ts.getDefaultLibFilePath(options),
     readFile: function (path: string): string | undefined {
       console.log('path', path);
-      if (path === removeFilePrefix(currentTextDocument.uri)) {
+      if (path === currentTextDocumentUriWithoutFilePrefix) {
         return currentTextDocument.getText();
       } else {
         // @ts-ignore
@@ -115,6 +116,7 @@ function initConnection() {
     const activeDocument = documents.get(uri);
     if (activeDocument) {
       currentTextDocument = activeDocument;
+      currentTextDocumentUriWithoutFilePrefix = removeFilePrefix(currentTextDocument.uri);
       initTSService();
     }
   });
@@ -140,7 +142,7 @@ const getRanges = throttle(
     const program = service.getProgram();
     if (program) {
       const typeChecker = program.getTypeChecker();
-      const sourceFile = program.getSourceFile(removeFilePrefix(currentTextDocument.uri));
+      const sourceFile = program.getSourceFile(currentTextDocumentUriWithoutFilePrefix);
       if (sourceFile) {
         console.log('sourceFile.getFullText()', sourceFile.getFullText());
         const routeStringLiterals = getRouteStringLiteral(sourceFile, typeChecker);
