@@ -37,34 +37,39 @@ function getAllTsFiles(dirPath: string) {
   return tsFiles;
 }
 
+function removeFilePrefix(fpath: string) {
+  return fpath.slice('file://'.length);
+}
+
 function initTSService() {
   if (alreadyInitTSServer) {
     return;
   }
   alreadyInitTSServer = true;
   const compilerOptions: ts.CompilerOptions = {
-    allowNonTsExtensions: true,
+    // allowNonTsExtensions: true,
     allowJs: true,
-    target: ts.ScriptTarget.Latest,
-    moduleResolution: ts.ModuleResolutionKind.Classic,
-    experimentalDecorators: false,
+    // target: ts.ScriptTarget.Latest,
+    // moduleResolution: ts.ModuleResolutionKind.Classic,
+    // experimentalDecorators: false,
   };
   service = ts.createLanguageService({
     getCompilationSettings: () => compilerOptions,
-    getScriptFileNames: () => [currentTextDocument.uri],
+    getScriptFileNames: () =>
+      getAllTsFiles(path.join(removeFilePrefix(workspaceRootFolderPath), 'src')),
     getScriptKind: (fileName) => {
       return fileName.substr(fileName.length - 2) === 'ts' ? ts.ScriptKind.TS : ts.ScriptKind.JS;
     },
     // TODO: 思考非currentTextDocument的文件版本恒为1时时候会出现问题
     getScriptVersion: (fileName: string) => {
-      if (fileName === currentTextDocument.uri) {
+      if (fileName === removeFilePrefix(currentTextDocument.uri)) {
         return String(currentTextDocument.version);
       }
       return '1';
     },
     getScriptSnapshot: (fileName: string) => {
       console.log('getScriptSnapshot', fileName);
-      if (fileName === currentTextDocument.uri) {
+      if (fileName === removeFilePrefix(currentTextDocument.uri)) {
         const text = currentTextDocument.getText();
         return {
           getText: (start, end) => text.substring(start, end),
@@ -78,11 +83,11 @@ function initTSService() {
         return ts.ScriptSnapshot.fromString(fs.readFileSync(fileName).toString());
       }
     },
-    getCurrentDirectory: () => workspaceRootFolderPath.slice('file://'.length),
+    getCurrentDirectory: () => removeFilePrefix(workspaceRootFolderPath),
     getDefaultLibFileName: (options) => ts.getDefaultLibFilePath(options),
     readFile: function (path: string): string | undefined {
       console.log('path', path);
-      if (path === currentTextDocument.uri) {
+      if (path === removeFilePrefix(currentTextDocument.uri)) {
         return currentTextDocument.getText();
       } else {
         // @ts-ignore
@@ -136,7 +141,7 @@ const getRanges = throttle(
     const program = service.getProgram();
     if (program) {
       const typeChecker = program.getTypeChecker();
-      const sourceFile = program.getSourceFile(currentTextDocument.uri);
+      const sourceFile = program.getSourceFile(removeFilePrefix(currentTextDocument.uri));
       if (sourceFile) {
         console.log('sourceFile.getFullText()', sourceFile.getFullText());
         const routeStringLiterals = getRouteStringLiteral(sourceFile, typeChecker);
