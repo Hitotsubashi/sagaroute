@@ -11,31 +11,30 @@ import fs from 'fs';
 import { throttle } from 'lodash';
 import getRouteStringLiteral from './get-route-string';
 import getRouteRangeRecorder, { RouteRange } from './RouteRangeRecorder';
-import path from 'path';
 
 let service: ts.LanguageService;
 let workspaceRootFolderPath: string;
 let currentTextDocument: TextDocument;
 let alreadyInitTSServer = false;
 
-function getAllTsFiles(dirPath: string) {
-  const files = fs.readdirSync(dirPath);
+// function getAllTsFiles(dirPath: string) {
+//   const files = fs.readdirSync(dirPath);
 
-  let tsFiles: string[] = [];
+//   let tsFiles: string[] = [];
 
-  files.forEach((file) => {
-    const filePath = path.join(dirPath, file);
-    const stat = fs.statSync(filePath);
+//   files.forEach((file) => {
+//     const filePath = path.join(dirPath, file);
+//     const stat = fs.statSync(filePath);
 
-    if (stat.isDirectory()) {
-      tsFiles = [...tsFiles, ...getAllTsFiles(filePath)];
-    } else if (filePath.toLowerCase().endsWith('.ts') || filePath.toLowerCase().endsWith('.tsx')) {
-      tsFiles.push(filePath);
-    }
-  });
+//     if (stat.isDirectory()) {
+//       tsFiles = [...tsFiles, ...getAllTsFiles(filePath)];
+//     } else if (filePath.toLowerCase().endsWith('.ts') || filePath.toLowerCase().endsWith('.tsx')) {
+//       tsFiles.push(filePath);
+//     }
+//   });
 
-  return tsFiles;
-}
+//   return tsFiles;
+// }
 
 function removeFilePrefix(fpath: string) {
   return fpath.slice('file://'.length);
@@ -55,8 +54,8 @@ function initTSService() {
   };
   service = ts.createLanguageService({
     getCompilationSettings: () => compilerOptions,
-    getScriptFileNames: () =>
-      getAllTsFiles(path.join(removeFilePrefix(workspaceRootFolderPath), 'src')),
+    getScriptFileNames: () => [removeFilePrefix(currentTextDocument.uri)],
+    // getAllTsFiles(path.join(removeFilePrefix(workspaceRootFolderPath), 'src')),
     getScriptKind: (fileName) => {
       return fileName.substr(fileName.length - 2) === 'ts' ? ts.ScriptKind.TS : ts.ScriptKind.JS;
     },
@@ -65,7 +64,7 @@ function initTSService() {
       if (fileName === removeFilePrefix(currentTextDocument.uri)) {
         return String(currentTextDocument.version);
       }
-      return '1';
+      return '0';
     },
     getScriptSnapshot: (fileName: string) => {
       console.log('getScriptSnapshot', fileName);
