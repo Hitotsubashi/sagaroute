@@ -27,8 +27,7 @@ function isNavigationFunction(
   typeChecker: ts.TypeChecker,
 ): node is ts.CallExpression {
   if (ts.isCallExpression(node) && node.arguments[0] && ts.isStringLiteral(node.arguments[0])) {
-    const stringType = typeChecker?.typeToString(typeChecker?.getTypeAtLocation(node.expression));
-    console.log('stringType', stringType);
+    const stringType = typeChecker.typeToString(typeChecker.getTypeAtLocation(node.expression));
     if (stringType === 'NavigateFunction') {
       return true;
     }

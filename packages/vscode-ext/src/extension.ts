@@ -259,10 +259,14 @@ interface RouteRange {
 function initListenRouteDecoration(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     client.onNotification('activeTextEditor/decorations', (response) => {
+      const settingConfiguration = vscode.workspace.getConfiguration('sagaroute');
+      const decorationStyle = (settingConfiguration.get('decoration') as typeof Proxy) || {};
       const { uri, ranges } = response as { uri: string; ranges: RouteRange[] };
       if (vscode.Uri.parse(uri).path === vscode.window.activeTextEditor?.document.uri.fsPath) {
         const decorationType = vscode.window.createTextEditorDecorationType({
           color: '#69b1ff',
+          backgroundColor: 'transparent',
+          ...decorationStyle,
         });
         vscode.window.activeTextEditor?.setDecorations(
           decorationType,

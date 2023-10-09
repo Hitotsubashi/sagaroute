@@ -53,6 +53,30 @@
           "type": "boolean",
           "default": false,
           "description": "Status decide Sagaroute to watching or not."
+        },
+        "sagaroute.decoration": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "default": null,
+          "markdownDescription": "The style used to define the highlighted route string, you can find the avaliable properties in [here](https://code.visualstudio.com/api/references/vscode-api#DecorationRenderOptions)",
+          "properties": {
+            "color": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "default": null
+            },
+            "backgroundColor": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "default": null
+            }
+          }
         }
       }
     },
