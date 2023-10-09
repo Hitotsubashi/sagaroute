@@ -384,32 +384,32 @@ async function showFile(fpath: string) {
   vscode.window.showTextDocument(doc);
 }
 
-async function setDecorationTest() {
-  const activeEditor = vscode.window.activeTextEditor;
-  const decorationType = vscode.window.createTextEditorDecorationType({
-    cursor: 'pointer',
-    textDecoration: 'underline',
-  });
-  if (activeEditor) {
-    activeEditor.setDecorations(decorationType, [
-      { range: new vscode.Range(0, 0, 1, 0), hoverMessage: '123' },
-    ]);
-  }
-  vscode.languages.registerDefinitionProvider([{ scheme: 'file', language: 'typescriptreact' }], {
-    provideDefinition(document, position) {
-      if (position.line === 0) {
-        return [
-          new vscode.Location(
-            vscode.Uri.file(
-              '/Users/admin/Desktop/work/MyStudy/project-vite-for-sagaroute-react/src/pages/user/e.tsx',
-            ),
-            new vscode.Range(0, 0, 0, 0),
-          ),
-        ];
-      }
-    },
-  });
-}
+// async function setDecorationTest() {
+//   const activeEditor = vscode.window.activeTextEditor;
+//   const decorationType = vscode.window.createTextEditorDecorationType({
+//     cursor: 'pointer',
+//     textDecoration: 'underline',
+//   });
+//   if (activeEditor) {
+//     activeEditor.setDecorations(decorationType, [
+//       { range: new vscode.Range(0, 0, 1, 0), hoverMessage: '123' },
+//     ]);
+//   }
+//   vscode.languages.registerDefinitionProvider([{ scheme: 'file', language: 'typescriptreact' }], {
+//     provideDefinition(document, position) {
+//       if (position.line === 0) {
+//         return [
+//           new vscode.Location(
+//             vscode.Uri.file(
+//               '/Users/admin/Desktop/work/MyStudy/project-vite-for-sagaroute-react/src/pages/user/e.tsx',
+//             ),
+//             new vscode.Range(0, 0, 0, 0),
+//           ),
+//         ];
+//       }
+//     },
+//   });
+// }
 
 let client: LanguageClient;
 
