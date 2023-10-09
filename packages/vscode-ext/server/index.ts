@@ -4,6 +4,7 @@ import {
   ProposedFeatures,
   TextDocumentSyncKind,
   InitializeResult,
+  _Connection,
 } from 'vscode-languageserver/node';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import ts from 'typescript';
@@ -17,28 +18,14 @@ let workspaceRootFolderPath: string;
 let currentTextDocument: TextDocument;
 let currentTextDocumentUriWithoutFilePrefix: string;
 let alreadyInitTSServer = false;
+let connection: _Connection;
 
-// function getAllTsFiles(dirPath: string) {
-//   const files = fs.readdirSync(dirPath);
-
-//   let tsFiles: string[] = [];
-
-//   files.forEach((file) => {
-//     const filePath = path.join(dirPath, file);
-//     const stat = fs.statSync(filePath);
-
-//     if (stat.isDirectory()) {
-//       tsFiles = [...tsFiles, ...getAllTsFiles(filePath)];
-//     } else if (filePath.toLowerCase().endsWith('.ts') || filePath.toLowerCase().endsWith('.tsx')) {
-//       tsFiles.push(filePath);
-//     }
-//   });
-
-//   return tsFiles;
-// }
-
-function removeFilePrefix(fpath: string) {
+function getPath(fpath: string) {
   return fpath.slice('file://'.length);
+}
+
+function getFPath(path: string) {
+  return 'file://' + path;
 }
 
 function initTSService() {
@@ -56,7 +43,7 @@ function initTSService() {
   service = ts.createLanguageService({
     getCompilationSettings: () => compilerOptions,
     getScriptFileNames: () => [currentTextDocumentUriWithoutFilePrefix],
-    // getAllTsFiles(path.join(removeFilePrefix(workspaceRootFolderPath), 'src')),
+    // getAllTsFiles(path.join(getPath(workspaceRootFolderPath), 'src')),
     getScriptKind: (fileName) => {
       return fileName.substr(fileName.length - 2) === 'ts' ? ts.ScriptKind.TS : ts.ScriptKind.JS;
     },
@@ -68,7 +55,6 @@ function initTSService() {
       return '0';
     },
     getScriptSnapshot: (fileName: string) => {
-      console.log('getScriptSnapshot', fileName);
       if (fileName === currentTextDocumentUriWithoutFilePrefix) {
         const text = currentTextDocument.getText();
         return {
@@ -83,10 +69,9 @@ function initTSService() {
         return ts.ScriptSnapshot.fromString(fs.readFileSync(fileName).toString());
       }
     },
-    getCurrentDirectory: () => removeFilePrefix(workspaceRootFolderPath),
+    getCurrentDirectory: () => getPath(workspaceRootFolderPath),
     getDefaultLibFileName: (options) => ts.getDefaultLibFilePath(options),
     readFile: function (path: string): string | undefined {
-      console.log('path', path);
       if (path === currentTextDocumentUriWithoutFilePrefix) {
         return currentTextDocument.getText();
       } else {
@@ -100,7 +85,7 @@ function initTSService() {
 }
 
 function initConnection() {
-  const connection = createConnection(ProposedFeatures.all);
+  connection = createConnection(ProposedFeatures.all);
   const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
   connection.onInitialize((params) => {
     workspaceRootFolderPath = params.workspaceFolders![0].uri;
@@ -112,13 +97,28 @@ function initConnection() {
     return result;
   });
 
-  connection.onNotification('window/activeTextEditor', (uri) => {
+  function changeCurrentTextDocument(uri: string) {
     const activeDocument = documents.get(uri);
     if (activeDocument) {
       currentTextDocument = activeDocument;
-      currentTextDocumentUriWithoutFilePrefix = removeFilePrefix(currentTextDocument.uri);
+      currentTextDocumentUriWithoutFilePrefix = getPath(currentTextDocument.uri);
       initTSService();
     }
+  }
+
+  connection.onInitialized(() => {
+    connection.sendRequest('activeTextEditor/uri').then((uri) => {
+      console.log('onInitialized', uri);
+      if (typeof uri === 'string') {
+        changeCurrentTextDocument(uri);
+        getRanges();
+      }
+    });
+  });
+
+  connection.onNotification('activeTextEditor/uri', (uri) => {
+    changeCurrentTextDocument(uri);
+    getRanges();
   });
 
   documents.onDidChangeContent((e) => {
@@ -136,34 +136,44 @@ const getRanges = throttle(
   () => {
     const routeRangeRecorder = getRouteRangeRecorder();
     const record = routeRangeRecorder.get(currentTextDocument.uri);
-    if (record && record.version === currentTextDocument.version) {
-      return;
-    }
-    const program = service.getProgram();
-    if (program) {
-      const typeChecker = program.getTypeChecker();
-      const sourceFile = program.getSourceFile(currentTextDocumentUriWithoutFilePrefix);
-      if (sourceFile) {
-        console.log('sourceFile.getFullText()', sourceFile.getFullText());
-        const routeStringLiterals = getRouteStringLiteral(sourceFile, typeChecker);
-        const ranges: RouteRange[] = routeStringLiterals.map(({ pos, end }) => {
-          const { line: startLine, character: startCharacter } =
-            currentTextDocument.positionAt(pos);
-          const { line: endLine, character: endCharacter } = currentTextDocument.positionAt(end);
-          return {
-            startLine,
-            startCharacter,
-            endLine,
-            endCharacter,
-          };
-        });
-        console.log(ranges);
-        routeRangeRecorder.set(currentTextDocument.uri, ranges, currentTextDocument.version);
+    if (!record || record.version !== currentTextDocument.version) {
+      const program = service.getProgram();
+      if (program) {
+        const typeChecker = program.getTypeChecker();
+        const sourceFile = program.getSourceFile(currentTextDocumentUriWithoutFilePrefix);
+        if (sourceFile) {
+          const routeStringLiterals = getRouteStringLiteral(sourceFile, typeChecker);
+          const ranges: RouteRange[] = routeStringLiterals.map(({ pos, end }) => {
+            const { line: startLine, character: startCharacter } =
+              currentTextDocument.positionAt(pos);
+            const { line: endLine, character: endCharacter } = currentTextDocument.positionAt(end);
+            return {
+              startLine,
+              startCharacter,
+              endLine,
+              endCharacter,
+            };
+          });
+          console.log(ranges);
+          routeRangeRecorder.set(currentTextDocument.uri, ranges, currentTextDocument.version);
+        }
       }
     }
+    setDecoration();
   },
   500,
   { trailing: true },
 );
+
+function setDecoration() {
+  const routeRangeRecorder = getRouteRangeRecorder();
+  const record = routeRangeRecorder.get(currentTextDocument.uri);
+  if (record) {
+    connection.sendNotification('activeTextEditor/decorations', {
+      uri: currentTextDocument.uri,
+      ranges: record.ranges,
+    });
+  }
+}
 
 initConnection();

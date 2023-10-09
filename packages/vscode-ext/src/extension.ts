@@ -249,6 +249,32 @@ function initListenWorkspaceConfiguration(context: vscode.ExtensionContext) {
   );
 }
 
+interface RouteRange {
+  startLine: number;
+  startCharacter: number;
+  endLine: number;
+  endCharacter: number;
+}
+
+function initListenRouteDecoration(context: vscode.ExtensionContext) {
+  context.subscriptions.push(
+    client.onNotification('activeTextEditor/decorations', (response) => {
+      const { uri, ranges } = response as { uri: string; ranges: RouteRange[] };
+      if (vscode.Uri.parse(uri).path === vscode.window.activeTextEditor?.document.uri.fsPath) {
+        const decorationType = vscode.window.createTextEditorDecorationType({
+          color: '#69b1ff',
+        });
+        vscode.window.activeTextEditor?.setDecorations(
+          decorationType,
+          ranges.map(({ startLine, startCharacter, endLine, endCharacter }) => ({
+            range: new vscode.Range(startLine, startCharacter, endLine, endCharacter),
+          })),
+        );
+      }
+    }),
+  );
+}
+
 function initSendServerWithActiveTextEditor(context: vscode.ExtensionContext) {
   function getUriFromDocument(document?: vscode.TextDocument) {
     if (document) {
@@ -261,17 +287,24 @@ function initSendServerWithActiveTextEditor(context: vscode.ExtensionContext) {
     return undefined;
   }
 
-  const activeUri = getUriFromDocument(vscode.window.activeTextEditor?.document);
-  if (activeUri) {
-    setTimeout(() => {
-      client.sendNotification('window/activeTextEditor', activeUri);
-    }, 1500);
-  }
+  context.subscriptions.push(
+    client.onRequest('activeTextEditor/uri', () => {
+      const activeUri = getUriFromDocument(vscode.window.activeTextEditor?.document);
+      return activeUri;
+    }),
+  );
+
+  // const activeUri = getUriFromDocument(vscode.window.activeTextEditor?.document);
+  // if (activeUri) {
+  //   setTimeout(() => {
+  //     client.sendNotification('activeTextEditor/uri', activeUri);
+  //   }, 1500);
+  // }
   context.subscriptions.push(
     vscode.window.onDidChangeActiveTextEditor((e) => {
       const activeUri = getUriFromDocument(e?.document);
       if (activeUri) {
-        client.sendNotification('window/activeTextEditor', activeUri);
+        client.sendNotification('activeTextEditor/uri', activeUri);
       }
     }),
   );
@@ -419,6 +452,7 @@ export function activate(context: vscode.ExtensionContext) {
   try {
     initClient(context);
     initSendServerWithActiveTextEditor(context);
+    initListenRouteDecoration(context);
     // setDecorationTest();
     initStatusBar(context);
     initParseUrlCommand(context);

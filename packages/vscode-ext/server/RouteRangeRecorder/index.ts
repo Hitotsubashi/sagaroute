@@ -15,7 +15,7 @@ interface RangeRecord {
 class RouteRangeRecorder {
   rangeMap: Record<string, RangeRecord> = {};
 
-  get(uri: string) {
+  get(uri: string): RangeRecord | undefined {
     return this.rangeMap[uri];
   }
 
