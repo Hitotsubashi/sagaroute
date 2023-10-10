@@ -7,9 +7,7 @@ import getSagaRoute, { rebuildSagaroute } from './SagaRoute';
 import getLogging from './Logging';
 import { performance } from 'perf_hooks';
 import getCacheManager from './CacheManager';
-import getPathCompletionItemManager, {
-  PathCompletionItemManager,
-} from './PathCompletionItemManager';
+import getPathCompletionItemManager from './PathCompletionItemManager';
 import getWarningManager from './WarningManager';
 import getJSDocManager from './JSDocManager';
 import urlRegex from 'url-regex';
@@ -21,7 +19,6 @@ import {
   ServerOptions,
   TransportKind,
 } from 'vscode-languageclient/node';
-import { Position } from 'vscode';
 
 let isEnabled: boolean;
 let routingWatcher: FSWatcher;

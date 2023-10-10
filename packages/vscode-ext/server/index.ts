@@ -16,6 +16,7 @@ import getRouteStringLiteral from './get-route-string';
 import getRouteRangeRecorder, { RouteRange } from './RouteRangeRecorder';
 import getRouteFileRelationManager, { ModifedRouteObject } from './RouteFileRelationManager';
 import getPathParseManager from './PathParseManager';
+import getJSDocManager from './JSDocManager';
 
 let service: ts.LanguageService;
 let workspaceRootFolderPath: string;
@@ -23,6 +24,7 @@ let currentTextDocument: TextDocument;
 let currentTextDocumentUriWithoutFilePrefix: string;
 let alreadyInitTSServer = false;
 let connection: _Connection;
+let documents: TextDocuments<TextDocument>;
 
 function getPath(fpath: string) {
   return fpath.slice('file://'.length);
@@ -46,7 +48,11 @@ function initTSService() {
   };
   service = ts.createLanguageService({
     getCompilationSettings: () => compilerOptions,
-    getScriptFileNames: () => [currentTextDocumentUriWithoutFilePrefix],
+    getScriptFileNames: () => {
+      console.log('getScriptFileNames');
+
+      return [currentTextDocumentUriWithoutFilePrefix];
+    },
     // getAllTsFiles(path.join(getPath(workspaceRootFolderPath), 'src')),
     getScriptKind: (fileName) => {
       return fileName.substr(fileName.length - 2) === 'ts' ? ts.ScriptKind.TS : ts.ScriptKind.JS;
@@ -55,8 +61,10 @@ function initTSService() {
     getScriptVersion: (fileName: string) => {
       if (fileName === currentTextDocumentUriWithoutFilePrefix) {
         return String(currentTextDocument.version);
+      } else {
+        const document = documents.get(getFPath(fileName));
+        return document?.version.toString() || '0';
       }
-      return '0';
     },
     getScriptSnapshot: (fileName: string) => {
       if (fileName === currentTextDocumentUriWithoutFilePrefix) {
@@ -90,12 +98,13 @@ function initTSService() {
 
 function initConnection() {
   connection = createConnection(ProposedFeatures.all);
-  const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
+  documents = new TextDocuments(TextDocument);
   connection.onInitialize((params) => {
     workspaceRootFolderPath = params.workspaceFolders![0].uri;
     const result: InitializeResult = {
       capabilities: {
         definitionProvider: true,
+        hoverProvider: true,
         textDocumentSync: TextDocumentSyncKind.Incremental,
       },
     };
@@ -136,6 +145,54 @@ function initConnection() {
     },
   );
 
+  connection.onHover(({ textDocument, position }) => {
+    const { uri } = textDocument;
+    const routeRangeRecorder = getRouteRangeRecorder();
+    const result = routeRangeRecorder.get(uri);
+    if (result) {
+      const { ranges } = result;
+      const { line, character } = position;
+      const range = ranges.find(
+        ({ startLine, startCharacter, endLine, endCharacter }) =>
+          startLine === line &&
+          endLine === line &&
+          startCharacter <= character &&
+          character <= endCharacter,
+      );
+      if (range) {
+        const pathParseManager = getPathParseManager();
+        const path = pathParseManager.parse(range.text);
+        console.log('onHover', path);
+        if (path) {
+          const jsDocManager = getJSDocManager();
+          const program = service.getProgram();
+          if (program) {
+            const sourceFile = program.getSourceFile(path);
+            console.log('sourceFile', sourceFile);
+
+            if (sourceFile) {
+              console.log(jsDocManager.parseJSDoc(sourceFile));
+            }
+          }
+
+          return {
+            contents: {
+              kind: 'markdown',
+              value: [`**${path.slice(getPath(workspaceRootFolderPath).length)}**`].join('\n'),
+            },
+            range: Range.create(
+              range.startLine,
+              range.startCharacter,
+              range.endLine,
+              range.endCharacter,
+            ),
+          };
+        }
+      }
+    }
+    return undefined;
+  });
+
   connection.onDefinition(({ textDocument, position }) => {
     const { uri } = textDocument;
     const routeRangeRecorder = getRouteRangeRecorder();
@@ -153,7 +210,7 @@ function initConnection() {
       if (range) {
         const pathParseManager = getPathParseManager();
         const path = pathParseManager.parse(range.text);
-        console.log('path', path);
+        console.log('onDefinition', path);
         if (path) {
           return Location.create(getFPath(path), Range.create(0, 0, 0, 0));
         }
@@ -181,6 +238,10 @@ const parseRanges = throttle(
       const program = service.getProgram();
       if (program) {
         const typeChecker = program.getTypeChecker();
+        console.log(
+          'currentTextDocumentUriWithoutFilePrefix',
+          currentTextDocumentUriWithoutFilePrefix,
+        );
         const sourceFile = program.getSourceFile(currentTextDocumentUriWithoutFilePrefix);
         if (sourceFile) {
           const routeStringLiterals = getRouteStringLiteral(sourceFile, typeChecker);
