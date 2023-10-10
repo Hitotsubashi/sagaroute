@@ -3,6 +3,7 @@ export interface RouteRange {
   startCharacter: number;
   endLine: number;
   endCharacter: number;
+  text: string;
   // location: string;
   // hover: string;
 }

@@ -21,6 +21,7 @@ import {
   ServerOptions,
   TransportKind,
 } from 'vscode-languageclient/node';
+import { Position } from 'vscode';
 
 let isEnabled: boolean;
 let routingWatcher: FSWatcher;
@@ -342,42 +343,42 @@ function initParseUrlCommand(context: vscode.ExtensionContext) {
   );
 }
 
-function registerRouteDecorator(context: vscode.ExtensionContext) {
-  const documentSelector: vscode.DocumentSelector = [
-    { scheme: 'file', language: 'typescript' },
-    { scheme: 'file', language: 'typescriptreact' },
-    { scheme: 'file', language: 'javascript' },
-    { scheme: 'file', language: 'javascriptreact' },
-  ];
-  const pathParseManager = getPathParseManager();
-  context.subscriptions.push(
-    vscode.languages.registerHoverProvider(documentSelector, {
-      async provideHover(document, position) {
-        const range =
-          document.getWordRangeAtPosition(position, /"\/([^"]*)"/) ||
-          document.getWordRangeAtPosition(position, /`\/([^`]*)`/) ||
-          document.getWordRangeAtPosition(position, /'\/([^']*)'/);
+// function registerRouteDecorator(context: vscode.ExtensionContext) {
+//   const documentSelector: vscode.DocumentSelector = [
+//     { scheme: 'file', language: 'typescript' },
+//     { scheme: 'file', language: 'typescriptreact' },
+//     { scheme: 'file', language: 'javascript' },
+//     { scheme: 'file', language: 'javascriptreact' },
+//   ];
+//   const pathParseManager = getPathParseManager();
+//   context.subscriptions.push(
+//     vscode.languages.registerHoverProvider(documentSelector, {
+//       async provideHover(document, position) {
+//         const range =
+//           document.getWordRangeAtPosition(position, /"\/([^"]*)"/) ||
+//           document.getWordRangeAtPosition(position, /`\/([^`]*)`/) ||
+//           document.getWordRangeAtPosition(position, /'\/([^']*)'/);
 
-        if (range) {
-          const pathname = document.getText(range).slice(1, -1);
-          const fpath = pathParseManager.parse(pathname);
-          let markdown: vscode.MarkdownString;
-          if (fpath) {
-            markdown = PathCompletionItemManager.makeBasicMarkdown(fpath);
-            const jsDocManager = getJSDocManager();
-            const jsdoc = await jsDocManager.getJSDoc(fpath);
-            if (jsdoc) {
-              markdown.appendCodeblock(jsdoc, 'javascript');
-            }
-          } else {
-            markdown = new vscode.MarkdownString('No page matching this route was found');
-          }
-          return new vscode.Hover(markdown);
-        }
-      },
-    }),
-  );
-}
+//         if (range) {
+//           const pathname = document.getText(range).slice(1, -1);
+//           const fpath = pathParseManager.parse(pathname);
+//           let markdown: vscode.MarkdownString;
+//           if (fpath) {
+//             markdown = PathCompletionItemManager.makeBasicMarkdown(fpath);
+//             const jsDocManager = getJSDocManager();
+//             const jsdoc = await jsDocManager.getJSDoc(fpath);
+//             if (jsdoc) {
+//               markdown.appendCodeblock(jsdoc, 'javascript');
+//             }
+//           } else {
+//             markdown = new vscode.MarkdownString('No page matching this route was found');
+//           }
+//           return new vscode.Hover(markdown);
+//         }
+//       },
+//     }),
+//   );
+// }
 
 async function showFile(fpath: string) {
   const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(fpath));
@@ -411,9 +412,9 @@ async function showFile(fpath: string) {
 //   });
 // }
 
-let client: LanguageClient;
+export let client: LanguageClient;
 
-async function initClient(context: vscode.ExtensionContext) {
+function initClient(context: vscode.ExtensionContext) {
   const serverModule = context.asAbsolutePath(path.join('dist', 'server.js'));
   const serverOptions: ServerOptions = {
     run: { module: serverModule, transport: TransportKind.ipc },
@@ -465,7 +466,7 @@ export function activate(context: vscode.ExtensionContext) {
     initConfigWatcher();
     initRoutingWatcher();
     registerRouteCompletions(context);
-    registerRouteDecorator(context);
+    // registerRouteDecorator(context);
   } catch (err) {
     console.log(err);
   }

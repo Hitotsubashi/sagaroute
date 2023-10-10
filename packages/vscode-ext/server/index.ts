@@ -4,6 +4,8 @@ import {
   ProposedFeatures,
   TextDocumentSyncKind,
   InitializeResult,
+  Location,
+  Range,
   _Connection,
 } from 'vscode-languageserver/node';
 import { TextDocument } from 'vscode-languageserver-textdocument';
@@ -12,6 +14,8 @@ import fs from 'fs';
 import { throttle } from 'lodash';
 import getRouteStringLiteral from './get-route-string';
 import getRouteRangeRecorder, { RouteRange } from './RouteRangeRecorder';
+import getRouteFileRelationManager, { ModifedRouteObject } from './RouteFileRelationManager';
+import getPathParseManager from './PathParseManager';
 
 let service: ts.LanguageService;
 let workspaceRootFolderPath: string;
@@ -91,6 +95,7 @@ function initConnection() {
     workspaceRootFolderPath = params.workspaceFolders![0].uri;
     const result: InitializeResult = {
       capabilities: {
+        definitionProvider: true,
         textDocumentSync: TextDocumentSyncKind.Incremental,
       },
     };
@@ -108,22 +113,58 @@ function initConnection() {
 
   connection.onInitialized(() => {
     connection.sendRequest('activeTextEditor/uri').then((uri) => {
-      console.log('onInitialized', uri);
       if (typeof uri === 'string') {
         changeCurrentTextDocument(uri);
-        getRanges();
+        parseRanges();
       }
     });
   });
 
   connection.onNotification('activeTextEditor/uri', (uri) => {
     changeCurrentTextDocument(uri);
-    getRanges();
+    parseRanges();
+  });
+
+  connection.onNotification(
+    'routeFileRelationManager/buildMap',
+    (result: { routes: ModifedRouteObject[] }) => {
+      const routeFileRelationManager = getRouteFileRelationManager();
+      routeFileRelationManager.setRoutes(result.routes);
+      routeFileRelationManager.buildMap();
+      const pathParseManager = getPathParseManager();
+      pathParseManager.compute();
+    },
+  );
+
+  connection.onDefinition(({ textDocument, position }) => {
+    const { uri } = textDocument;
+    const routeRangeRecorder = getRouteRangeRecorder();
+    const result = routeRangeRecorder.get(uri);
+    if (result) {
+      const { ranges } = result;
+      const { line, character } = position;
+      const range = ranges.find(
+        ({ startLine, startCharacter, endLine, endCharacter }) =>
+          startLine === line &&
+          endLine === line &&
+          startCharacter <= character &&
+          character <= endCharacter,
+      );
+      if (range) {
+        const pathParseManager = getPathParseManager();
+        const path = pathParseManager.parse(range.text);
+        console.log('path', path);
+        if (path) {
+          return Location.create(getFPath(path), Range.create(0, 0, 0, 0));
+        }
+      }
+    }
+    return undefined;
   });
 
   documents.onDidChangeContent((e) => {
     if (currentTextDocument?.uri === e.document.uri) {
-      getRanges();
+      parseRanges();
     }
   });
 
@@ -132,7 +173,7 @@ function initConnection() {
   connection.listen();
 }
 
-const getRanges = throttle(
+const parseRanges = throttle(
   () => {
     const routeRangeRecorder = getRouteRangeRecorder();
     const record = routeRangeRecorder.get(currentTextDocument.uri);
@@ -143,7 +184,7 @@ const getRanges = throttle(
         const sourceFile = program.getSourceFile(currentTextDocumentUriWithoutFilePrefix);
         if (sourceFile) {
           const routeStringLiterals = getRouteStringLiteral(sourceFile, typeChecker);
-          const ranges: RouteRange[] = routeStringLiterals.map(({ pos, end }) => {
+          const ranges: RouteRange[] = routeStringLiterals.map(({ pos, end, text }) => {
             const { line: startLine, character: startCharacter } =
               currentTextDocument.positionAt(pos);
             const { line: endLine, character: endCharacter } = currentTextDocument.positionAt(end);
@@ -152,9 +193,9 @@ const getRanges = throttle(
               startCharacter,
               endLine,
               endCharacter,
+              text,
             };
           });
-          console.log(ranges);
           routeRangeRecorder.set(currentTextDocument.uri, ranges, currentTextDocument.version);
         }
       }
