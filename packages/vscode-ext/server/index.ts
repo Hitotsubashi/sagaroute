@@ -17,6 +17,7 @@ import getRouteRangeRecorder, { RouteRange } from './RouteRangeRecorder';
 import getRouteFileRelationManager, { ModifedRouteObject } from './RouteFileRelationManager';
 import getPathParseManager from './PathParseManager';
 import getJSDocManager from './JSDocManager';
+import getPathCompletionItemManager from './PathCompletionItemManager';
 
 let service: ts.LanguageService;
 let workspaceRootFolderPath: string;
@@ -48,12 +49,7 @@ function initTSService() {
   };
   service = ts.createLanguageService({
     getCompilationSettings: () => compilerOptions,
-    getScriptFileNames: () => {
-      console.log('getScriptFileNames');
-
-      return [currentTextDocumentUriWithoutFilePrefix];
-    },
-    // getAllTsFiles(path.join(getPath(workspaceRootFolderPath), 'src')),
+    getScriptFileNames: () => [currentTextDocumentUriWithoutFilePrefix],
     getScriptKind: (fileName) => {
       return fileName.substr(fileName.length - 2) === 'ts' ? ts.ScriptKind.TS : ts.ScriptKind.JS;
     },
@@ -61,10 +57,12 @@ function initTSService() {
     getScriptVersion: (fileName: string) => {
       if (fileName === currentTextDocumentUriWithoutFilePrefix) {
         return String(currentTextDocument.version);
-      } else {
-        const document = documents.get(getFPath(fileName));
-        return document?.version.toString() || '0';
       }
+      return '0';
+      // else {
+      //   const document = documents.get(getFPath(fileName));
+      //   return document?.version.toString() || '0';
+      // }
     },
     getScriptSnapshot: (fileName: string) => {
       if (fileName === currentTextDocumentUriWithoutFilePrefix) {
@@ -105,6 +103,13 @@ function initConnection() {
       capabilities: {
         definitionProvider: true,
         hoverProvider: true,
+        completionProvider: {
+          triggerCharacters: ['/'],
+          resolveProvider: true,
+          completionItem: {
+            labelDetailsSupport: true,
+          },
+        },
         textDocumentSync: TextDocumentSyncKind.Incremental,
       },
     };
@@ -142,8 +147,36 @@ function initConnection() {
       routeFileRelationManager.buildMap();
       const pathParseManager = getPathParseManager();
       pathParseManager.compute();
+      const pathCompletionItemManager = getPathCompletionItemManager();
+      pathCompletionItemManager.generateCompletions();
     },
   );
+
+  connection.onCompletion(({ textDocument, position }) => {
+    console.log('connection.onCompletion');
+
+    const { uri } = textDocument;
+    const routeRangeRecorder = getRouteRangeRecorder();
+    const result = routeRangeRecorder.get(uri);
+    if (result) {
+      const { ranges } = result;
+      const { line, character } = position;
+      const range = ranges.find(
+        ({ startLine, startCharacter, endLine, endCharacter }) =>
+          startLine === line &&
+          endLine === line &&
+          startCharacter <= character &&
+          character <= endCharacter,
+      );
+      if (range) {
+        console.log('range', range);
+        const pathCompletionItemManager = getPathCompletionItemManager();
+        console.log('getCompletions', pathCompletionItemManager.getCompletions());
+
+        return pathCompletionItemManager.getCompletions();
+      }
+    }
+  });
 
   connection.onHover(async ({ textDocument, position }) => {
     const { uri } = textDocument;
@@ -162,12 +195,9 @@ function initConnection() {
       if (range) {
         const pathParseManager = getPathParseManager();
         const path = pathParseManager.parse(range.text);
-        console.log('onHover', path);
         if (path) {
           const jsDocManager = getJSDocManager();
           const jsdoc = await jsDocManager.getJSDoc(path);
-          console.log('jsdoc', jsdoc);
-
           const markdownContents = [
             `**${path.slice(getPath(workspaceRootFolderPath).length + 1)}**`,
           ];
@@ -209,7 +239,6 @@ function initConnection() {
       if (range) {
         const pathParseManager = getPathParseManager();
         const path = pathParseManager.parse(range.text);
-        console.log('onDefinition', path);
         if (path) {
           return Location.create(getFPath(path), Range.create(0, 0, 0, 0));
         }
@@ -237,10 +266,6 @@ const parseRanges = throttle(
       const program = service.getProgram();
       if (program) {
         const typeChecker = program.getTypeChecker();
-        console.log(
-          'currentTextDocumentUriWithoutFilePrefix',
-          currentTextDocumentUriWithoutFilePrefix,
-        );
         const sourceFile = program.getSourceFile(currentTextDocumentUriWithoutFilePrefix);
         if (sourceFile) {
           const routeStringLiterals = getRouteStringLiteral(sourceFile, typeChecker);
