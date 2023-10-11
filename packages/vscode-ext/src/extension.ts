@@ -7,12 +7,12 @@ import getSagaRoute, { rebuildSagaroute } from './SagaRoute';
 import getLogging from './Logging';
 import { performance } from 'perf_hooks';
 import getCacheManager from './CacheManager';
-import getPathCompletionItemManager from './PathCompletionItemManager';
+// import getPathCompletionItemManager from './PathCompletionItemManager';
 import getWarningManager from './WarningManager';
-import getJSDocManager from './JSDocManager';
+// import getJSDocManager from './JSDocManager';
 import urlRegex from 'url-regex';
-import getRouteFileRelationManager from './RouteFileRelationManager';
-import getPathParseManager from './PathParseManager';
+// import getRouteFileRelationManager from './RouteFileRelationManager';
+// import getPathParseManager from './PathParseManager';
 import {
   LanguageClient,
   LanguageClientOptions,
@@ -324,10 +324,10 @@ function initParseUrlCommand(context: vscode.ExtensionContext) {
           return;
         }
         const url = new URL(input);
-        const pathParseManager = getPathParseManager();
-        const fpath = pathParseManager.parse(
+        const fpath = (await client.sendRequest(
+          'url/parse',
           url.hash.startsWith('#/') ? url.hash.slice(1) : url.pathname,
-        );
+        )) as string | undefined;
         if (!fpath) {
           vscode.window.showErrorMessage(
             `The file matching the entered url <${input}> could not be found.`,

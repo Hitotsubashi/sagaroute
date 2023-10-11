@@ -29,7 +29,7 @@ const statisticPathHooks: RoutingOption['hooks'] = {
       order: 105,
       handler(routes: RouteObject[]) {
         // routeFileRelationManager.setRoutes(routes);
-        // client.sendNotification('routeFileRelationManager/buildMap', {
+        // client.sendNotification('route/build', {
         //   relations: relations.slice(),
         //   routes,
         // });
@@ -47,7 +47,7 @@ const statisticPathHooks: RoutingOption['hooks'] = {
           // pathCompletionItemManager.generateCompletions();
           // pathParseManager.compute();
           traverseRouteAndMountFileNode(routesWithFileNode);
-          client.sendNotification('routeFileRelationManager/buildMap', {
+          client.sendNotification('route/build', {
             routes: routesWithFileNode,
           });
           routesWithFileNode = [];

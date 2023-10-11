@@ -140,18 +140,21 @@ function initConnection() {
     parseRanges();
   });
 
-  connection.onNotification(
-    'routeFileRelationManager/buildMap',
-    (result: { routes: ModifedRouteObject[] }) => {
-      const routeFileRelationManager = getRouteFileRelationManager();
-      routeFileRelationManager.setRoutes(result.routes);
-      routeFileRelationManager.buildMap();
-      const pathParseManager = getPathParseManager();
-      pathParseManager.compute();
-      const pathCompletionItemManager = getPathCompletionItemManager();
-      pathCompletionItemManager.generateCompletions();
-    },
-  );
+  connection.onNotification('route/build', (result: { routes: ModifedRouteObject[] }) => {
+    const routeFileRelationManager = getRouteFileRelationManager();
+    routeFileRelationManager.setRoutes(result.routes);
+    routeFileRelationManager.buildMap();
+    const pathParseManager = getPathParseManager();
+    pathParseManager.compute();
+    const pathCompletionItemManager = getPathCompletionItemManager();
+    pathCompletionItemManager.generateCompletions();
+  });
+
+  connection.onRequest('url/parse', (pathname) => {
+    const pathParseManager = getPathParseManager();
+    const filepath = pathParseManager.parse(pathname);
+    return filepath;
+  });
 
   connection.onCompletion(({ textDocument, position }) => {
     const { uri } = textDocument;
