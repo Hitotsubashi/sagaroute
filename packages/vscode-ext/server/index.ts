@@ -7,6 +7,7 @@ import {
   Location,
   Range,
   _Connection,
+  CompletionItem,
 } from 'vscode-languageserver/node';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import ts from 'typescript';
@@ -153,8 +154,6 @@ function initConnection() {
   );
 
   connection.onCompletion(({ textDocument, position }) => {
-    console.log('connection.onCompletion');
-
     const { uri } = textDocument;
     const routeRangeRecorder = getRouteRangeRecorder();
     const result = routeRangeRecorder.get(uri);
@@ -169,13 +168,26 @@ function initConnection() {
           character <= endCharacter,
       );
       if (range) {
-        console.log('range', range);
         const pathCompletionItemManager = getPathCompletionItemManager();
-        console.log('getCompletions', pathCompletionItemManager.getCompletions());
-
         return pathCompletionItemManager.getCompletions();
       }
     }
+  });
+
+  connection.onCompletionResolve(async (completion: CompletionItem) => {
+    const routeFileRelationManager = getRouteFileRelationManager();
+    const filepath = routeFileRelationManager.getRoutePathToFilePathMap()[completion.label]!;
+    const jsDocManager = getJSDocManager();
+    const jsdoc = await jsDocManager.getJSDoc(filepath);
+    const markdownContents = [`**${filepath.slice(getPath(workspaceRootFolderPath).length + 1)}**`];
+    if (jsdoc) {
+      markdownContents.push('```typescript', jsdoc, '```');
+    }
+    completion.documentation = {
+      kind: 'markdown',
+      value: markdownContents.join('\n'),
+    };
+    return completion;
   });
 
   connection.onHover(async ({ textDocument, position }) => {

@@ -178,58 +178,58 @@ function initRoutingWatcher(immediate = false) {
     });
 }
 
-function registerRouteCompletions(context: vscode.ExtensionContext) {
-  const documentSelector: vscode.DocumentSelector = [
-    { scheme: 'file', language: 'typescript' },
-    { scheme: 'file', language: 'typescriptreact' },
-    { scheme: 'file', language: 'javascript' },
-    { scheme: 'file', language: 'javascriptreact' },
-  ];
-  const pathCompletionItemManager = getPathCompletionItemManager();
-  const routeFileRelationManager = getRouteFileRelationManager();
+// function registerRouteCompletions(context: vscode.ExtensionContext) {
+//   const documentSelector: vscode.DocumentSelector = [
+//     { scheme: 'file', language: 'typescript' },
+//     { scheme: 'file', language: 'typescriptreact' },
+//     { scheme: 'file', language: 'javascript' },
+//     { scheme: 'file', language: 'javascriptreact' },
+//   ];
+//   const pathCompletionItemManager = getPathCompletionItemManager();
+//   const routeFileRelationManager = getRouteFileRelationManager();
 
-  context.subscriptions.push(
-    vscode.languages.registerCompletionItemProvider(
-      documentSelector,
-      {
-        provideCompletionItems(document, position) {
-          const line = document.lineAt(position.line).text;
-          if (line.slice(0, position.character).endsWith('//')) {
-            const completions = pathCompletionItemManager.getCompletions();
-            completions.forEach((item) => {
-              item.additionalTextEdits = [
-                vscode.TextEdit.replace(
-                  new vscode.Range(
-                    position.line,
-                    position.character - 2,
-                    position.line,
-                    position.character,
-                  ),
-                  '',
-                ),
-              ];
-            });
-            return completions;
-          }
-          return undefined;
-        },
-        async resolveCompletionItem(item) {
-          const route = item.label as string;
-          const fpath = routeFileRelationManager.getRoutePathToFilePathMap()[route];
-          if (fpath) {
-            const jsDocManager = getJSDocManager();
-            const jsdoc = await jsDocManager.getJSDoc(fpath);
-            if (jsdoc) {
-              (item.documentation as vscode.MarkdownString).appendCodeblock(jsdoc, 'javascript');
-            }
-          }
-          return item;
-        },
-      },
-      '/',
-    ),
-  );
-}
+//   context.subscriptions.push(
+//     vscode.languages.registerCompletionItemProvider(
+//       documentSelector,
+//       {
+//         provideCompletionItems(document, position) {
+//           const line = document.lineAt(position.line).text;
+//           if (line.slice(0, position.character).endsWith('//')) {
+//             const completions = pathCompletionItemManager.getCompletions();
+//             completions.forEach((item) => {
+//               item.additionalTextEdits = [
+//                 vscode.TextEdit.replace(
+//                   new vscode.Range(
+//                     position.line,
+//                     position.character - 2,
+//                     position.line,
+//                     position.character,
+//                   ),
+//                   '',
+//                 ),
+//               ];
+//             });
+//             return completions;
+//           }
+//           return undefined;
+//         },
+//         async resolveCompletionItem(item) {
+//           const route = item.label as string;
+//           const fpath = routeFileRelationManager.getRoutePathToFilePathMap()[route];
+//           if (fpath) {
+//             const jsDocManager = getJSDocManager();
+//             const jsdoc = await jsDocManager.getJSDoc(fpath);
+//             if (jsdoc) {
+//               (item.documentation as vscode.MarkdownString).appendCodeblock(jsdoc, 'javascript');
+//             }
+//           }
+//           return item;
+//         },
+//       },
+//       '/',
+//     ),
+//   );
+// }
 
 function initListenWorkspaceConfiguration(context: vscode.ExtensionContext) {
   context.subscriptions.push(
@@ -462,7 +462,7 @@ export function activate(context: vscode.ExtensionContext) {
     initInputCommand(context);
     initConfigWatcher();
     initRoutingWatcher();
-    registerRouteCompletions(context);
+    // registerRouteCompletions(context);
     // registerRouteDecorator(context);
   } catch (err) {
     console.log(err);

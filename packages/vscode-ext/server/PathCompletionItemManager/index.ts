@@ -31,7 +31,6 @@ export class PathCompletionItemManager {
 
   generateCompletions() {
     const routePathToFilePathMap = this.routeFileRelationManager.getRoutePathToFilePathMap();
-    console.log('routePathToFilePathMap', routePathToFilePathMap);
     this.completions = Object.keys(routePathToFilePathMap).map((route) =>
       this.transformPathToCompletionItem(route),
     );
