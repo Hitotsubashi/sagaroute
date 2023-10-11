@@ -1,65 +1,113 @@
-import ts from 'typescript';
+/* eslint-disable @typescript-eslint/naming-convention */
+import * as fs from 'fs';
+import * as path from 'path';
+import { promisify } from 'util';
+import { parse, ParserPlugin, ParseResult } from '@babel/parser';
+import traverse from '@babel/traverse';
+import * as t from '@babel/types';
+
+const statAsync = promisify(fs.stat);
+const readFileAync = promisify(fs.readFile);
+
+async function getAst(fpath: string) {
+  const fileContent = await readFileAync(fpath, 'utf-8');
+  const { ext } = path.parse(fpath);
+  const plugins: ParserPlugin[] = ['jsx'];
+  if (ext === '.tsx') {
+    plugins.push('typescript');
+  }
+  return parse(fileContent, {
+    sourceType: 'module',
+    plugins,
+  });
+}
+
+function findJSDoc(ast: ParseResult<t.File>): string | null {
+  let componentName: string | undefined = undefined;
+  let comments: t.Comment[] | null | undefined;
+  traverse(ast, {
+    ExportDefaultDeclaration(traversePath) {
+      const { node } = traversePath;
+      const { declaration } = node;
+      if (t.isFunctionDeclaration(declaration)) {
+        comments = node.leadingComments;
+        traversePath.stop();
+      } else if (t.isIdentifier(declaration)) {
+        componentName = declaration.name;
+        traversePath.stop();
+      } else if (t.isClassDeclaration(declaration)) {
+        comments = node.leadingComments;
+        traversePath.stop();
+      }
+    },
+  });
+  if (componentName) {
+    traverse(ast, {
+      FunctionDeclaration(traversePath) {
+        const { node } = traversePath;
+        if (node.id?.name === componentName) {
+          comments = node.leadingComments;
+          traversePath.stop();
+        }
+      },
+      ClassDeclaration(traversePath) {
+        const { node } = traversePath;
+        if (node.id?.name === componentName) {
+          comments = node.leadingComments;
+          traversePath.stop();
+        }
+      },
+      VariableDeclaration(traversePath) {
+        const { node } = traversePath;
+        const { declarations } = node;
+        if (
+          declarations.some(
+            (declarator) => t.isIdentifier(declarator.id) && declarator.id.name === componentName,
+          )
+        ) {
+          comments = node.leadingComments;
+          traversePath.stop();
+        }
+      },
+    });
+  }
+  if (comments?.length) {
+    return comments
+      .map((comment) => {
+        if (comment.type === 'CommentBlock') {
+          return `/*${comment.value}*/`;
+        } else {
+          return `// ${comment.value}`;
+        }
+      })
+      .join('\n');
+  }
+  return null;
+}
 
 class JSDocManager {
-  jsdocRecord: Record<string, { version: number; content: string | null }> = {};
+  jsdocRecord: Record<string, { mtime: number; content: string | null }> = {};
 
-  getJSDoc(path: string) {
-    return this.jsdocRecord[path];
-  }
-
-  setJSDoc(path: string, version: number, content: string | null) {
-    this.jsdocRecord[path] = { version, content };
-  }
-
-  parseJSDoc(sourceFile: ts.SourceFile) {
-    const componentName = this.findComponentName(sourceFile);
-    if (componentName) {
-      const componentNode = this.findComponentNode(sourceFile, componentName);
-      if (componentNode) {
-        const leadingCommentRanges =
-          ts.getLeadingCommentRanges(sourceFile.text, componentNode.pos) || [];
-        return leadingCommentRanges
-          .map((range) => sourceFile.text.substring(range.pos, range.end))
-          .join('\n');
+  async getJSDoc(fpath: string): Promise<null | string> {
+    let stat: fs.Stats;
+    try {
+      stat = await statAsync(fpath);
+    } catch (err) {
+      console.error(`JSDocManager: Failed to get file stats for ${fpath}: ${err}`);
+      return null;
+    }
+    if (this.jsdocRecord[fpath]) {
+      if (stat!.mtimeMs === this.jsdocRecord[fpath].mtime) {
+        return this.jsdocRecord[fpath].content;
       }
     }
-    return null;
-  }
-
-  private findComponentNode(tsNode: ts.Node | ts.SourceFile, componentName: string) {
-    let componentNode: ts.Node | undefined;
-    ts.forEachChild(tsNode, (node: ts.Node) => {
-      if (
-        ts.isVariableStatement(node) &&
-        node.declarationList.declarations.some(
-          (declaration) =>
-            ts.isIdentifier(declaration.name) && declaration.name.escapedText === componentName,
-        )
-      ) {
-        componentNode = node;
-      } else if (ts.isFunctionDeclaration(node) && node.name?.escapedText === componentName) {
-        componentNode = node;
-      } else if (ts.isClassDeclaration(node) && node.name?.escapedText === componentName) {
-        componentNode = node;
-      } else {
-        componentNode = this.findComponentNode(node, componentName);
-      }
-    });
-    return componentNode;
-  }
-
-  private findComponentName(tsNode: ts.Node | ts.SourceFile) {
-    let componentName: string | undefined;
-    ts.forEachChild(tsNode, (node: ts.Node) => {
-      if (!componentName) {
-        if (ts.isExportAssignment(node) && ts.isIdentifier(node.expression)) {
-          componentName = String(node.expression.escapedText);
-        } else {
-          componentName = this.findComponentName(node);
-        }
-      }
-    });
-    return componentName;
+    const ast = await getAst(fpath);
+    const jsdoc = findJSDoc(ast);
+    this.jsdocRecord[fpath] = {
+      mtime: stat.mtimeMs,
+      content: jsdoc,
+    };
+    return jsdoc;
   }
 }
 

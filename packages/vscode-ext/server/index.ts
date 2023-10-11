@@ -145,7 +145,7 @@ function initConnection() {
     },
   );
 
-  connection.onHover(({ textDocument, position }) => {
+  connection.onHover(async ({ textDocument, position }) => {
     const { uri } = textDocument;
     const routeRangeRecorder = getRouteRangeRecorder();
     const result = routeRangeRecorder.get(uri);
@@ -165,20 +165,19 @@ function initConnection() {
         console.log('onHover', path);
         if (path) {
           const jsDocManager = getJSDocManager();
-          const program = service.getProgram();
-          if (program) {
-            const sourceFile = program.getSourceFile(path);
-            console.log('sourceFile', sourceFile);
+          const jsdoc = await jsDocManager.getJSDoc(path);
+          console.log('jsdoc', jsdoc);
 
-            if (sourceFile) {
-              console.log(jsDocManager.parseJSDoc(sourceFile));
-            }
+          const markdownContents = [
+            `**${path.slice(getPath(workspaceRootFolderPath).length + 1)}**`,
+          ];
+          if (jsdoc) {
+            markdownContents.push('```typescript', jsdoc, '```');
           }
-
           return {
             contents: {
               kind: 'markdown',
-              value: [`**${path.slice(getPath(workspaceRootFolderPath).length)}**`].join('\n'),
+              value: markdownContents.join('\n'),
             },
             range: Range.create(
               range.startLine,
