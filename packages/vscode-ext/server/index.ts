@@ -8,6 +8,8 @@ import {
   Range,
   _Connection,
   CompletionItem,
+  Diagnostic,
+  DiagnosticSeverity,
 } from 'vscode-languageserver/node';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import ts from 'typescript';
@@ -301,10 +303,28 @@ const parseRanges = throttle(
       }
     }
     setDecoration();
+    setDiagnostic();
   },
   500,
   { trailing: true },
 );
+
+function setDiagnostic() {
+  const routeRangeRecorder = getRouteRangeRecorder();
+  const record = routeRangeRecorder.get(currentTextDocument.uri);
+  if (record) {
+    const pathParseManager = getPathParseManager();
+    const noMatchedRouteRanges = record.ranges.filter(({ text }) => !pathParseManager.parse(text));
+    const diagnostics = noMatchedRouteRanges.map((range) =>
+      Diagnostic.create(
+        Range.create(range.startLine, range.startCharacter, range.endLine, range.endCharacter),
+        `The path [${range.text}] has no matched route.`,
+        DiagnosticSeverity.Warning,
+      ),
+    );
+    connection.sendDiagnostics({ uri: currentTextDocument.uri, diagnostics });
+  }
+}
 
 function setDecoration() {
   const routeRangeRecorder = getRouteRangeRecorder();
