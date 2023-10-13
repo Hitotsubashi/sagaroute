@@ -254,6 +254,7 @@ interface RouteRange {
   endCharacter: number;
 }
 
+let decorationType: vscode.TextEditorDecorationType;
 function initListenRouteDecoration(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     client.onNotification('activeTextEditor/decorations', (response) => {
@@ -261,7 +262,11 @@ function initListenRouteDecoration(context: vscode.ExtensionContext) {
       const decorationStyle = (settingConfiguration.get('decoration') as typeof Proxy) || {};
       const { uri, ranges } = response as { uri: string; ranges: RouteRange[] };
       if (vscode.Uri.parse(uri).path === vscode.window.activeTextEditor?.document.uri.fsPath) {
-        const decorationType = vscode.window.createTextEditorDecorationType({
+        if (decorationType) {
+          vscode.window.activeTextEditor?.setDecorations(decorationType, []);
+          decorationType.dispose();
+        }
+        decorationType = vscode.window.createTextEditorDecorationType({
           color: '#69b1ff',
           backgroundColor: 'transparent',
           ...decorationStyle,

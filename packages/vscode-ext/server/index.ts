@@ -165,14 +165,14 @@ function initConnection() {
     if (result) {
       const { ranges } = result;
       const { line, character } = position;
-      const range = ranges.find(
+      const inRange = ranges.some(
         ({ startLine, startCharacter, endLine, endCharacter }) =>
           startLine === line &&
           endLine === line &&
           startCharacter <= character &&
           character <= endCharacter,
       );
-      if (range) {
+      if (inRange) {
         const pathCompletionItemManager = getPathCompletionItemManager();
         return pathCompletionItemManager.getCompletions();
       }
