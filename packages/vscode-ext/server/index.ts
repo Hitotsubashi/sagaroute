@@ -29,6 +29,7 @@ let currentTextDocumentUriWithoutFilePrefix: string;
 let alreadyInitTSServer = false;
 let connection: _Connection;
 let documents: TextDocuments<TextDocument>;
+let enabled = false;
 
 function getPath(fpath: string) {
   return fpath.slice('file://'.length);
@@ -56,7 +57,6 @@ function initTSService() {
     getScriptKind: (fileName) => {
       return fileName.substr(fileName.length - 2) === 'ts' ? ts.ScriptKind.TS : ts.ScriptKind.JS;
     },
-    // TODO: 思考非currentTextDocument的文件版本恒为1时时候会出现问题
     getScriptVersion: (fileName: string) => {
       if (fileName === currentTextDocumentUriWithoutFilePrefix) {
         return String(currentTextDocument.version);
@@ -143,6 +143,7 @@ function initConnection() {
   });
 
   connection.onNotification('route/build', (result: { routes: ModifedRouteObject[] }) => {
+    enabled = false;
     const routeFileRelationManager = getRouteFileRelationManager();
     routeFileRelationManager.setRoutes(result.routes);
     routeFileRelationManager.buildMap();
@@ -159,6 +160,9 @@ function initConnection() {
   });
 
   connection.onCompletion(({ textDocument, position }) => {
+    if (!enabled) {
+      return;
+    }
     const { uri } = textDocument;
     const routeRangeRecorder = getRouteRangeRecorder();
     const result = routeRangeRecorder.get(uri);
@@ -180,6 +184,9 @@ function initConnection() {
   });
 
   connection.onCompletionResolve(async (completion: CompletionItem) => {
+    if (!enabled) {
+      return completion;
+    }
     const routeFileRelationManager = getRouteFileRelationManager();
     const filepath = routeFileRelationManager.getRoutePathToFilePathMap()[completion.label]!;
     const jsDocManager = getJSDocManager();
@@ -196,6 +203,9 @@ function initConnection() {
   });
 
   connection.onHover(async ({ textDocument, position }) => {
+    if (!enabled) {
+      return;
+    }
     const { uri } = textDocument;
     const routeRangeRecorder = getRouteRangeRecorder();
     const result = routeRangeRecorder.get(uri);
@@ -240,6 +250,9 @@ function initConnection() {
   });
 
   connection.onDefinition(({ textDocument, position }) => {
+    if (!enabled) {
+      return;
+    }
     const { uri } = textDocument;
     const routeRangeRecorder = getRouteRangeRecorder();
     const result = routeRangeRecorder.get(uri);
@@ -265,6 +278,9 @@ function initConnection() {
   });
 
   documents.onDidChangeContent((e) => {
+    if (!enabled) {
+      return;
+    }
     if (currentTextDocument?.uri === e.document.uri) {
       parseRanges();
     }
