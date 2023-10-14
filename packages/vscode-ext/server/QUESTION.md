@@ -12,3 +12,11 @@ onCompletion:
 Decoration:
 
 1. 处理样式残影问题 ✅
+
+onHover:
+
+1. window下onHover会第二次才生效
+
+onDefinition:
+
+1. 优化选中整个字符串

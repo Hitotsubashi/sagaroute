@@ -31,7 +31,7 @@ let currentTextDocumentUriWithoutFilePrefix: string;
 let alreadyInitTSServer = false;
 let connection: _Connection;
 let documents: TextDocuments<TextDocument>;
-// let enabled = false;
+let enabled = false;
 
 function getPath(fpath: string) {
   return url.fileURLToPath(fpath).replaceAll(path.sep, '/');
@@ -145,7 +145,8 @@ function initConnection() {
   });
 
   connection.onNotification('route/build', (result: { routes: ModifedRouteObject[] }) => {
-    // enabled = true;
+    const immediate = !enabled;
+    enabled = true;
     const routeFileRelationManager = getRouteFileRelationManager();
     routeFileRelationManager.setRoutes(result.routes);
     routeFileRelationManager.buildMap();
@@ -153,6 +154,9 @@ function initConnection() {
     pathParseManager.compute();
     const pathCompletionItemManager = getPathCompletionItemManager();
     pathCompletionItemManager.generateCompletions();
+    if (immediate) {
+      parseRanges();
+    }
   });
 
   connection.onRequest('url/parse', (pathname) => {
@@ -162,9 +166,9 @@ function initConnection() {
   });
 
   connection.onCompletion(({ textDocument, position }) => {
-    // if (!enabled) {
-    //   return;
-    // }
+    if (!enabled) {
+      return;
+    }
     const { uri } = textDocument;
     const routeRangeRecorder = getRouteRangeRecorder();
     const result = routeRangeRecorder.get(uri);
@@ -186,9 +190,9 @@ function initConnection() {
   });
 
   connection.onCompletionResolve(async (completion: CompletionItem) => {
-    // if (!enabled) {
-    //   return completion;
-    // }
+    if (!enabled) {
+      return completion;
+    }
     const routeFileRelationManager = getRouteFileRelationManager();
     const filepath = routeFileRelationManager.getRoutePathToFilePathMap()[completion.label]!;
     const jsDocManager = getJSDocManager();
@@ -205,13 +209,18 @@ function initConnection() {
   });
 
   connection.onHover(async ({ textDocument, position }) => {
-    // if (!enabled) {
-    //   return;
-    // }
+    console.log('onHover');
+    if (!enabled) {
+      return;
+    }
+    console.log('onHover1');
+
     const { uri } = textDocument;
     const routeRangeRecorder = getRouteRangeRecorder();
     const result = routeRangeRecorder.get(uri);
     if (result) {
+      console.log('result', result);
+
       const { ranges } = result;
       const { line, character } = position;
       const range = ranges.find(
@@ -222,11 +231,17 @@ function initConnection() {
           character <= endCharacter,
       );
       if (range) {
+        console.log('range', range);
+
         const pathParseManager = getPathParseManager();
         const path = pathParseManager.parse(range.text);
         if (path) {
+          console.log('path', path);
+
           const jsDocManager = getJSDocManager();
           const jsdoc = await jsDocManager.getJSDoc(path);
+          console.log('jsdoc', jsdoc);
+
           const markdownContents = [
             `**${path.slice(getPath(workspaceRootFolderPath).length + 1)}**`,
           ];
@@ -248,13 +263,15 @@ function initConnection() {
         }
       }
     }
-    return undefined;
   });
 
   connection.onDefinition(({ textDocument, position }) => {
-    // if (!enabled) {
-    //   return;
-    // }
+    console.log('onDefinition');
+
+    if (!enabled) {
+      return;
+    }
+    console.log('onDefinition1');
     const { uri } = textDocument;
     const routeRangeRecorder = getRouteRangeRecorder();
     const result = routeRangeRecorder.get(uri);
@@ -292,9 +309,9 @@ function initConnection() {
 
 const parseRanges = throttle(
   () => {
-    // if (!enabled) {
-    //   return;
-    // }
+    if (!enabled) {
+      return;
+    }
     const routeRangeRecorder = getRouteRangeRecorder();
     const record = routeRangeRecorder.get(currentTextDocument.uri);
     if (!record || record.version !== currentTextDocument.version) {
