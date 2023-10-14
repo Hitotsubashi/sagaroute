@@ -261,7 +261,7 @@ function initListenRouteDecoration(context: vscode.ExtensionContext) {
       const settingConfiguration = vscode.workspace.getConfiguration('sagaroute');
       const decorationStyle = (settingConfiguration.get('decoration') as typeof Proxy) || {};
       const { uri, ranges } = response as { uri: string; ranges: RouteRange[] };
-      if (vscode.Uri.parse(uri).path === vscode.window.activeTextEditor?.document.uri.fsPath) {
+      if (uri === vscode.window.activeTextEditor?.document.uri.toString()) {
         if (decorationType) {
           vscode.window.activeTextEditor?.setDecorations(decorationType, []);
           decorationType.dispose();
@@ -288,7 +288,7 @@ function initSendServerWithActiveTextEditor(context: vscode.ExtensionContext) {
       const fsPath = document.uri.fsPath;
       const { ext } = path.parse(fsPath);
       if (['.js', '.ts', '.tsx', '.jsx'].includes(ext)) {
-        return `file://${fsPath}`;
+        return vscode.Uri.file(fsPath).toString();
       }
     }
     return undefined;
@@ -301,12 +301,6 @@ function initSendServerWithActiveTextEditor(context: vscode.ExtensionContext) {
     }),
   );
 
-  // const activeUri = getUriFromDocument(vscode.window.activeTextEditor?.document);
-  // if (activeUri) {
-  //   setTimeout(() => {
-  //     client.sendNotification('activeTextEditor/uri', activeUri);
-  //   }, 1500);
-  // }
   context.subscriptions.push(
     vscode.window.onDidChangeActiveTextEditor((e) => {
       const activeUri = getUriFromDocument(e?.document);
