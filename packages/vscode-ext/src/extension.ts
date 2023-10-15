@@ -131,6 +131,21 @@ function initRoutingWatcher(immediate = false) {
   if (immediate) {
     debounceWorking();
   }
+  // const watchPath = path
+  //   .join(workspaceRootFolderPath, '**/*.{ts,js,tsx,jsx}')
+  //   .replaceAll(path.sep, '/');
+  // console.log('watchPath', watchPath);
+
+  // routingWatcher = vscode.workspace.createFileSystemWatcher(watchPath);
+  // const eventHandle = (type: 'change' | 'create' | 'delete', uri: vscode.Uri) => {
+  //   const filepath = uri.path;
+  //   console.log('filepath', filepath, uri.fsPath);
+  //   console.log('uri', uri);
+  //   console.log('type', type);
+  // };
+  // routingWatcher.onDidChange((uri) => eventHandle('change', uri));
+  // routingWatcher.onDidCreate((uri) => eventHandle('create', uri));
+  // routingWatcher.onDidDelete((uri) => eventHandle('delete', uri));
 
   routingWatcher = chokidar
     .watch(workspaceRootFolderPath, {
