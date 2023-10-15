@@ -1,9 +1,10 @@
 优化补充：
 
 1. 详细化NavigateFunction的来源📇
-2. 考虑是否初次加载时立即执行约定式路由的生成
-   - 存在问题：会导致onDiagnosis提前执行
+2. 考虑是否初次加载时立即执行约定式路由的生成 ✅(不立即执行，让用户自行触发)
+   - 存在问题：会导致onDiagnosis提前执行 ✅
 3. Sagaroute Server日志
+4. 路由字符串样式重新筛选
 
 onCompletion:
 

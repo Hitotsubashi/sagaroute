@@ -209,18 +209,13 @@ function initConnection() {
   });
 
   connection.onHover(async ({ textDocument, position }) => {
-    console.log('onHover');
     if (!enabled) {
       return;
     }
-    console.log('onHover1');
-
     const { uri } = textDocument;
     const routeRangeRecorder = getRouteRangeRecorder();
     const result = routeRangeRecorder.get(uri);
     if (result) {
-      console.log('result', result);
-
       const { ranges } = result;
       const { line, character } = position;
       const range = ranges.find(
@@ -231,17 +226,11 @@ function initConnection() {
           character <= endCharacter,
       );
       if (range) {
-        console.log('range', range);
-
         const pathParseManager = getPathParseManager();
         const path = pathParseManager.parse(range.text);
         if (path) {
-          console.log('path', path);
-
           const jsDocManager = getJSDocManager();
           const jsdoc = await jsDocManager.getJSDoc(path);
-          console.log('jsdoc', jsdoc);
-
           const markdownContents = [
             `**${path.slice(getPath(workspaceRootFolderPath).length + 1)}**`,
           ];
@@ -266,12 +255,9 @@ function initConnection() {
   });
 
   connection.onDefinition(({ textDocument, position }) => {
-    console.log('onDefinition');
-
     if (!enabled) {
       return;
     }
-    console.log('onDefinition1');
     const { uri } = textDocument;
     const routeRangeRecorder = getRouteRangeRecorder();
     const result = routeRangeRecorder.get(uri);

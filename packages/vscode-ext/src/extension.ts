@@ -7,12 +7,8 @@ import getSagaRoute, { rebuildSagaroute } from './SagaRoute';
 import getLogging from './Logging';
 import { performance } from 'perf_hooks';
 import getCacheManager from './CacheManager';
-// import getPathCompletionItemManager from './PathCompletionItemManager';
 import getWarningManager from './WarningManager';
-// import getJSDocManager from './JSDocManager';
 import urlRegex from 'url-regex';
-// import getRouteFileRelationManager from './RouteFileRelationManager';
-// import getPathParseManager from './PathParseManager';
 import {
   LanguageClient,
   LanguageClientOptions,
@@ -178,59 +174,6 @@ function initRoutingWatcher(immediate = false) {
     });
 }
 
-// function registerRouteCompletions(context: vscode.ExtensionContext) {
-//   const documentSelector: vscode.DocumentSelector = [
-//     { scheme: 'file', language: 'typescript' },
-//     { scheme: 'file', language: 'typescriptreact' },
-//     { scheme: 'file', language: 'javascript' },
-//     { scheme: 'file', language: 'javascriptreact' },
-//   ];
-//   const pathCompletionItemManager = getPathCompletionItemManager();
-//   const routeFileRelationManager = getRouteFileRelationManager();
-
-//   context.subscriptions.push(
-//     vscode.languages.registerCompletionItemProvider(
-//       documentSelector,
-//       {
-//         provideCompletionItems(document, position) {
-//           const line = document.lineAt(position.line).text;
-//           if (line.slice(0, position.character).endsWith('//')) {
-//             const completions = pathCompletionItemManager.getCompletions();
-//             completions.forEach((item) => {
-//               item.additionalTextEdits = [
-//                 vscode.TextEdit.replace(
-//                   new vscode.Range(
-//                     position.line,
-//                     position.character - 2,
-//                     position.line,
-//                     position.character,
-//                   ),
-//                   '',
-//                 ),
-//               ];
-//             });
-//             return completions;
-//           }
-//           return undefined;
-//         },
-//         async resolveCompletionItem(item) {
-//           const route = item.label as string;
-//           const fpath = routeFileRelationManager.getRoutePathToFilePathMap()[route];
-//           if (fpath) {
-//             const jsDocManager = getJSDocManager();
-//             const jsdoc = await jsDocManager.getJSDoc(fpath);
-//             if (jsdoc) {
-//               (item.documentation as vscode.MarkdownString).appendCodeblock(jsdoc, 'javascript');
-//             }
-//           }
-//           return item;
-//         },
-//       },
-//       '/',
-//     ),
-//   );
-// }
-
 function initListenWorkspaceConfiguration(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration(async (event) => {
@@ -339,74 +282,10 @@ function initParseUrlCommand(context: vscode.ExtensionContext) {
   );
 }
 
-// function registerRouteDecorator(context: vscode.ExtensionContext) {
-//   const documentSelector: vscode.DocumentSelector = [
-//     { scheme: 'file', language: 'typescript' },
-//     { scheme: 'file', language: 'typescriptreact' },
-//     { scheme: 'file', language: 'javascript' },
-//     { scheme: 'file', language: 'javascriptreact' },
-//   ];
-//   const pathParseManager = getPathParseManager();
-//   context.subscriptions.push(
-//     vscode.languages.registerHoverProvider(documentSelector, {
-//       async provideHover(document, position) {
-//         const range =
-//           document.getWordRangeAtPosition(position, /"\/([^"]*)"/) ||
-//           document.getWordRangeAtPosition(position, /`\/([^`]*)`/) ||
-//           document.getWordRangeAtPosition(position, /'\/([^']*)'/);
-
-//         if (range) {
-//           const pathname = document.getText(range).slice(1, -1);
-//           const fpath = pathParseManager.parse(pathname);
-//           let markdown: vscode.MarkdownString;
-//           if (fpath) {
-//             markdown = PathCompletionItemManager.makeBasicMarkdown(fpath);
-//             const jsDocManager = getJSDocManager();
-//             const jsdoc = await jsDocManager.getJSDoc(fpath);
-//             if (jsdoc) {
-//               markdown.appendCodeblock(jsdoc, 'javascript');
-//             }
-//           } else {
-//             markdown = new vscode.MarkdownString('No page matching this route was found');
-//           }
-//           return new vscode.Hover(markdown);
-//         }
-//       },
-//     }),
-//   );
-// }
-
 async function showFile(fpath: string) {
   const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(fpath));
   vscode.window.showTextDocument(doc);
 }
-
-// async function setDecorationTest() {
-//   const activeEditor = vscode.window.activeTextEditor;
-//   const decorationType = vscode.window.createTextEditorDecorationType({
-//     cursor: 'pointer',
-//     textDecoration: 'underline',
-//   });
-//   if (activeEditor) {
-//     activeEditor.setDecorations(decorationType, [
-//       { range: new vscode.Range(0, 0, 1, 0), hoverMessage: '123' },
-//     ]);
-//   }
-//   vscode.languages.registerDefinitionProvider([{ scheme: 'file', language: 'typescriptreact' }], {
-//     provideDefinition(document, position) {
-//       if (position.line === 0) {
-//         return [
-//           new vscode.Location(
-//             vscode.Uri.file(
-//               '/Users/admin/Desktop/work/MyStudy/project-vite-for-sagaroute-react/src/pages/user/e.tsx',
-//             ),
-//             new vscode.Range(0, 0, 0, 0),
-//           ),
-//         ];
-//       }
-//     },
-//   });
-// }
 
 export let client: LanguageClient;
 
@@ -454,15 +333,12 @@ export function activate(context: vscode.ExtensionContext) {
     initClient(context);
     initSendServerWithActiveTextEditor(context);
     initListenRouteDecoration(context);
-    // setDecorationTest();
     initStatusBar(context);
     initParseUrlCommand(context);
     initListenWorkspaceConfiguration(context);
     initInputCommand(context);
     initConfigWatcher();
     initRoutingWatcher();
-    // registerRouteCompletions(context);
-    // registerRouteDecorator(context);
   } catch (err) {
     console.log(err);
   }

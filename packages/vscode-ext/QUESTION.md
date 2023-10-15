@@ -30,9 +30,10 @@
 5. 如果出现 onError 或 onWarn，则取消缓存 ✅
 6. 修复 vscode.engine 为 invalid 的情况📇
 7. 考虑是否把@sagaroute/react 提取出来📇
-8. launch.json可以放到根目录上运行
+8. launch.json可以放到根目录上运行📇
 9. 补充package.json中的keyword，description ✅
 10. 补充editor.quickSuggestions的开启
+11. 把routingWatcher的设计从chokidar换成vscode.watcher（注意先测试vscode.watcher是否可以监听到git的取消）
 
 文档补充：
 
