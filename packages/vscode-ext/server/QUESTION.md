@@ -16,7 +16,7 @@ Decoration:
 
 onHover:
 
-1. window下onHover会第二次才生效
+1. window，Mac下onHover会第二次才生效
 
 onDefinition:
 

@@ -34,3 +34,20 @@ function isNavigationFunction(
   }
   return false;
 }
+
+function isLink(node: ts.Node, typeChecker: ts.TypeChecker): node is ts.JsxOpeningElement {
+  if (ts.isJsxOpeningElement(node)) {
+    const toProperty = node.attributes.properties.find(
+      (property) =>
+        ts.isJsxAttribute(property) &&
+        property.name.escapedText === 'to' &&
+        property.initializer &&
+        ts.isStringLiteral(property.initializer),
+    );
+    if (toProperty) {
+      const stringType = typeChecker.typeToString(typeChecker.getTypeAtLocation(node.tagName));
+      return stringType.includes('LinkProps');
+    }
+  }
+  return false;
+}
