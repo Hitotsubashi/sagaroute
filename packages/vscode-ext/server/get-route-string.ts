@@ -12,7 +12,7 @@ function traverse(tsNode: ts.Node | ts.SourceFile, typeChecker: ts.TypeChecker) 
   const matchNode: (ts.StringLiteral | ts.NoSubstitutionTemplateLiteral)[] = [];
   ts.forEachChild(tsNode, (node: ts.Node) => {
     let tsNodes: (ts.StringLiteral | ts.NoSubstitutionTemplateLiteral)[] | undefined;
-    if ((tsNodes = isNavigationFunction(node, typeChecker))) {
+    if ((tsNodes = isToFunction(node, typeChecker))) {
       matchNode.push(...tsNodes);
     } else if ((tsNodes = isLinkOrNavigate(node, typeChecker))) {
       matchNode.push(...tsNodes);
@@ -23,14 +23,35 @@ function traverse(tsNode: ts.Node | ts.SourceFile, typeChecker: ts.TypeChecker) 
   return matchNode;
 }
 
-function isNavigationFunction(node: ts.Node, typeChecker: ts.TypeChecker) {
-  if (
-    ts.isCallExpression(node) &&
-    typeChecker.typeToString(typeChecker.getTypeAtLocation(node.expression)) ===
-      'NavigateFunction' &&
-    node.arguments[0]
-  ) {
-    return extractStringArgument(node.arguments[0]);
+function isToFunction(node: ts.Node, typeChecker: ts.TypeChecker) {
+  if (ts.isCallExpression(node) && node.arguments[0]) {
+    const functionType = typeChecker.getTypeAtLocation(node.expression);
+    try {
+      if (
+        [
+          'useHref',
+          'useLinkClickHandler',
+          'useResolvedPath',
+          'NavigateFunction',
+          'useViewTransitionState',
+        ].includes(typeChecker.symbolToString(functionType.symbol))
+      ) {
+        const functionParamSymbols = functionType.getCallSignatures()[0]?.getParameters();
+        if (functionParamSymbols[0].getName() === 'to') {
+          return extractStringArgument(node.arguments[0]);
+        }
+        // const functionParamSymbols = functionType.getCallSignatures()[0]?.getParameters();
+        // if (functionParamSymbols) {
+        //   const firstParamType = typeChecker?.getTypeOfSymbol(functionParamSymbols[0]);
+        //   if (typeChecker.typeToString(firstParamType) === 'To') {
+        //     return extractStringArgument(node.arguments[0]);
+        //   }
+        // }
+      }
+    } catch (err) {
+      console.info(err.message);
+      return undefined;
+    }
   }
   return undefined;
 }
