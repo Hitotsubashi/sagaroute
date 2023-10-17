@@ -1,3 +1,4 @@
+/* eslint-disable no-cond-assign */
 import ts from 'typescript';
 
 export default function getRouteStringLiteral(
@@ -7,14 +8,14 @@ export default function getRouteStringLiteral(
   return traverse(sourcefile, typeChecker);
 }
 
-function traverse(
-  tsNode: ts.Node | ts.SourceFile,
-  typeChecker: ts.TypeChecker,
-): ts.StringLiteral[] {
-  const matchNode: ts.StringLiteral[] = [];
+function traverse(tsNode: ts.Node | ts.SourceFile, typeChecker: ts.TypeChecker) {
+  const matchNode: (ts.StringLiteral | ts.NoSubstitutionTemplateLiteral)[] = [];
   ts.forEachChild(tsNode, (node: ts.Node) => {
-    if (isNavigationFunction(node, typeChecker)) {
-      matchNode.push(node.arguments[0] as ts.StringLiteral);
+    let tsNodes: (ts.StringLiteral | ts.NoSubstitutionTemplateLiteral)[] | undefined;
+    if ((tsNodes = isNavigationFunction(node, typeChecker))) {
+      matchNode.push(...tsNodes);
+    } else if ((tsNodes = isLinkOrNavigate(node, typeChecker))) {
+      matchNode.push(...tsNodes);
     } else {
       matchNode.push(...traverse(node, typeChecker));
     }
@@ -22,32 +23,70 @@ function traverse(
   return matchNode;
 }
 
-function isNavigationFunction(
-  node: ts.Node,
-  typeChecker: ts.TypeChecker,
-): node is ts.CallExpression {
-  if (ts.isCallExpression(node) && node.arguments[0] && ts.isStringLiteral(node.arguments[0])) {
-    const stringType = typeChecker.typeToString(typeChecker.getTypeAtLocation(node.expression));
-    if (stringType === 'NavigateFunction') {
-      return true;
-    }
+function isNavigationFunction(node: ts.Node, typeChecker: ts.TypeChecker) {
+  if (
+    ts.isCallExpression(node) &&
+    typeChecker.typeToString(typeChecker.getTypeAtLocation(node.expression)) ===
+      'NavigateFunction' &&
+    node.arguments[0]
+  ) {
+    return extractStringArgument(node.arguments[0]);
   }
-  return false;
+  return undefined;
 }
 
-function isLink(node: ts.Node, typeChecker: ts.TypeChecker): node is ts.JsxOpeningElement {
-  if (ts.isJsxOpeningElement(node)) {
-    const toProperty = node.attributes.properties.find(
-      (property) =>
-        ts.isJsxAttribute(property) &&
-        property.name.escapedText === 'to' &&
-        property.initializer &&
-        ts.isStringLiteral(property.initializer),
-    );
-    if (toProperty) {
-      const stringType = typeChecker.typeToString(typeChecker.getTypeAtLocation(node.tagName));
-      return stringType.includes('LinkProps');
+function isLinkOrNavigate(node: ts.Node, typeChecker: ts.TypeChecker) {
+  if (ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) {
+    const type = typeChecker.typeToString(typeChecker.getTypeAtLocation(node.tagName));
+    if (type.includes('LinkProps') || type.includes('NavigateProps')) {
+      const toProperty = node.attributes.properties.find(
+        (property) =>
+          ts.isJsxAttribute(property) && property.name.escapedText === 'to' && property.initializer,
+      ) as ts.JsxAttribute | undefined;
+      if (toProperty) {
+        const { initializer } = toProperty;
+        if (ts.isJsxExpression(initializer!) && initializer.expression) {
+          return extractStringArgument(initializer.expression);
+        } else {
+          return extractStringArgument(initializer!);
+        }
+      }
     }
   }
-  return false;
+  return undefined;
+}
+
+// function isNavigate(node: ts.Node, typeChecker: ts.TypeChecker){
+//   if (
+//     (ts.isJsxOpeningElement(node)||ts.isJsxSelfClosingElement(node)) &&
+//     typeChecker.typeToString(typeChecker.getTypeAtLocation(node.tagName)).includes('NavigateProps')
+//   ) {
+//     const toProperty = node.attributes.properties.find(
+//       (property) =>
+//         ts.isJsxAttribute(property) && property.name.escapedText === 'to' && property.initializer,
+//     ) as ts.JsxAttribute | undefined;
+//     if (toProperty) {
+//       const { initializer } = toProperty;
+//       if (ts.isJsxExpression(initializer!) && initializer.expression) {
+//         return extractStringArgument(initializer.expression);
+//       } else {
+//         return extractStringArgument(initializer!);
+//       }
+//     }
+//   }
+//   return undefined;
+// }
+
+function extractStringArgument(argNode: ts.Node) {
+  const nodes: (ts.StringLiteral | ts.NoSubstitutionTemplateLiteral)[] = [];
+  if (!argNode) {
+    return nodes;
+  }
+  if (ts.isConditionalExpression(argNode)) {
+    nodes.push(...extractStringArgument(argNode.whenTrue));
+    nodes.push(...extractStringArgument(argNode.whenFalse));
+  } else if (ts.isNoSubstitutionTemplateLiteral(argNode) || ts.isStringLiteral(argNode)) {
+    nodes.push(argNode);
+  }
+  return nodes;
 }

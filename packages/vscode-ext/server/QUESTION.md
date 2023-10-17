@@ -21,3 +21,9 @@ onHover:
 onDefinition:
 
 1. 优化选中整个字符串
+
+ast:
+
+1. navigate中第一形参为表达式的情况
+2. Link中to参数为表达式的情况
+3. 支持``模板字符串
