@@ -5,7 +5,7 @@ import { CompletionItem, CompletionItemKind, InsertTextFormat } from 'vscode-lan
 
 export class PathCompletionItemManager {
   private routeFileRelationManager: RouteFileRelationManager;
-  private completions: CompletionItem[] = [];
+  private absoluteCompletions: CompletionItem[] = [];
 
   constructor(routeFileRelationManager: RouteFileRelationManager) {
     this.routeFileRelationManager = routeFileRelationManager;
@@ -20,25 +20,15 @@ export class PathCompletionItemManager {
       .slice(1);
   }
 
-  // static makeBasicMarkdown(fpath: string) {
-  //   const relatedFileText = fpath.replace(workspaceRootFolderPath, '').replaceAll(path.sep, '/');
-  //   const relatedFileLink = fpath.replace(workspaceRootFolderPath, '.').replaceAll(path.sep, '/');
-  //   const md = new vscode.MarkdownString(
-  //     `related to file: [${relatedFileText}](${relatedFileLink})`,
-  //   );
-  //   return md;
-  // }
-
-  generateCompletions() {
+  generateAbsoluteCompletions() {
     const routePathToFilePathMap = this.routeFileRelationManager.getRoutePathToFilePathMap();
-    this.completions = Object.keys(routePathToFilePathMap).map((route) =>
+    this.absoluteCompletions = Object.keys(routePathToFilePathMap).map((route) =>
       this.transformPathToCompletionItem(route),
     );
   }
 
-  getCompletions() {
-    // this.assignCompletionsWithDocumentaion();
-    return this.completions;
+  getCompletions(baseroute?: string) {
+    return this.absoluteCompletions;
   }
 
   private transformPathToCompletionItem(route: string) {
@@ -48,16 +38,6 @@ export class PathCompletionItemManager {
     completion.insertTextFormat = InsertTextFormat.Snippet;
     return completion;
   }
-
-  // private assignCompletionsWithDocumentaion() {
-  //   const routePathToFilePathMap = this.routeFileRelationManager.getRoutePathToFilePathMap();
-  //   this.completions.forEach((completion) => {
-  //     const fpath = routePathToFilePathMap[completion.label as string];
-  //     if (fpath) {
-  //       completion.documentation = PathCompletionItemManager.makeBasicMarkdown(fpath);
-  //     }
-  //   });
-  // }
 }
 
 let pathCompletionItemManager: PathCompletionItemManager;

@@ -1,13 +1,13 @@
 import { FileNode } from '@sagaroute/react/lib/gather';
 import { RouteObject } from '@sagaroute/react/lib/weave';
 import path from 'path';
-
 export type ModifedRouteObject = RouteObject & { fileNode: FileNode };
 
 export class RouteFileRelationManager {
   private routes: ModifedRouteObject[] = [];
   private routeObjectToFilePathMap = new Map<ModifedRouteObject, string>();
   private routePathToFilePathMap: Record<string, string | undefined> = {};
+  private filePathToRoutePathMap: Record<string, string> = {};
   private routePathToRouteObjectMap: Record<string, ModifedRouteObject> = {};
 
   getRouteObjectToFilePathMap() {
@@ -16,6 +16,10 @@ export class RouteFileRelationManager {
 
   getRoutePathToFilePathMap() {
     return this.routePathToFilePathMap;
+  }
+
+  getFilePathToRoutePathMap() {
+    return this.filePathToRoutePathMap;
   }
 
   getRoutePathToRouteObjectMap() {
@@ -56,7 +60,7 @@ export class RouteFileRelationManager {
     }
   }
 
-  // make routePathToFilePathMap,connect both routeObject.path and FileNode.path
+  // make routePathToFilePathMap and filePathToRoutePathMap,connect both routeObject.path and FileNode.path
   private buildRoutePathMap(route: ModifedRouteObject, parentPath = '') {
     let routePath = route.path ? `${parentPath}/${route.path}` : parentPath;
     if (!routePath.startsWith('/')) {
@@ -72,7 +76,11 @@ export class RouteFileRelationManager {
         route.children?.some(({ index }) => index === true));
 
     if (routeAvaliable) {
-      this.routePathToFilePathMap[routePath] = this.routeObjectToFilePathMap.get(route);
+      const filePath = this.routeObjectToFilePathMap.get(route);
+      this.routePathToFilePathMap[routePath] = filePath;
+      if (filePath) {
+        this.filePathToRoutePathMap[filePath] = routePath;
+      }
     }
 
     if (route.children?.length) {
@@ -86,6 +94,7 @@ export class RouteFileRelationManager {
   buildMap() {
     this.routeObjectToFilePathMap.clear();
     this.routePathToFilePathMap = {};
+    this.filePathToRoutePathMap = {};
     this.routePathToRouteObjectMap = {};
     this.routes.forEach((route) => {
       this.buildRouteMap(route);

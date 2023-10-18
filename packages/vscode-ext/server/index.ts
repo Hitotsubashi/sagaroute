@@ -41,6 +41,13 @@ function getFPath(path: string) {
   return url.pathToFileURL(path).toString();
 }
 
+function adjustRelativePathPrefix(fpath: string) {
+  if (fpath.startsWith('../.')) {
+    return fpath.replace(/^\.\.\//, '');
+  }
+  return fpath.replace(/^\.\.\//, './');
+}
+
 function initTSService() {
   if (alreadyInitTSServer) {
     return;
@@ -134,14 +141,14 @@ function initConnection() {
     connection.sendRequest('activeTextEditor/uri').then((uri) => {
       if (typeof uri === 'string') {
         changeCurrentTextDocument(uri);
-        parseRanges();
+        handleParseRanges();
       }
     });
   });
 
   connection.onNotification('activeTextEditor/uri', (uri) => {
     changeCurrentTextDocument(uri);
-    parseRanges();
+    handleParseRanges();
   });
 
   connection.onNotification('route/build', (result: { routes: ModifedRouteObject[] }) => {
@@ -153,9 +160,9 @@ function initConnection() {
     const pathParseManager = getPathParseManager();
     pathParseManager.compute();
     const pathCompletionItemManager = getPathCompletionItemManager();
-    pathCompletionItemManager.generateCompletions();
+    pathCompletionItemManager.generateAbsoluteCompletions();
     if (immediate) {
-      parseRanges();
+      handleParseRanges();
     }
   });
 
@@ -169,22 +176,35 @@ function initConnection() {
     if (!enabled) {
       return;
     }
+    parseRanges();
     const { uri } = textDocument;
     const routeRangeRecorder = getRouteRangeRecorder();
     const result = routeRangeRecorder.get(uri);
+    console.log('result', result);
     if (result) {
       const { ranges } = result;
       const { line, character } = position;
-      const inRange = ranges.some(
+      const range = ranges.find(
         ({ startLine, startCharacter, endLine, endCharacter }) =>
           startLine === line &&
           endLine === line &&
           startCharacter <= character &&
           character <= endCharacter,
       );
-      if (inRange) {
-        const pathCompletionItemManager = getPathCompletionItemManager();
-        return pathCompletionItemManager.getCompletions();
+      console.log('range', range);
+      if (range) {
+        if (range.text.startsWith('/')) {
+          const pathCompletionItemManager = getPathCompletionItemManager();
+          return pathCompletionItemManager.getCompletions();
+        } else {
+          const routeFileRelationManager = getRouteFileRelationManager();
+          const baseroute =
+            routeFileRelationManager.getFilePathToRoutePathMap()[
+              currentTextDocumentUriWithoutFilePrefix.replaceAll('/', path.sep)
+            ];
+          const route = path.join(baseroute, range.text).replace(path.sep, '/');
+          console.log('route', route);
+        }
       }
     }
   });
@@ -284,7 +304,7 @@ function initConnection() {
 
   documents.onDidChangeContent((e) => {
     if (currentTextDocument?.uri === e.document.uri) {
-      parseRanges();
+      handleParseRanges();
     }
   });
 
@@ -293,36 +313,40 @@ function initConnection() {
   connection.listen();
 }
 
-const parseRanges = throttle(
-  () => {
-    if (!enabled) {
-      return;
-    }
-    const routeRangeRecorder = getRouteRangeRecorder();
-    const record = routeRangeRecorder.get(currentTextDocument.uri);
-    if (!record || record.version !== currentTextDocument.version) {
-      const program = service.getProgram();
-      if (program) {
-        const typeChecker = program.getTypeChecker();
-        const sourceFile = program.getSourceFile(currentTextDocumentUriWithoutFilePrefix);
-        if (sourceFile) {
-          const routeStringLiterals = getRouteStringLiteral(sourceFile, typeChecker);
-          const ranges: RouteRange[] = routeStringLiterals.map(({ pos, end, text }) => {
-            const { line: startLine, character: startCharacter } =
-              currentTextDocument.positionAt(pos);
-            const { line: endLine, character: endCharacter } = currentTextDocument.positionAt(end);
-            return {
-              startLine,
-              startCharacter,
-              endLine,
-              endCharacter,
-              text,
-            };
-          });
-          routeRangeRecorder.set(currentTextDocument.uri, ranges, currentTextDocument.version);
-        }
+function parseRanges() {
+  if (!enabled) {
+    return;
+  }
+  const routeRangeRecorder = getRouteRangeRecorder();
+  const record = routeRangeRecorder.get(currentTextDocument.uri);
+  if (!record || record.version !== currentTextDocument.version) {
+    const program = service.getProgram();
+    if (program) {
+      const typeChecker = program.getTypeChecker();
+      const sourceFile = program.getSourceFile(currentTextDocumentUriWithoutFilePrefix);
+      if (sourceFile) {
+        const routeStringLiterals = getRouteStringLiteral(sourceFile, typeChecker);
+        const ranges: RouteRange[] = routeStringLiterals.map(({ pos, end, text }) => {
+          const { line: startLine, character: startCharacter } =
+            currentTextDocument.positionAt(pos);
+          const { line: endLine, character: endCharacter } = currentTextDocument.positionAt(end);
+          return {
+            startLine,
+            startCharacter,
+            endLine,
+            endCharacter,
+            text,
+          };
+        });
+        routeRangeRecorder.set(currentTextDocument.uri, ranges, currentTextDocument.version);
       }
     }
+  }
+}
+
+const handleParseRanges = throttle(
+  () => {
+    parseRanges();
     setDecoration();
     setDiagnostic();
   },

@@ -9,6 +9,8 @@
 onCompletion:
 
 1. 考虑500ms的throttle是否会对completion的结果造成影响
+2. 考虑是否支持ToVariable
+3. 支持相对路径
 
 Decoration:
 
@@ -21,9 +23,3 @@ onHover:
 onDefinition:
 
 1. 优化选中整个字符串
-
-ast:
-
-1. navigate中第一形参为表达式的情况
-2. Link中to参数为表达式的情况
-3. 支持``模板字符串
