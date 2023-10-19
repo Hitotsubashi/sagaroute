@@ -225,8 +225,7 @@ function initListenRouteDecoration(context: vscode.ExtensionContext) {
           decorationType.dispose();
         }
         decorationType = vscode.window.createTextEditorDecorationType({
-          color: '#69b1ff',
-          backgroundColor: 'transparent',
+          color: '#13c2c2',
           ...decorationStyle,
         });
         vscode.window.activeTextEditor?.setDecorations(

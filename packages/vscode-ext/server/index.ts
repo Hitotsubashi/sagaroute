@@ -41,13 +41,6 @@ function getFPath(path: string) {
   return url.pathToFileURL(path).toString();
 }
 
-function adjustRelativePathPrefix(fpath: string) {
-  if (fpath.startsWith('../.')) {
-    return fpath.replace(/^\.\.\//, '');
-  }
-  return fpath.replace(/^\.\.\//, './');
-}
-
 function initTSService() {
   if (alreadyInitTSServer) {
     return;
