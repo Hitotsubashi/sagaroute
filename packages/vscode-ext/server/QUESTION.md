@@ -5,12 +5,13 @@
    - 存在问题：会导致onDiagnosis提前执行 ✅
 3. Sagaroute Server日志
 4. 路由字符串样式重新筛选
+5. 再非路由文件中测试使用相对路径的情况
 
 onCompletion:
 
-1. 考虑500ms的throttle是否会对completion的结果造成影响
-2. 考虑是否支持ToVariable
-3. 支持相对路径
+6. 考虑500ms的throttle是否会对completion的结果造成影响
+7. 考虑是否支持ToVariable
+8. 支持相对路径
 
 Decoration:
 

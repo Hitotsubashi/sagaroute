@@ -13,29 +13,47 @@ export class PathCompletionItemManager {
 
   private transformPathToSnippetLine(path: string) {
     let index = 1;
-    return path
-      .replace(/((:[^/]+)|(\*))/g, (arg1) => {
-        return `\${${index++}:${arg1}}`;
-      })
-      .slice(1);
+    return path.replace(/((:[^/]+)|(\*))/g, (arg1) => {
+      return `\${${index++}:${arg1}}`;
+    });
   }
 
   generateAbsoluteCompletions() {
+    this.absoluteCompletions = this.generateCompletions();
+  }
+
+  private generateCompletions(baseroute?: string) {
     const routePathToFilePathMap = this.routeFileRelationManager.getRoutePathToFilePathMap();
-    this.absoluteCompletions = Object.keys(routePathToFilePathMap).map((route) =>
-      this.transformPathToCompletionItem(route),
-    );
+    return Object.keys(routePathToFilePathMap)
+      .filter((route) => {
+        if (baseroute) {
+          return route.startsWith(baseroute);
+        } else {
+          return true;
+        }
+      })
+      .map((route) =>
+        this.transformPathToCompletionItem(
+          route.replace(baseroute || '/', ''),
+          routePathToFilePathMap[route],
+        ),
+      );
   }
 
   getCompletions(baseroute?: string) {
-    return this.absoluteCompletions;
+    if (baseroute) {
+      return this.generateCompletions(baseroute);
+    } else {
+      return this.absoluteCompletions;
+    }
   }
 
-  private transformPathToCompletionItem(route: string) {
+  private transformPathToCompletionItem(route: string, filepath: string | undefined) {
     const completion = CompletionItem.create(route);
     completion.kind = CompletionItemKind.Text;
     completion.insertText = this.transformPathToSnippetLine(route);
     completion.insertTextFormat = InsertTextFormat.Snippet;
+    completion.data = { filepath };
     return completion;
   }
 }

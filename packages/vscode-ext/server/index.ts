@@ -11,7 +11,7 @@ import {
   Diagnostic,
   DiagnosticSeverity,
 } from 'vscode-languageserver/node';
-import { TextDocument } from 'vscode-languageserver-textdocument';
+import { Position, TextDocument } from 'vscode-languageserver-textdocument';
 import ts from 'typescript';
 import fs from 'fs';
 import { throttle } from 'lodash';
@@ -178,53 +178,56 @@ function initConnection() {
     }
     parseRanges();
     const { uri } = textDocument;
+    const range = findMatchedRange(uri, position);
+    if (range) {
+      const pathCompletionItemManager = getPathCompletionItemManager();
+      if (range.text === '/') {
+        return pathCompletionItemManager.getCompletions();
+      } else {
+        const currentRoute = generateCurrentRoute(range.text);
+        if (currentRoute) {
+          return pathCompletionItemManager.getCompletions(currentRoute);
+        }
+      }
+    }
+  });
+
+  function findMatchedRange(uri: string, position: Position) {
     const routeRangeRecorder = getRouteRangeRecorder();
     const result = routeRangeRecorder.get(uri);
-    console.log('result', result);
     if (result) {
       const { ranges } = result;
       const { line, character } = position;
-      const range = ranges.find(
+      return ranges.find(
         ({ startLine, startCharacter, endLine, endCharacter }) =>
           startLine === line &&
           endLine === line &&
           startCharacter <= character &&
           character <= endCharacter,
       );
-      console.log('range', range);
-      if (range) {
-        if (range.text.startsWith('/')) {
-          const pathCompletionItemManager = getPathCompletionItemManager();
-          return pathCompletionItemManager.getCompletions();
-        } else {
-          const routeFileRelationManager = getRouteFileRelationManager();
-          const baseroute =
-            routeFileRelationManager.getFilePathToRoutePathMap()[
-              currentTextDocumentUriWithoutFilePrefix.replaceAll('/', path.sep)
-            ];
-          const route = path.join(baseroute, range.text).replace(path.sep, '/');
-          console.log('route', route);
-        }
-      }
     }
-  });
+    return undefined;
+  }
 
   connection.onCompletionResolve(async (completion: CompletionItem) => {
     if (!enabled) {
       return completion;
     }
-    const routeFileRelationManager = getRouteFileRelationManager();
-    const filepath = routeFileRelationManager.getRoutePathToFilePathMap()[completion.label]!;
-    const jsDocManager = getJSDocManager();
-    const jsdoc = await jsDocManager.getJSDoc(filepath);
-    const markdownContents = [`**${filepath.slice(getPath(workspaceRootFolderPath).length + 1)}**`];
-    if (jsdoc) {
-      markdownContents.push('```typescript', jsdoc, '```');
+    const { filepath } = completion.data;
+    if (filepath) {
+      const jsDocManager = getJSDocManager();
+      const jsdoc = await jsDocManager.getJSDoc(filepath);
+      const markdownContents = [
+        `**${filepath.slice(getPath(workspaceRootFolderPath).length + 1)}**`,
+      ];
+      if (jsdoc) {
+        markdownContents.push('```typescript', jsdoc, '```');
+      }
+      completion.documentation = {
+        kind: 'markdown',
+        value: markdownContents.join('\n'),
+      };
     }
-    completion.documentation = {
-      kind: 'markdown',
-      value: markdownContents.join('\n'),
-    };
     return completion;
   });
 
@@ -233,21 +236,12 @@ function initConnection() {
       return;
     }
     const { uri } = textDocument;
-    const routeRangeRecorder = getRouteRangeRecorder();
-    const result = routeRangeRecorder.get(uri);
-    if (result) {
-      const { ranges } = result;
-      const { line, character } = position;
-      const range = ranges.find(
-        ({ startLine, startCharacter, endLine, endCharacter }) =>
-          startLine === line &&
-          endLine === line &&
-          startCharacter <= character &&
-          character <= endCharacter,
-      );
-      if (range) {
-        const pathParseManager = getPathParseManager();
-        const path = pathParseManager.parse(range.text);
+    const range = findMatchedRange(uri, position);
+    if (range) {
+      const pathParseManager = getPathParseManager();
+      const routepath = range.text.startsWith('/') ? range.text : generateCurrentRoute(range.text);
+      if (routepath) {
+        const path = pathParseManager.parse(routepath);
         if (path) {
           const jsDocManager = getJSDocManager();
           const jsdoc = await jsDocManager.getJSDoc(path);
@@ -279,27 +273,17 @@ function initConnection() {
       return;
     }
     const { uri } = textDocument;
-    const routeRangeRecorder = getRouteRangeRecorder();
-    const result = routeRangeRecorder.get(uri);
-    if (result) {
-      const { ranges } = result;
-      const { line, character } = position;
-      const range = ranges.find(
-        ({ startLine, startCharacter, endLine, endCharacter }) =>
-          startLine === line &&
-          endLine === line &&
-          startCharacter <= character &&
-          character <= endCharacter,
-      );
-      if (range) {
-        const pathParseManager = getPathParseManager();
-        const path = pathParseManager.parse(range.text);
+    const range = findMatchedRange(uri, position);
+    if (range) {
+      const pathParseManager = getPathParseManager();
+      const routepath = range.text.startsWith('/') ? range.text : generateCurrentRoute(range.text);
+      if (routepath) {
+        const path = pathParseManager.parse(routepath);
         if (path) {
           return Location.create(getFPath(path), Range.create(0, 0, 0, 0));
         }
       }
     }
-    return undefined;
   });
 
   documents.onDidChangeContent((e) => {
@@ -344,6 +328,19 @@ function parseRanges() {
   }
 }
 
+function generateCurrentRoute(routeText: string) {
+  const routeFileRelationManager = getRouteFileRelationManager();
+  const filepath =
+    routeFileRelationManager.getFilePathToRoutePathMap()[
+      currentTextDocumentUriWithoutFilePrefix.replaceAll('/', path.sep)
+    ];
+  if (filepath) {
+    const baseroute = routeText.startsWith('/') ? '' : filepath;
+    return path.join(baseroute, routeText).replace(path.sep, '/');
+  }
+  return null;
+}
+
 const handleParseRanges = throttle(
   () => {
     parseRanges();
@@ -359,7 +356,10 @@ function setDiagnostic() {
   const record = routeRangeRecorder.get(currentTextDocument.uri);
   if (record) {
     const pathParseManager = getPathParseManager();
-    const noMatchedRouteRanges = record.ranges.filter(({ text }) => !pathParseManager.parse(text));
+    const noMatchedRouteRanges = record.ranges.filter(({ text }) => {
+      const routepath = text.startsWith('/') ? text : generateCurrentRoute(text);
+      return !routepath || !pathParseManager.parse(routepath);
+    });
     const diagnostics = noMatchedRouteRanges.map((range) =>
       Diagnostic.create(
         Range.create(range.startLine, range.startCharacter, range.endLine, range.endCharacter),
