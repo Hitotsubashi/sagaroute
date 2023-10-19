@@ -1,6 +1,4 @@
-// import path from 'path';
 import getRouteFileRelationManager, { RouteFileRelationManager } from '../RouteFileRelationManager';
-// import { workspaceRootFolderPath } from '..';
 import { CompletionItem, CompletionItemKind, InsertTextFormat } from 'vscode-languageserver';
 
 export class PathCompletionItemManager {
