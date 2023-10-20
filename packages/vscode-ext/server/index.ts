@@ -372,7 +372,6 @@ const handleParse = throttle(
 function setDiagnostic() {
   const ignoreRangeRecorder = getIgnoreRangeRecorder();
   const ignoreRecord = ignoreRangeRecorder.get(currentTextDocument.uri);
-  console.log('ignoreRecord', ignoreRecord);
   if (ignoreRecord?.ignoreWhole) {
     connection.sendDiagnostics({ uri: currentTextDocument.uri, diagnostics: [] });
     return;

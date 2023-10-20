@@ -15,6 +15,7 @@ onCompletion:
 1. 考虑500ms的throttle是否会对completion的结果造成影响
 2. 考虑是否支持ToVariable
 3. 支持相对路径 ✅
+4. 在多内容（800行+）的文件中测试看是否流畅
 
 Decoration:
 

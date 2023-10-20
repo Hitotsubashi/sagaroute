@@ -16,10 +16,16 @@ async function getAst(fpath: string) {
   if (ext === '.tsx') {
     plugins.push('typescript');
   }
-  return parse(fileContent, {
-    sourceType: 'module',
-    plugins,
-  });
+  try {
+    return parse(fileContent, {
+      sourceType: 'module',
+      plugins,
+    });
+  } catch (err) {
+    console.error(`babel parse failed in path: [ ${fpath} ]`);
+    console.error(err.message);
+    return null;
+  }
 }
 
 function findJSDoc(ast: ParseResult<t.File>): string | null {
@@ -102,6 +108,9 @@ class JSDocManager {
       }
     }
     const ast = await getAst(fpath);
+    if (!ast) {
+      return null;
+    }
     const jsdoc = findJSDoc(ast);
     this.jsdocRecord[fpath] = {
       mtime: stat.mtimeMs,
