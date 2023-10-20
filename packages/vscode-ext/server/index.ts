@@ -23,6 +23,8 @@ import getJSDocManager from './JSDocManager';
 import getPathCompletionItemManager from './PathCompletionItemManager';
 import url from 'url';
 import path from 'path';
+import getIgnoreRangeRecorder from './IgnoreRangeRecorder';
+import getIgnoreCommentRanges from './get-ignore-comment';
 
 let service: ts.LanguageService;
 let workspaceRootFolderPath: string;
@@ -134,14 +136,14 @@ function initConnection() {
     connection.sendRequest('activeTextEditor/uri').then((uri) => {
       if (typeof uri === 'string') {
         changeCurrentTextDocument(uri);
-        handleParseRanges();
+        handleParse();
       }
     });
   });
 
   connection.onNotification('activeTextEditor/uri', (uri) => {
     changeCurrentTextDocument(uri);
-    handleParseRanges();
+    handleParse();
   });
 
   connection.onNotification('route/build', (result: { routes: ModifedRouteObject[] }) => {
@@ -155,7 +157,7 @@ function initConnection() {
     const pathCompletionItemManager = getPathCompletionItemManager();
     pathCompletionItemManager.generateAbsoluteCompletions();
     if (immediate) {
-      handleParseRanges();
+      handleParse();
     }
   });
 
@@ -281,13 +283,35 @@ function initConnection() {
 
   documents.onDidChangeContent((e) => {
     if (currentTextDocument?.uri === e.document.uri) {
-      handleParseRanges();
+      handleParse();
     }
   });
 
   documents.listen(connection);
 
   connection.listen();
+}
+
+function parseIgnoreRanges() {
+  if (!enabled) {
+    return;
+  }
+  const ignoreRangeRecorder = getIgnoreRangeRecorder();
+  const record = ignoreRangeRecorder.get(currentTextDocument.uri);
+  if (!record || record.version !== currentTextDocument.version) {
+    const program = service.getProgram();
+    if (program) {
+      const sourceFile = program.getSourceFile(currentTextDocumentUriWithoutFilePrefix);
+      if (sourceFile) {
+        const ignoreComments = getIgnoreCommentRanges(sourceFile);
+        ignoreRangeRecorder.set(currentTextDocument.uri, {
+          version: currentTextDocument.version,
+          ignoreWhole: ignoreComments.some(({ whole }) => whole),
+          lines: ignoreComments.map(({ end }) => currentTextDocument.positionAt(end).line + 1),
+        });
+      }
+    }
+  }
 }
 
 function parseRanges() {
@@ -334,8 +358,9 @@ function generateCurrentRoute(routeText: string) {
   return null;
 }
 
-const handleParseRanges = throttle(
+const handleParse = throttle(
   () => {
+    parseIgnoreRanges();
     parseRanges();
     setDecoration();
     setDiagnostic();
@@ -345,13 +370,23 @@ const handleParseRanges = throttle(
 );
 
 function setDiagnostic() {
+  const ignoreRangeRecorder = getIgnoreRangeRecorder();
+  const ignoreRecord = ignoreRangeRecorder.get(currentTextDocument.uri);
+  console.log('ignoreRecord', ignoreRecord);
+  if (ignoreRecord?.ignoreWhole) {
+    connection.sendDiagnostics({ uri: currentTextDocument.uri, diagnostics: [] });
+    return;
+  }
+  const ignoreLines = ignoreRecord?.lines;
   const routeRangeRecorder = getRouteRangeRecorder();
   const record = routeRangeRecorder.get(currentTextDocument.uri);
   if (record) {
     const pathParseManager = getPathParseManager();
-    const noMatchedRouteRanges = record.ranges.filter(({ text }) => {
+    const noMatchedRouteRanges = record.ranges.filter(({ text, startLine }) => {
       const routepath = text.startsWith('/') ? text : generateCurrentRoute(text);
-      return !routepath || !pathParseManager.parse(routepath);
+      return (
+        !ignoreLines?.includes(startLine) && (!routepath || !pathParseManager.parse(routepath))
+      );
     });
     const diagnostics = noMatchedRouteRanges.map((range) =>
       Diagnostic.create(

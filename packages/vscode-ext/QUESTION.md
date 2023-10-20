@@ -32,8 +32,13 @@
 7. 考虑是否把@sagaroute/react 提取出来📇
 8. launch.json可以放到根目录上运行📇
 9. 补充package.json中的keyword，description ✅
-10. 补充editor.quickSuggestions的开启
-11. 把routingWatcher的设计从chokidar换成vscode.watcher（注意先测试vscode.watcher是否可以监听到git的取消）
+10. 把routingWatcher的设计从chokidar换成vscode.watcher（注意先测试vscode.watcher是否可以监听到git的取消）
+11. 对配置文件的格式校验
+
+bug修复：
+
+1. babel在解析routeFile错误后的处理
+2. babel在解析文件出现错误后的处理
 
 文档补充：
 

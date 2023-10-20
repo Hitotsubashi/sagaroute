@@ -74,27 +74,6 @@ function isLinkOrNavigate(node: ts.Node, typeChecker: ts.TypeChecker) {
   return undefined;
 }
 
-// function isNavigate(node: ts.Node, typeChecker: ts.TypeChecker){
-//   if (
-//     (ts.isJsxOpeningElement(node)||ts.isJsxSelfClosingElement(node)) &&
-//     typeChecker.typeToString(typeChecker.getTypeAtLocation(node.tagName)).includes('NavigateProps')
-//   ) {
-//     const toProperty = node.attributes.properties.find(
-//       (property) =>
-//         ts.isJsxAttribute(property) && property.name.escapedText === 'to' && property.initializer,
-//     ) as ts.JsxAttribute | undefined;
-//     if (toProperty) {
-//       const { initializer } = toProperty;
-//       if (ts.isJsxExpression(initializer!) && initializer.expression) {
-//         return extractStringArgument(initializer.expression);
-//       } else {
-//         return extractStringArgument(initializer!);
-//       }
-//     }
-//   }
-//   return undefined;
-// }
-
 function extractStringArgument(argNode: ts.Node) {
   const nodes: (ts.StringLiteral | ts.NoSubstitutionTemplateLiteral)[] = [];
   if (!argNode) {
