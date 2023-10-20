@@ -6,8 +6,8 @@
 3. Sagaroute Server日志
 4. 路由字符串样式重新筛选 ✅
 5. 再非路由文件中测试使用相对路径的情况 ✅
-6. 提供忽略检查路由的指令 ✅
-   - 文件中行内// sagaroute-ignore-next-line(注意jsx中的注释)，整个文件// sagaroute-ignore
+6. 提供忽略检查路由的指令
+   - 文件中行内// sagaroute-ignore-next-line(注意jsx中的注释)，整个文件// sagaroute-ignore ✅
    - 忽略检测文件列表 .sagarouteignore
 
 onCompletion:
