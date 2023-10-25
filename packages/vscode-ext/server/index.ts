@@ -356,7 +356,7 @@ function generateCurrentRoute(routeText: string) {
     ];
   if (filepath) {
     const baseroute = routeText.startsWith('/') ? '' : filepath;
-    return path.join(baseroute, routeText).replace(path.sep, '/');
+    return path.join(baseroute, routeText).replaceAll(path.sep, '/');
   }
   return null;
 }
