@@ -29,7 +29,6 @@ import getIgnoreCommentRanges from './get-ignore-comment';
 let service: ts.LanguageService;
 let workspaceRootFolderPath: string;
 let currentTextDocument: TextDocument;
-let currentTextDocumentUriWithoutFilePrefix: string;
 let alreadyInitTSServer = false;
 let connection: _Connection;
 let documents: TextDocuments<TextDocument>;
@@ -41,6 +40,10 @@ function getPath(fpath: string) {
 
 function getFPath(path: string) {
   return url.pathToFileURL(path).toString();
+}
+
+function getCurrentTextDocumentPath() {
+  return getPath(currentTextDocument.uri);
 }
 
 function initTSService() {
@@ -57,12 +60,12 @@ function initTSService() {
   };
   service = ts.createLanguageService({
     getCompilationSettings: () => compilerOptions,
-    getScriptFileNames: () => [currentTextDocumentUriWithoutFilePrefix],
+    getScriptFileNames: () => [getCurrentTextDocumentPath()],
     getScriptKind: (fileName) => {
       return fileName.substr(fileName.length - 2) === 'ts' ? ts.ScriptKind.TS : ts.ScriptKind.JS;
     },
     getScriptVersion: (fileName: string) => {
-      if (fileName === currentTextDocumentUriWithoutFilePrefix) {
+      if (fileName === getCurrentTextDocumentPath()) {
         return String(currentTextDocument.version);
       }
       return '0';
@@ -72,7 +75,7 @@ function initTSService() {
       // }
     },
     getScriptSnapshot: (fileName: string) => {
-      if (fileName === currentTextDocumentUriWithoutFilePrefix) {
+      if (fileName === getCurrentTextDocumentPath()) {
         const text = currentTextDocument.getText();
         return {
           getText: (start, end) => text.substring(start, end),
@@ -89,7 +92,7 @@ function initTSService() {
     getCurrentDirectory: () => getPath(workspaceRootFolderPath),
     getDefaultLibFileName: (options) => ts.getDefaultLibFilePath(options),
     readFile: function (path: string): string | undefined {
-      if (path === currentTextDocumentUriWithoutFilePrefix) {
+      if (path === getCurrentTextDocumentPath()) {
         return currentTextDocument.getText();
       } else {
         // @ts-ignore
@@ -127,7 +130,6 @@ function initConnection() {
     const activeDocument = documents.get(uri);
     if (activeDocument) {
       currentTextDocument = activeDocument;
-      currentTextDocumentUriWithoutFilePrefix = getPath(currentTextDocument.uri);
       initTSService();
     }
   }
@@ -142,12 +144,12 @@ function initConnection() {
   });
 
   connection.onNotification('activeTextEditor/uri', (uri) => {
+    clearDiagnostic();
     changeCurrentTextDocument(uri);
     handleParse();
   });
 
   connection.onNotification('route/build', (result: { routes: ModifedRouteObject[] }) => {
-    const immediate = !enabled;
     enabled = true;
     const routeFileRelationManager = getRouteFileRelationManager();
     routeFileRelationManager.setRoutes(result.routes);
@@ -156,9 +158,7 @@ function initConnection() {
     pathParseManager.compute();
     const pathCompletionItemManager = getPathCompletionItemManager();
     pathCompletionItemManager.generateAbsoluteCompletions();
-    if (immediate) {
-      handleParse();
-    }
+    handleParse();
   });
 
   connection.onRequest('url/parse', (pathname) => {
@@ -301,7 +301,7 @@ function parseIgnoreRanges() {
   if (!record || record.version !== currentTextDocument.version) {
     const program = service.getProgram();
     if (program) {
-      const sourceFile = program.getSourceFile(currentTextDocumentUriWithoutFilePrefix);
+      const sourceFile = program.getSourceFile(getCurrentTextDocumentPath());
       if (sourceFile) {
         const ignoreComments = getIgnoreCommentRanges(sourceFile);
         ignoreRangeRecorder.set(currentTextDocument.uri, {
@@ -324,7 +324,7 @@ function parseRanges() {
     const program = service.getProgram();
     if (program) {
       const typeChecker = program.getTypeChecker();
-      const sourceFile = program.getSourceFile(currentTextDocumentUriWithoutFilePrefix);
+      const sourceFile = program.getSourceFile(getCurrentTextDocumentPath());
       if (sourceFile) {
         const routeStringLiterals = getRouteStringLiteral(sourceFile, typeChecker);
         const ranges: RouteRange[] = routeStringLiterals.map(({ pos, end, text }) => {
@@ -349,7 +349,7 @@ function generateCurrentRoute(routeText: string) {
   const routeFileRelationManager = getRouteFileRelationManager();
   const filepath =
     routeFileRelationManager.getFilePathToRoutePathMap()[
-      currentTextDocumentUriWithoutFilePrefix.replaceAll('/', path.sep)
+      getCurrentTextDocumentPath().replaceAll('/', path.sep)
     ];
   if (filepath) {
     const baseroute = routeText.startsWith('/') ? '' : filepath;
@@ -369,11 +369,17 @@ const handleParse = throttle(
   { trailing: true },
 );
 
+function clearDiagnostic() {
+  if (currentTextDocument?.uri) {
+    connection.sendDiagnostics({ uri: currentTextDocument.uri, diagnostics: [] });
+  }
+}
+
 function setDiagnostic() {
   const ignoreRangeRecorder = getIgnoreRangeRecorder();
   const ignoreRecord = ignoreRangeRecorder.get(currentTextDocument.uri);
   if (ignoreRecord?.ignoreWhole) {
-    connection.sendDiagnostics({ uri: currentTextDocument.uri, diagnostics: [] });
+    clearDiagnostic();
     return;
   }
   const ignoreLines = ignoreRecord?.lines;
