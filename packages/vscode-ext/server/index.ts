@@ -144,7 +144,6 @@ function initConnection() {
   });
 
   connection.onNotification('activeTextEditor/uri', (uri) => {
-    clearDiagnostic();
     changeCurrentTextDocument(uri);
     handleParse();
   });
@@ -287,6 +286,10 @@ function initConnection() {
     }
   });
 
+  documents.onDidClose((e) => {
+    connection.sendDiagnostics({ uri: e.document.uri, diagnostics: [] });
+  });
+
   documents.listen(connection);
 
   connection.listen();
@@ -369,17 +372,11 @@ const handleParse = throttle(
   { trailing: true },
 );
 
-function clearDiagnostic() {
-  if (currentTextDocument?.uri) {
-    connection.sendDiagnostics({ uri: currentTextDocument.uri, diagnostics: [] });
-  }
-}
-
 function setDiagnostic() {
   const ignoreRangeRecorder = getIgnoreRangeRecorder();
   const ignoreRecord = ignoreRangeRecorder.get(currentTextDocument.uri);
   if (ignoreRecord?.ignoreWhole) {
-    clearDiagnostic();
+    connection.sendDiagnostics({ uri: currentTextDocument.uri, diagnostics: [] });
     return;
   }
   const ignoreLines = ignoreRecord?.lines;
