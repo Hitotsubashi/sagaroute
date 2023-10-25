@@ -34,6 +34,9 @@
 9. 补充package.json中的keyword，description ✅
 10. 把routingWatcher的设计从chokidar换成vscode.watcher（注意先测试vscode.watcher是否可以监听到git的取消）📇
 11. 对配置文件的格式校验
+12. 路由属性设置优化 📇
+    - 直观、快捷看到组件的路由属性
+    - 能快速修改组件的路由属性
 
 bug修复：
 
