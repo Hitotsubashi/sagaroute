@@ -2,16 +2,23 @@ import getRouteFileRelationManager, { RouteFileRelationManager } from '../RouteF
 
 const paramRe = /^:\w+$/;
 const dynamicSegmentValue = 3;
+const indexRouteValue = 2;
 const emptySegmentValue = 1;
 const staticSegmentValue = 10;
 const splatPenalty = -2;
 const isSplat = (s: string) => s === '*';
-function computeScore(route: string): number {
-  const segments = route.split('/');
+
+function computeScore(path: string, index: boolean | undefined): number {
+  const segments = path.split('/');
   let initialScore = segments.length;
   if (segments.some(isSplat)) {
     initialScore += splatPenalty;
   }
+
+  if (index) {
+    initialScore += indexRouteValue;
+  }
+
   return segments
     .filter((s) => !isSplat(s))
     .reduce(
@@ -63,11 +70,12 @@ export class PathParseManager {
 
   compute() {
     this.parseCache = {};
+    const routePathToRouteObjectMap = this.routeFileRelationManager.getRoutePathToRouteObjectMap();
     this.routeTestRanks = Object.entries(this.routeFileRelationManager.getRoutePathToFilePathMap())
       .map(([route, fpath]) => ({
         route,
         fpath: fpath!,
-        score: computeScore(route),
+        score: computeScore(route, routePathToRouteObjectMap[route]?.index),
         regexp: this.transformRouteToRegExp(route),
       }))
       .filter(({ fpath }) => fpath)
