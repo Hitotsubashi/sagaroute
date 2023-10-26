@@ -68,7 +68,7 @@ function initInputCommand(context: vscode.ExtensionContext) {
 function initConfigWatcher() {
   const watchPath = path
     .join(workspaceRootFolderPath, 'sagaroute.config.{js,cjs}')
-    .replace(path.sep, '/');
+    .replaceAll(path.sep, '/');
   configWatcher = vscode.workspace.createFileSystemWatcher(watchPath);
   const eventHandle = (type: string, uri: vscode.Uri) => {
     const logging = getLogging();
