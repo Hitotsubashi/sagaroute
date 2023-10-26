@@ -5,7 +5,7 @@
   "license": "MIT",
   "publisher": "ocean-sagaroute",
   "description": "A VSCode plugin based on @sagaroute/react for quickly generating  generating routes that suitable for React Router@6+",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "icon": "LOGO.png",
   "engines": {
     "vscode": "^1.55.2",
@@ -132,7 +132,7 @@
     "@babel/parser": "^7.21.2",
     "@babel/traverse": "^7.21.2",
     "@babel/types": "^7.21.3",
-    "@sagaroute/react": "^0.0.2",
+    "@sagaroute/react": "^0.0.3",
     "chokidar": "^3.5.3",
     "glob": "^7.1.4",
     "lodash": "^4.17.21",

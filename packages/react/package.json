@@ -1,6 +1,6 @@
 {
   "name": "@sagaroute/react",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A conventional routing plugin for generating routes that suitable for React Router@6+",
   "keywords": [
     "routes",

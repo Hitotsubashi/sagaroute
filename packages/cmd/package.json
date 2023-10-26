@@ -1,6 +1,6 @@
 {
   "name": "@sagaroute/cmd",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A command-line tool for generating conventional routes built on top of @sagaroute/react",
   "author": "Hitotsubashi",
   "keywords": [
@@ -48,7 +48,7 @@
     "nyc": "^15.1.0"
   },
   "dependencies": {
-    "@sagaroute/react": "^0.0.2",
+    "@sagaroute/react": "^0.0.3",
     "colorette": "^2.0.20",
     "single-line-log": "^1.1.2",
     "yargs": "^17.7.1"
