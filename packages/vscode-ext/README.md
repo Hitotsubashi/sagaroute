@@ -6,40 +6,31 @@
 
 ## 介绍
 
-`sagaroute-vscode`是一款基于`@sagaroute/react`开发的约定式路由管理插件，它能**监听文件变化以快速更新路由列表**，且会根据路由列表提供[**快捷提示路由信息**](#快捷选择路由路径)和[**快速定位路由页面**](#支持通过url快速定位文件)的交互优化。运行效果可看以下展示：
+`sagaroute-vscode`是一款约定式路由管理插件，除了**快速生成约定式路由**，还支持在编码过程中对路由的**智能提示**、**快速定位**、**诊断**、**高亮显示**等功能。运行效果可看以下展示：
 
 <p align="center">
     <img alt="overview-generate-after-save" src="./doc/images/overview-generate-after-save.gif" width="500">
-    <div align="center">文件变化后触发路由列表更新</div>
+    <div align="center">文件变化后触发约定式路由的更新</div>
 </p>
 
 <p align="center">
-    <!-- TODO: 快捷键快速选择路由重新截图 -->
-    <img alt="overview-completion" src="./doc/images/overview-completion.gif" width="500">
-    <div align="center">支持通过快捷键快速查看和选择路由</div>
+    <img alt="overview-completion" src="./doc/images/route-completion-hover-definition.gif" width="500">
+    <div align="center">支持路由的样式高亮、智能提示、悬浮显示和点击跳转到路由对应组件</div>
 </p>
 
 <p align="center">
-    <!-- TODO: 悬浮提示路由信息截图 -->
-    <img alt="overview-completion" src="./doc/images/overview-completion.gif" width="500">
-    <div align="center">支持鼠标悬浮查看路由文件信息</div>
-</p>
-
-<p align="center">
-    <!-- TODO: parse截图 -->
-    <img alt="overview-completion" src="./doc/images/overview-completion.gif" width="500">
-    <div align="center">支持快速打开url对应的页面文件</div>
+    <img alt="overview-completion" src="./doc/images/route-diagnostic.gif" width="500">
+    <div align="center">支持对路由的诊断，不匹配的路由将以警告显示</div>
 </p>
 
 ## 特点
 
+<!-- TODO以下功能新增链接 -->
+
 - 🌴 泛用性: 生成的**约定式路由列表**遵循`ES6 Module`格式，适用于任何开发环境
-- 🎯 路由提示: 支持快速选择路由和查看路由组件信息
-- 🚀 快速稳定: 合理利用[缓存机制](#缓存)，使第二次的生成速度更快。若生成结果与上次相同，则不会更改**路由模板文件**
-- 📇 样式一致: 生成**路由列表**保存后会自动触发代码风格约束插件的格式化(如`prettier`、`eslint`，取决于`vscode`安装了哪些插件)
-- 📲 快捷定位: 支持快速打开`url`对应的页面文件
-  <!-- - 📲 实用性: 采用近似于[`umi`](https://v3.umijs.org/zh-CN/docs/convention-routing)的[约定式路由规则](../react/doc/Routing.md)，更贴近实际开发场景 -->
-    <!-- - 🎉 可扩展: 支持[配置文件](../react/README.md#配置文件)，可通过钩子函数控制工作流程或增强路由对象 -->
+- 🔖 智能提示: 在填写路由参数处会冒出路由选择项，在选择项中可查看该路由对应的组件文件信息
+- 🎯 精准定位: 可通过点击路由和解析`url`跳转到路由对应的组件文件
+- 📇 路由诊断: 支持对路由进行检测，不匹配的路由将以警告显示
 
 ## 使用
 
@@ -51,29 +42,19 @@
     <img alt="status-sleeping" src="./doc/images/download-marketplace.png" >
 </p>
 
-下载`Sagaroute`后会发现`Vscode`右下角的状态栏出现了一个如下的控件：
+下载`sagaroute-vscode`后会发现`Vscode`右下角的状态栏出现了一个如下的控件：
 
 <p align="center">
     <img alt="status-sleeping" src="./doc/images/status-sleeping.png" >
     <div align="center">此时代表Sagaroute没有开启监听</div>
 </p>
 
-`Sagaroute`在每个项目中是默认不开启监听工作的，需要开发者手动点击上面 👆 的控件切换监听状态，当开启监听后控件会如下所示
+`sagaroute-vscode`在每个项目中是默认不开启监听工作的，需要开发者手动点击上面 👆 的控件切换监听状态，当开启监听后控件会如下所示
 
 <p align="center">
     <img alt="status-watching" src="./doc/images/status-watching.png" >
     <div align="center">此时代表Sagaroute已开启监听</div>
 </p>
-
-<!-- ### 2. 在项目中下载`@sagaroute/react`(非必须但推荐)
-
-```bash
-npm install @sagaroute/react
-```
-
-**_与`prettier-vscode`一样，在`sagaroute-vscode`中有内嵌的`@sagaroute/react`，因此即使不做这一步也不会影响运行。但这里推荐做做这一步是因为这样确保不同开发者在同一项目中使用的`@sagaroute/react`的版本是一致的，避免因版本不同导致的差异化情况_**
-
-**执行该步骤后需要重启`Vscode`才会生效** -->
 
 ### 2. 在路由模板文件中用注释做标记注入
 
@@ -106,7 +87,7 @@ export default router;
 
 ### 3. 生成路由列表
 
-`@sagaorute/vscode-extension`会监听**页面文件目录**里的文件，当更改的文件`CRTL+S`保存时开始执行生成路由，同时你也可以使用命令要求本插件开始生成路由，即(CMD/CTRL + Shift + P)唤出命令面板后输入`Sagaroute: routing`，如下 👇 所示：
+`sagaroute-vscode`会监听**页面文件目录**里的文件，当更改的文件`CRTL+S`保存时开始执行生成路由，同时你也可以使用命令要求本插件开始生成路由，即(CMD/CTRL + Shift + P)唤出命令面板后输入`Sagaroute: routing`，如下 👇 所示：
 
 <p align="center">
     <img alt="command-routing" src="./doc/images/command-routing.gif" >
@@ -152,7 +133,7 @@ Users.routeProps = {
 
 ## 配置参数
 
-`@sagaroute/cmd`中支持指定的配置项如下所示：
+`sagaroute`中支持指定的配置项如下所示：
 
 配置项中所有参数的简要说明如下所示：
 
@@ -191,12 +172,12 @@ module.exports = {
 
 - `Sagaroute: routing`: 生成路由列表，若存在缓存，则无视缓存重新构建
 - `Sagaroute: rebuild`: 重新根据[配置文件](#配置设置方式)构建配置，并执行生成路由列表的操作
-- `Sagaroute: show`: 打开`Sagaroute`的`output`输出面板
+- `Sagaroute: show`: 打开`sagaroute-vscode`的`output`输出面板
 - `Sagaroute: parse`: 用于根据`url`快速定位文件，详情请看[高级特性-通过url快速定位文件](#支持通过url快速定位文件)
 
-## `.vscode/settings.json`中的`Sagaroute`设定
+## `.vscode/settings.json`中的设置
 
-你可以在`.vscode/settings.json`中设置`sagaroute.working`变量，以决定`Sagaroute`是否开启监听**路由文件目录**的变化以动态生成约定式路由列表，如下所示：
+你可以在`.vscode/settings.json`中设置`sagaroute.working`变量，以决定`sagaroute-vscode`是否开启监听**路由文件目录**的变化以动态生成约定式路由列表，如下所示：
 
 ```json
 {
@@ -207,16 +188,16 @@ module.exports = {
 
 ## 状态栏
 
-在`vscode`底部的状态栏中会有`Sagaroute`的状态控件，以显示`Sagaroute`是否处于监听**路由文件目录**中。如下所示：
+在`vscode`底部的状态栏中会有`sagaroute-vscode`的状态控件，以显示`sagaroute-vscode`是否处于监听**路由文件目录**中。如下所示：
 
 <p align="center">
     <img alt="status-sleeping" src="./doc/images/status-sleeping.png" >
-    <div align="center">白字代表Sagaroute没有监听</div>
+    <div align="center">白字代表sagaroute-vscode没有监听</div>
 </p>
 
 <p align="center">
     <img alt="status-watching" src="./doc/images/status-watching.png">
-    <div align="center">绿字代表Sagaroute正在监听</div>
+    <div align="center">绿字代表sagaroute-vscode正在监听</div>
 </p>
 
 你也可以通过点击该状态控件来切换监听状态。监听状态会同步到`.vscode/settings.json`的`sagaroute.working`变量中

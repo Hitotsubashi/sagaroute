@@ -1591,22 +1591,6 @@
   resolved "https://registry.npmmirror.com/@pkgjs/parseargs/-/parseargs-0.11.0.tgz#a77ea742fab25775145434eb1d2328cf5013ac33"
   integrity sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==
 
-"@sagaroute/react@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@sagaroute/react/-/react-0.0.1.tgz#2b2d7f33c4962f1960c94e44030eabc090f6452d"
-  integrity sha512-+7f2BWCT1VsYwTA17vPJjWgcwRIwcbWFzFgqFlm3KO/+O1W31AGDvdWV9W5D0RDvvJF8DXBRdOzTBLYsBJ0V1Q==
-  dependencies:
-    "@babel/core" "^7.21.3"
-    "@babel/generator" "^7.21.3"
-    "@babel/parser" "^7.21.2"
-    "@babel/preset-typescript" "^7.22.5"
-    "@babel/traverse" "^7.21.2"
-    "@babel/types" "^7.21.3"
-    babel-plugin-jsx "^1.2.0"
-    lodash "^4.17.21"
-    mustache "^4.2.0"
-    yup "^1.1.1"
-
 "@sigstore/protobuf-specs@^0.1.0":
   version "0.1.0"
   resolved "https://registry.npmmirror.com/@sigstore/protobuf-specs/-/protobuf-specs-0.1.0.tgz#957cb64ea2f5ce527cc9cf02a096baeb0d2b99b4"
