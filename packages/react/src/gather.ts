@@ -103,7 +103,7 @@ function traverse(dirpath: string, option: InnerGatherOption): FileNode[] {
           else {
             const fileContent = fs.readFileSync(absPath, 'utf-8');
             const isTsx = ext === '.tsx';
-            const ast = parseToAst(fileContent, isTsx);
+            const ast = parseToAst(fileContent, isTsx, absPath);
             if (!isReactComponent(ast)) {
               fileNode = null;
             } else {
@@ -173,7 +173,7 @@ export function getLayoutFileNodeIfExist(
     }
     if (stats?.isFile()) {
       const content = fs.readFileSync(layoutPath, 'utf-8');
-      const ast = parseToAst(content, isTsx);
+      const ast = parseToAst(content, isTsx, layoutPath);
       if (!isReactComponent(ast)) {
         layoutFileNode = null;
       } else {

@@ -6,7 +6,7 @@
 
 ## 介绍
 
-`sagaroute-vscode`是一款基于`@sagaroute/react`开发的用于快速生成约定式路由列表的`VSCode`插件，它会监听**路由文件目录**的变化以动态生成约定式路由列表，并把生成结果插入到指定[**路由模板文件**](../react/doc/Template.md)
+`sagaroute-vscode`是一款基于`@sagaroute/react`开发的约定式路由管理插件，它能**监听文件变化以快速更新路由列表**，且会根据路由列表提供[**快捷提示路由信息**](#快捷选择路由路径)和[**快速定位路由页面**](#支持通过url快速定位文件)的交互优化。运行效果可看以下展示：
 
 <p align="center">
     <img alt="overview-generate-after-save" src="./doc/images/overview-generate-after-save.gif" width="500">
@@ -14,18 +14,32 @@
 </p>
 
 <p align="center">
+    <!-- TODO: 快捷键快速选择路由重新截图 -->
     <img alt="overview-completion" src="./doc/images/overview-completion.gif" width="500">
-    <div align="center">支持智能提示路由路径</div>
+    <div align="center">支持通过快捷键快速查看和选择路由</div>
+</p>
+
+<p align="center">
+    <!-- TODO: 悬浮提示路由信息截图 -->
+    <img alt="overview-completion" src="./doc/images/overview-completion.gif" width="500">
+    <div align="center">支持鼠标悬浮查看路由文件信息</div>
+</p>
+
+<p align="center">
+    <!-- TODO: parse截图 -->
+    <img alt="overview-completion" src="./doc/images/overview-completion.gif" width="500">
+    <div align="center">支持快速打开url对应的页面文件</div>
 </p>
 
 ## 特点
 
 - 🌴 泛用性: 生成的**约定式路由列表**遵循`ES6 Module`格式，适用于任何开发环境
-- 🎯 智能提示: 具有路由路径智能提示机制
-- 🚀 快且稳: 合理利用[缓存机制](#缓存)，使第二次的生成速度更快。若生成结果与上次相同，则不会更改**路由模板文件**
-- 📲 实用性: 采用近似于[`umi`](https://v3.umijs.org/zh-CN/docs/convention-routing)的[约定式路由规则](../react/doc/Routing.md)，更贴近实际开发场景
+- 🎯 路由提示: 支持快速选择路由和查看路由组件信息
+- 🚀 快速稳定: 合理利用[缓存机制](#缓存)，使第二次的生成速度更快。若生成结果与上次相同，则不会更改**路由模板文件**
 - 📇 样式一致: 生成**路由列表**保存后会自动触发代码风格约束插件的格式化(如`prettier`、`eslint`，取决于`vscode`安装了哪些插件)
-- 🎉 可扩展: 支持[配置文件](../react/README.md#配置文件)，可通过钩子函数控制工作流程或增强路由对象
+- 📲 快捷定位: 支持快速打开`url`对应的页面文件
+  <!-- - 📲 实用性: 采用近似于[`umi`](https://v3.umijs.org/zh-CN/docs/convention-routing)的[约定式路由规则](../react/doc/Routing.md)，更贴近实际开发场景 -->
+    <!-- - 🎉 可扩展: 支持[配置文件](../react/README.md#配置文件)，可通过钩子函数控制工作流程或增强路由对象 -->
 
 ## 使用
 
@@ -51,7 +65,7 @@
     <div align="center">此时代表Sagaroute已开启监听</div>
 </p>
 
-### 2. 在项目中下载`@sagaroute/react`(非必须但推荐)
+<!-- ### 2. 在项目中下载`@sagaroute/react`(非必须但推荐)
 
 ```bash
 npm install @sagaroute/react
@@ -59,9 +73,9 @@ npm install @sagaroute/react
 
 **_与`prettier-vscode`一样，在`sagaroute-vscode`中有内嵌的`@sagaroute/react`，因此即使不做这一步也不会影响运行。但这里推荐做做这一步是因为这样确保不同开发者在同一项目中使用的`@sagaroute/react`的版本是一致的，避免因版本不同导致的差异化情况_**
 
-**执行该步骤后需要重启`Vscode`才会生效**
+**执行该步骤后需要重启`Vscode`才会生效** -->
 
-### 3. 在路由模板文件中用注释做标记注入
+### 2. 在路由模板文件中用注释做标记注入
 
 [**路由模板文件**](../react/doc/Template.md)是指要被注入路由列表的文件，我们需要通过注释来指明**路由模板文件**中哪个位置被注入**路由列表**和**依赖**
 
@@ -90,7 +104,7 @@ export default router;
 
 其中`/* sagaroute-inject:imports */`用于标记**依赖**注入的位置，`/* sagaroute-inject:routes */`用于标记**路由列表**注入的位置。关于这些注释的含义和**路由模板文件**的更多说明可看[此处](../react/doc/Routing.md)
 
-### 4. 生成路由列表
+### 3. 生成路由列表
 
 `@sagaorute/vscode-extension`会监听**页面文件目录**里的文件，当更改的文件`CRTL+S`保存时开始执行生成路由，同时你也可以使用命令要求本插件开始生成路由，即(CMD/CTRL + Shift + P)唤出命令面板后输入`Sagaroute: routing`，如下 👇 所示：
 
@@ -115,6 +129,7 @@ export default function Users() {
 /** @type {import('react-router-dom').RouteObject} */
 Users.routeProps = {
   caseSensitive: false,
+  ErrorBoundary: ErrorBoundary,
 };
 ```
 
@@ -152,7 +167,7 @@ Users.routeProps = {
 | [rootPath](../react/doc/API.md#rootPath) | 项目路径 | string | process.cwd() |
 | [onWarning](./doc/API.md#onwarning) | 触发警告时的回调函数 | function(message: string): void | -- |
 
-**注意❗：在该插件中，`hooks`的[`print.inject.after`](../react/doc/Hook.md#printinjectafter)、[`print.write.before`](../react/doc/Hook.md#printwritebefore)、[`print.write.after`](../react/doc/Hook.md#printwriteafter)不会被执行。**
+**注意❗：在该插件中，`hooks`的[`print.write.after`](../react/doc/Hook.md#printwriteafter)不会被执行。**
 
 对上述配置参数中更详细的说明可看[API](../react/doc/API.md)
 
@@ -177,6 +192,7 @@ module.exports = {
 - `Sagaroute: routing`: 生成路由列表，若存在缓存，则无视缓存重新构建
 - `Sagaroute: rebuild`: 重新根据[配置文件](#配置设置方式)构建配置，并执行生成路由列表的操作
 - `Sagaroute: show`: 打开`Sagaroute`的`output`输出面板
+- `Sagaroute: parse`: 用于根据`url`快速定位文件，详情请看[高级特性-通过url快速定位文件](#支持通过url快速定位文件)
 
 ## `.vscode/settings.json`中的`Sagaroute`设定
 
@@ -207,18 +223,48 @@ module.exports = {
 
 ## 高级特性
 
-### 路由路径智能拼写
+### 快捷选择路由
 
-你可以在项目中通过键入`"//"`，`sagaroute`插件会提供所有所有路由的路径提示，如下所示：
+你可以在项目中通过键入快捷键`"//"`调出所有可选路由，如下所示：
 
-<p align="center">
-    <img alt="overview-completion" src="./doc/images/overview-completion.gif" >
-    <div align="center">支持智能提示路由路径</div>
-</p>
+<!-- TODO:替换图片 -->
+
+![overview-completion](./doc/images/overview-completion.gif)
 
 选择后，`"//"`会被替换成所选择的路由路径
 
-**注意：在`vscode`项目首次打开时，要先做保存操作或者强制`Sagaroute: routing`后，才会有开启路由路径智能拼写**
+其中可选项会展示以下信息：
+
+![completion-documentaion](./doc/images/completion-documentaion.png)
+
+1. 路由对应的文件路径链接
+2. 路由对应的文件中的默认导出组件的注释（如果存在）
+
+**注意: 在`vscode`项目首次打开时，要先做保存操作或者强制`Sagaroute: routing`触发路由列表刷新后，才会有开启快捷选择路由路径**
+
+### 快捷查看路由对应的文件信息
+
+<!-- TODO:如果实现了路由高亮，则去掉cannot not find match route的功能，否则就保持 -->
+
+你可以通过鼠标停留路由字符串查看路由信息，此时路由信息会以悬浮冒泡的形式展示，如下所示：
+
+<!-- TODO: 补充悬浮显示路由信息的gif图，用``作为路由格式-->
+
+所展示路由信息的内容与[快捷选择路由](#快捷选择路由)的一致。若该路由字符串不存在能与之匹配的路由，则会显示以下信息：
+
+![no-route-matched](./doc/images/no-route-matched.png)
+
+**注意: 在`vscode`项目首次打开时，要先做保存操作或者强制`Sagaroute: routing`触发路由列表刷新后，才会有开启快捷选择路由路径**
+
+### 支持通过url快速定位文件
+
+可通过`Sagaroute: parse`指令唤出输入框，在输入框中输入要定位的`url`，`sagaroute-vscode`会解析`url`并在编辑窗口中打开该`url`对应的文件，如下效果图所示：
+
+<!-- TODO 添加sagaroute.parse效果图 -->
+
+**_开发者无须关心`url`对应的路由模式是`hash`还是`browser`，`sagaroute-vscode`会自行判断处理_**
+
+**注意: 在`vscode`项目首次打开时，要先做保存操作或者强制`Sagaroute: routing`触发路由列表刷新后，才会有开启快捷选择路由路径**
 
 ### 支持批量生成`lazy`路由
 

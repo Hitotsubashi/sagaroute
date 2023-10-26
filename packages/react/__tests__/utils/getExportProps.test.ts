@@ -36,7 +36,7 @@ test("get routeProps from 'export const routeProps = {xxx}'", () => {
     loader: ${loader1.toString()},
     action: ${action1.toString()}
   }`;
-  const ast = parseToAst(content, true);
+  const ast = parseToAst(content, true, '');
   expect(
     getExportProps(ast, ['routeProps'], path.join('src', 'pages/b/b.tsx'), {
       relativePath: path.relative(
@@ -65,7 +65,7 @@ test("get routeProps from 'export {routeProps}'", () => {
     loader: ${loader2.toString()},
     action: ${action1.toString()}
   };`;
-  const ast = parseToAst(content);
+  const ast = parseToAst(content, false, '');
   expect(
     getExportProps(ast, ['routeProps'], path.join('src', 'pages', 'index.tsx'), {
       relativePath: path.relative(
@@ -95,7 +95,7 @@ test("get routeProps from 'export {routeMeta1 as routeProps}'", () => {
       action:${action2.toString()}
   };
   `;
-  const ast = parseToAst(content);
+  const ast = parseToAst(content, false, '');
 
   expect(
     getExportProps(ast, ['routeProps'], path.join('src', 'pages', 'index.tsx'), {
@@ -131,7 +131,7 @@ test('get routeProps include variable exported in local file', () => {
           errorElement: <ErrorBoundary/>
       };
     `;
-  const ast = parseToAst(content);
+  const ast = parseToAst(content, false, '');
   expect(
     getExportProps(ast, ['routeProps'], path.join('src', 'pages', 'a.tsx'), {
       relativePath: path.relative(
@@ -169,7 +169,7 @@ test('boundary: get routeProps include not exist variable', () => {
     index: true,
     action,
   };`;
-  const ast = parseToAst(content);
+  const ast = parseToAst(content, false, '');
   expect(() => {
     getExportProps(ast, ['routeProps'], path.join('src', 'pages', 'a.tsx'), {
       relativePath: path.relative(
@@ -184,7 +184,7 @@ test('boundary: get routeProps include not exist variable', () => {
 
 test('get nothing from export', () => {
   const content = `export const a = {}`;
-  const ast = parseToAst(content);
+  const ast = parseToAst(content, false, '');
   expect(
     getExportProps(ast, ['routeProps'], path.join('src', 'pages', 'index.tsx'), {
       relativePath: path.relative(
@@ -210,7 +210,7 @@ test('get two props1 which both export wrapply', () => {
       layout: false,
       lazy: true
   };`;
-  const ast = parseToAst(content);
+  const ast = parseToAst(content, false, '');
   expect(
     getExportProps(ast, ['routeProps', 'routeOptions'], 'src/pages/b/b.tsx', {
       relativePath: path.relative(
@@ -240,7 +240,7 @@ test('get two props2 which both export directly', () => {
   Comp.routeProps = {a:1,b:2};
   Comp.routeOptions = {a:1,b:3};
   `;
-  const ast = parseToAst(content);
+  const ast = parseToAst(content, false, '');
   expect(
     getExportProps(ast, ['routeProps', 'routeOptions'], path.join('src', 'pages', 'index.tsx'), {
       relativePath: path.relative(
@@ -266,7 +266,7 @@ test('get two props whiich both export wrapply and with as', () => {
   };
   Comp["routeOptions"] = {a:1,b:3};
   `;
-  const ast = parseToAst(content);
+  const ast = parseToAst(content, false, '');
   expect(
     getExportProps(ast, ['routeProps', 'routeOptions'], path.join('src', 'pages', 'index.tsx'), {
       relativePath: path.relative(
@@ -296,7 +296,7 @@ test('get two props which export directly and init with comma', () => {
     lazy: ${lazy3}
   }
   Comp.routeOptions = {a:1,b:3};`;
-  const ast = parseToAst(content);
+  const ast = parseToAst(content, false, '');
   expect(
     getExportProps(ast, ['routeProps', 'routeOptions'], path.join('src', 'pages', 'index.tsx'), {
       relativePath: path.relative(
@@ -335,7 +335,7 @@ test('test  pathRewrite', () => {
       loader
     };
     `;
-  const ast = parseToAst(content);
+  const ast = parseToAst(content, false, '');
   expect(
     getExportProps(ast, ['routeProps', 'routeOptions'], path.join('src', 'pages', 'index.tsx'), {
       relativePath: path.relative(
@@ -416,7 +416,7 @@ test('test with htmlTag,ReactTag,SvgTag,custom Component and WebCustomComponent'
           <Detail/>
         </>
     };`;
-  const ast = parseToAst(content);
+  const ast = parseToAst(content, false, '');
   expect(
     getExportProps(ast, ['routeOptions'], path.join('src', 'pages', 'index.tsx'), {
       relativePath: path.relative(
@@ -531,7 +531,7 @@ test('import in different way and path', () => {
         </>
       </>
     };`;
-  const ast = parseToAst(content);
+  const ast = parseToAst(content, false, '');
   expect(
     getExportProps(ast, ['routeOptions'], path.join('src', 'pages', 'index.tsx'), {
       relativePath: path.relative(
@@ -610,7 +610,7 @@ test('use same variable in different attributes', () => {
       handler2: loader2
     }
   `;
-  const ast = parseToAst(content);
+  const ast = parseToAst(content, false, '');
   expect(
     getExportProps(ast, ['routeOptions'], path.join('src', 'pages', 'index.tsx'), {
       relativePath: path.relative(

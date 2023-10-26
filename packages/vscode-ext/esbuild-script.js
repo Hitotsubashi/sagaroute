@@ -42,8 +42,17 @@ const nativeNodeModulesPlugin = {
 const argv = yargs(hideBin(process.argv)).argv;
 
 const config = {
-  entryPoints: ['./src/extension.ts'],
-  outfile: 'dist/extension.js',
+  entryPoints: [
+    {
+      in: './src/extension.ts',
+      out: 'extension',
+    },
+    {
+      in: './server/index.ts',
+      out: 'server',
+    },
+  ],
+  outdir: 'dist',
   format: 'cjs',
   platform: 'node',
   external: ['vscode'],

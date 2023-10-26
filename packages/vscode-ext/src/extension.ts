@@ -7,8 +7,14 @@ import getSagaRoute, { rebuildSagaroute } from './SagaRoute';
 import getLogging from './Logging';
 import { performance } from 'perf_hooks';
 import getCacheManager from './CacheManager';
-import getPathCompletionItemManager from './PathCompletionItemManager';
 import getWarningManager from './WarningManager';
+import urlRegex from 'url-regex';
+import {
+  LanguageClient,
+  LanguageClientOptions,
+  ServerOptions,
+  TransportKind,
+} from 'vscode-languageclient/node';
 
 let isEnabled: boolean;
 let routingWatcher: FSWatcher;
@@ -60,21 +66,9 @@ function initInputCommand(context: vscode.ExtensionContext) {
 }
 
 function initConfigWatcher() {
-  //   const sagaRouteConfigFiles = [
-  //     path.join(workspaceRootFolderPath, 'sagaroute.config.js'),
-  //     path.join(workspaceRootFolderPath, 'sagaroute.config.cjs'),
-  //   ];
-  //   configWatcher = chokidar
-  //     .watch(sagaRouteConfigFiles, { ignoreInitial: true })
-  //     .on('all', (event, filepath) => {
-  //       const logging = getLogging();
-  //       logging.logMessage(`[watch] File ${filepath} has been ${event}`);
-  //       rebuildSagaroute();
-  //       initRoutingWatcher(true);
-  //     });
   const watchPath = path
     .join(workspaceRootFolderPath, 'sagaroute.config.{js,cjs}')
-    .replace(path.sep, '/');
+    .replaceAll(path.sep, '/');
   configWatcher = vscode.workspace.createFileSystemWatcher(watchPath);
   const eventHandle = (type: string, uri: vscode.Uri) => {
     const logging = getLogging();
@@ -137,6 +131,21 @@ function initRoutingWatcher(immediate = false) {
   if (immediate) {
     debounceWorking();
   }
+  // const watchPath = path
+  //   .join(workspaceRootFolderPath, '**/*.{ts,js,tsx,jsx}')
+  //   .replaceAll(path.sep, '/');
+  // console.log('watchPath', watchPath);
+
+  // routingWatcher = vscode.workspace.createFileSystemWatcher(watchPath);
+  // const eventHandle = (type: 'change' | 'create' | 'delete', uri: vscode.Uri) => {
+  //   const filepath = uri.path;
+  //   console.log('filepath', filepath, uri.fsPath);
+  //   console.log('uri', uri);
+  //   console.log('type', type);
+  // };
+  // routingWatcher.onDidChange((uri) => eventHandle('change', uri));
+  // routingWatcher.onDidCreate((uri) => eventHandle('create', uri));
+  // routingWatcher.onDidDelete((uri) => eventHandle('delete', uri));
 
   routingWatcher = chokidar
     .watch(workspaceRootFolderPath, {
@@ -180,46 +189,6 @@ function initRoutingWatcher(immediate = false) {
     });
 }
 
-function registerRouteCompletions(context: vscode.ExtensionContext) {
-  const documentSelector: vscode.DocumentSelector = [
-    { scheme: 'file', language: 'typescript' },
-    { scheme: 'file', language: 'typescriptreact' },
-    { scheme: 'file', language: 'javascript' },
-    { scheme: 'file', language: 'javascriptreact' },
-  ];
-  const pathCompletionItemManager = getPathCompletionItemManager();
-
-  context.subscriptions.push(
-    vscode.languages.registerCompletionItemProvider(
-      documentSelector,
-      {
-        provideCompletionItems(document, position) {
-          const line = document.lineAt(position.line).text;
-          if (line.slice(0, position.character).endsWith('//')) {
-            const completions = pathCompletionItemManager.getCompletions();
-            completions.forEach((item) => {
-              item.additionalTextEdits = [
-                vscode.TextEdit.replace(
-                  new vscode.Range(
-                    position.line,
-                    position.character - 2,
-                    position.line,
-                    position.character,
-                  ),
-                  '',
-                ),
-              ];
-            });
-            return completions;
-          }
-          return undefined;
-        },
-      },
-      '/',
-    ),
-  );
-}
-
 function initListenWorkspaceConfiguration(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration(async (event) => {
@@ -236,16 +205,154 @@ function initListenWorkspaceConfiguration(context: vscode.ExtensionContext) {
   );
 }
 
+interface RouteRange {
+  startLine: number;
+  startCharacter: number;
+  endLine: number;
+  endCharacter: number;
+}
+
+let decorationType: vscode.TextEditorDecorationType;
+function initListenRouteDecoration(context: vscode.ExtensionContext) {
+  context.subscriptions.push(
+    client.onNotification('activeTextEditor/decorations', (response) => {
+      const settingConfiguration = vscode.workspace.getConfiguration('sagaroute');
+      const decorationStyle = (settingConfiguration.get('decoration') as typeof Proxy) || {};
+      const { uri, ranges } = response as { uri: string; ranges: RouteRange[] };
+      if (uri === vscode.window.activeTextEditor?.document.uri.toString()) {
+        if (decorationType) {
+          vscode.window.activeTextEditor?.setDecorations(decorationType, []);
+          decorationType.dispose();
+        }
+        decorationType = vscode.window.createTextEditorDecorationType({
+          color: '#13c2c2',
+          ...decorationStyle,
+        });
+        vscode.window.activeTextEditor?.setDecorations(
+          decorationType,
+          ranges.map(({ startLine, startCharacter, endLine, endCharacter }) => ({
+            range: new vscode.Range(startLine, startCharacter, endLine, endCharacter),
+          })),
+        );
+      }
+    }),
+  );
+}
+
+function initSendServerWithActiveTextEditor(context: vscode.ExtensionContext) {
+  function getUriFromDocument(document?: vscode.TextDocument) {
+    if (document) {
+      const fsPath = document.uri.fsPath;
+      const { ext } = path.parse(fsPath);
+      if (['.js', '.ts', '.tsx', '.jsx'].includes(ext)) {
+        return vscode.Uri.file(fsPath).toString();
+      }
+    }
+    return undefined;
+  }
+
+  context.subscriptions.push(
+    client.onRequest('activeTextEditor/uri', () => {
+      const activeUri = getUriFromDocument(vscode.window.activeTextEditor?.document);
+      return activeUri;
+    }),
+  );
+
+  context.subscriptions.push(
+    vscode.window.onDidChangeActiveTextEditor((e) => {
+      const activeUri = getUriFromDocument(e?.document);
+      if (activeUri) {
+        client.sendNotification('activeTextEditor/uri', activeUri);
+      }
+    }),
+  );
+}
+
+function initParseUrlCommand(context: vscode.ExtensionContext) {
+  context.subscriptions.push(
+    vscode.commands.registerCommand('sagaroute.parse', async () => {
+      const input = await vscode.window.showInputBox({ placeHolder: 'Please enter the url.' });
+      if (typeof input === 'string') {
+        if (!urlRegex().test(input)) {
+          vscode.window.showErrorMessage(
+            `The  content <${input}> you entered does not match the url format.`,
+          );
+          return;
+        }
+        const url = new URL(input);
+        const fpath = (await client.sendRequest(
+          'url/parse',
+          url.hash.startsWith('#/') ? url.hash.slice(1) : url.pathname,
+        )) as string | undefined;
+        if (!fpath) {
+          vscode.window.showErrorMessage(
+            `The file matching the entered url <${input}> could not be found.`,
+          );
+          return;
+        }
+        showFile(fpath);
+      }
+    }),
+  );
+}
+
+async function showFile(fpath: string) {
+  const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(fpath));
+  vscode.window.showTextDocument(doc);
+}
+
+export let client: LanguageClient;
+
+function initClient(context: vscode.ExtensionContext) {
+  const serverModule = context.asAbsolutePath(path.join('dist', 'server.js'));
+  const serverOptions: ServerOptions = {
+    run: { module: serverModule, transport: TransportKind.ipc },
+    debug: {
+      module: serverModule,
+      transport: TransportKind.ipc,
+    },
+  };
+  // Options to control the language client
+  const clientOptions: LanguageClientOptions = {
+    // Register the server for plain text documents
+    documentSelector: [
+      { scheme: 'file', language: 'typescript' },
+      { scheme: 'file', language: 'typescriptreact' },
+      { scheme: 'file', language: 'javascript' },
+      { scheme: 'file', language: 'javascriptreact' },
+    ],
+  };
+
+  client = new LanguageClient(
+    'SagarouteLanguageServer',
+    'Sagaroute Language Server',
+    serverOptions,
+    clientOptions,
+  );
+
+  client.start();
+}
+
+function stopClient() {
+  if (!client) {
+    return undefined;
+  }
+  return client.stop();
+}
+
 export function activate(context: vscode.ExtensionContext) {
   const settingConfiguration = vscode.workspace.getConfiguration('sagaroute');
   isEnabled = settingConfiguration.get('working') as boolean;
   try {
+    initClient(context);
+    initSendServerWithActiveTextEditor(context);
+    initListenRouteDecoration(context);
     initStatusBar(context);
+    initParseUrlCommand(context);
     initListenWorkspaceConfiguration(context);
     initInputCommand(context);
     initConfigWatcher();
     initRoutingWatcher();
-    registerRouteCompletions(context);
   } catch (err) {
     console.log(err);
   }
@@ -254,4 +361,5 @@ export function activate(context: vscode.ExtensionContext) {
 export function deactivate() {
   configWatcher.dispose();
   routingWatcher.close();
+  return stopClient();
 }

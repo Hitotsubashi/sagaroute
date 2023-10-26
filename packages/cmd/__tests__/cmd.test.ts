@@ -85,3 +85,19 @@ test('use cmd with warnings include lost variable in both view and template', (d
     done();
   });
 });
+
+test('use cmd with errors include parsing file which includes syntax error', (done) => {
+  exec('cd ./__tests__/test-fixtures/error && sagaroute', (error) => {
+    expect(error?.message).toEqual(
+      expect.stringContaining(
+        `The file whose path is [ ${path.join(
+          __dirname,
+          'test-fixtures',
+          'error',
+          'src/pages/index.tsx',
+        )} ] has syntax errors`,
+      ),
+    );
+    done();
+  });
+});

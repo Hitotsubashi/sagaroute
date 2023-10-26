@@ -5,7 +5,7 @@
   "license": "MIT",
   "publisher": "ocean-sagaroute",
   "description": "A VSCode plugin based on @sagaroute/react for quickly generating  generating routes that suitable for React Router@6+",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "icon": "LOGO.png",
   "engines": {
     "vscode": "^1.55.2",
@@ -53,6 +53,30 @@
           "type": "boolean",
           "default": false,
           "description": "Status decide Sagaroute to watching or not."
+        },
+        "sagaroute.decoration": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "default": null,
+          "markdownDescription": "The style used to define the highlighted route string, you can find the avaliable properties in [here](https://code.visualstudio.com/api/references/vscode-api#DecorationRenderOptions)",
+          "properties": {
+            "color": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "default": null
+            },
+            "backgroundColor": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "default": null
+            }
+          }
         }
       }
     },
@@ -72,6 +96,10 @@
       {
         "command": "sagaroute.show",
         "title": "Sagaroute: show"
+      },
+      {
+        "command": "sagaroute.parse",
+        "title": "Sagaroute: parse"
       }
     ]
   },
@@ -80,7 +108,7 @@
     "vscode:prepublish": "yarn run esbuild-base -- --minify",
     "esbuild-base": "node esbuild-script.js",
     "esbuild": "yarn run esbuild-base -- --sourcemap",
-    "esbuild-watch": "yarn run esbuild-base -- --sourcemap --watch",
+    "watch": "yarn run esbuild-base -- --sourcemap --watch",
     "compile-tests": "yarn clean && npx tsc -b && yarn esbuild-base",
     "watch-tests": "npx tsc -b -w",
     "pretest": "yarn run compile-tests",
@@ -101,10 +129,17 @@
     "yargs": "^17.7.1"
   },
   "dependencies": {
-    "@sagaroute/react": "^0.0.2",
+    "@babel/parser": "^7.21.2",
+    "@babel/traverse": "^7.21.2",
+    "@babel/types": "^7.21.3",
+    "@sagaroute/react": "^0.0.3",
     "chokidar": "^3.5.3",
     "glob": "^7.1.4",
     "lodash": "^4.17.21",
-    "mocha": "^10.2.0"
+    "mocha": "^10.2.0",
+    "url-regex": "^5.0.0",
+    "vscode-languageclient": "^8.1.0",
+    "vscode-languageserver": "^8.1.0",
+    "vscode-languageserver-textdocument": "^1.0.8"
   }
 }

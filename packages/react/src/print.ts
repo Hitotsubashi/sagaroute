@@ -173,7 +173,11 @@ function parseEmptyInjectCommentToPlaceholder(content: string, handledInjectVari
 function generateRenderTemplateFromContent(content: string, routeFilePath: string) {
   const handledInjectVariables: string[] = [];
   const modifiedContent = removeInjectedContent(content);
-  const ast = parseToAst(modifiedContent, ['.ts', '.tsx'].includes(path.extname(routeFilePath)));
+  const ast = parseToAst(
+    modifiedContent,
+    ['.ts', '.tsx'].includes(path.extname(routeFilePath)),
+    routeFilePath,
+  );
   const existedImportNames = collectExistedImportNames(ast);
   parseStickyInjectCommentToPlaceholder(ast, handledInjectVariables);
   let { code: template } = generate(ast);

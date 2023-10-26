@@ -10,7 +10,7 @@ test('detect component in jsx', () => {
         </div>
       );
     `;
-  const ast = parseToAst(content);
+  const ast = parseToAst(content, false, '');
   expect(isReactComponent(ast)).toBe(true);
 });
 
@@ -23,7 +23,7 @@ test('detect component in tsx', () => {
         </div>
       );
       `;
-  const ast = parseToAst(content, true);
+  const ast = parseToAst(content, true, '');
   expect(isReactComponent(ast)).toBe(true);
 });
 
@@ -31,6 +31,6 @@ test('detect component in normal ts script', () => {
   const content = `
     var a: string = "";
       `;
-  const ast = parseToAst(content, true);
+  const ast = parseToAst(content, true, '');
   expect(isReactComponent(ast)).toBe(false);
 });
