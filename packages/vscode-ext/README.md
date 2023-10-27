@@ -177,14 +177,16 @@ module.exports = {
 
 ## `.vscode/settings.json`中的设置
 
-你可以在`.vscode/settings.json`中设置`sagaroute.working`变量，以决定`sagaroute-vscode`是否开启监听**路由文件目录**的变化以动态生成约定式路由列表，如下所示：
+1. `sagaroute.working`: 决定`sagaroute-vscode`是否开启监听**路由文件目录**的变化以动态生成约定式路由列表，如下所示：
 
-```json
-{
-  // true代表开启监控
-  "sagaroute.working": true
-}
-```
+   ```json
+   {
+     // true代表开启监控
+     "sagaroute.working": true
+   }
+   ```
+
+2. `sagaroute.decoration`: 决定路由高亮的样式，详细可看[路由高亮](./doc/Advanced.md#路由高亮)
 
 ## 状态栏
 
