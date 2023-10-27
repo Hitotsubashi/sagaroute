@@ -27,7 +27,7 @@
 
 如果只是想在日常开发中为项目生成路由列表，那以下**基础插件**可以满足大部分需求
 
-- [`sagaroute-vscode`](./packages/vscode-ext/README.md): 用于快速生成约定式路由列表的`VSCode`插件，可持续监听工作区的文件变动以动态生成路由列表
+- [`sagaroute-vscode`](./packages/vscode-ext/README.md): 一款约定式路由管理插件，除了**快速生成约定式路由**，还支持在编码过程中对路由的**智能提示**、**快速定位**、**诊断**、**高亮显示**等功能
 - [`@sagaroute/cmd`](./packages/cmd/README.md): 快速生成约定式路由列表的命令行工具
 
 ### 高级插件

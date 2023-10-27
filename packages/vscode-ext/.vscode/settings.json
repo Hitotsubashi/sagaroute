@@ -4,5 +4,6 @@
   },
   "typescript.tsc.autoDetect": "off",
   "prettier.printWidth": 100,
-  "auto-rename-tag.activationOnLanguage": ["*"]
+  "auto-rename-tag.activationOnLanguage": ["*"],
+  "sagaroute.working": false
 }
