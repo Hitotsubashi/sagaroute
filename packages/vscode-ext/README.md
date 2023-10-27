@@ -179,7 +179,7 @@ module.exports = {
 
 1. `sagaroute.working`: 决定`sagaroute-vscode`是否开启监听**路由文件目录**的变化以动态生成约定式路由列表，如下所示：
 
-   ```json
+   ```js
    {
      // true代表开启监控
      "sagaroute.working": true

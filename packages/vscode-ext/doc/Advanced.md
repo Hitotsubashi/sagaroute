@@ -139,7 +139,7 @@ navigate(`/form/${params}`);
 
 用户也可以自定义路由的高亮样式，在`.vscode/settings.json`中，提供了`sagaroute.decoration`去设置高亮样式，如下所示：
 
-```json
+```js
 {
   "sagaroute.decoration": {
     "color": "#ad4e00", // 路由字体颜色
