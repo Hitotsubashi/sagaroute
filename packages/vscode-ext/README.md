@@ -28,9 +28,9 @@
 <!-- TODO以下功能新增链接 -->
 
 - 🌴 泛用性: 生成的**约定式路由列表**遵循`ES6 Module`格式，适用于任何开发环境
-- 🔖 智能提示: 在填写路由参数处会冒出路由选择项，在选择项中可查看该路由对应的组件文件信息
-- 🎯 精准定位: 可通过点击路由和解析`url`跳转到路由对应的组件文件
-- 📇 路由诊断: 支持对路由进行检测，不匹配的路由将以警告显示
+- 🔖 [智能提示](./doc/Advanced.md#路由智能提示): 在填写路由参数处会冒出路由选择项，在选择项中可查看该路由对应的组件文件信息
+- 🎯 精准定位: 可通过[点击路由](./doc/Advanced.md#路由跳转)和[解析`url`跳转](./doc/Advanced.md#通过url定位路由文件)到路由对应的组件文件
+- 📇 [路由诊断](./doc/Advanced.md#路由诊断): 支持对路由进行检测，不匹配的路由将以警告显示
 
 ## 使用
 
@@ -173,7 +173,7 @@ module.exports = {
 - `Sagaroute: routing`: 生成路由列表，若存在缓存，则无视缓存重新构建
 - `Sagaroute: rebuild`: 重新根据[配置文件](#配置设置方式)构建配置，并执行生成路由列表的操作
 - `Sagaroute: show`: 打开`sagaroute-vscode`的`output`输出面板
-- `Sagaroute: parse`: 用于根据`url`快速定位文件，详情请看[高级特性-通过url快速定位文件](#支持通过url快速定位文件)
+- `Sagaroute: parse`: 用于根据`url`快速定位文件，详情请看[高级特性-通过url快速定位文件](./doc/Advanced.md#通过url定位路由文件)
 
 ## `.vscode/settings.json`中的设置
 
@@ -204,52 +204,11 @@ module.exports = {
 
 你也可以通过点击该状态控件来切换监听状态。监听状态会同步到`.vscode/settings.json`的`sagaroute.working`变量中
 
-## 高级特性
+## 常见问题🤔️
 
-### 快捷选择路由
+### 支持生成懒加载的路由吗？
 
-你可以在项目中通过键入快捷键`"//"`调出所有可选路由，如下所示：
-
-<!-- TODO:替换图片 -->
-
-![overview-completion](./doc/images/overview-completion.gif)
-
-选择后，`"//"`会被替换成所选择的路由路径
-
-其中可选项会展示以下信息：
-
-![completion-documentaion](./doc/images/completion-documentaion.png)
-
-1. 路由对应的文件路径链接
-2. 路由对应的文件中的默认导出组件的注释（如果存在）
-
-**注意: 在`vscode`项目首次打开时，要先做保存操作或者强制`Sagaroute: routing`触发路由列表刷新后，才会有开启快捷选择路由路径**
-
-### 快捷查看路由对应的文件信息
-
-<!-- TODO:如果实现了路由高亮，则去掉cannot not find match route的功能，否则就保持 -->
-
-你可以通过鼠标停留路由字符串查看路由信息，此时路由信息会以悬浮冒泡的形式展示，如下所示：
-
-<!-- TODO: 补充悬浮显示路由信息的gif图，用``作为路由格式-->
-
-所展示路由信息的内容与[快捷选择路由](#快捷选择路由)的一致。若该路由字符串不存在能与之匹配的路由，则会显示以下信息：
-
-![no-route-matched](./doc/images/no-route-matched.png)
-
-**注意: 在`vscode`项目首次打开时，要先做保存操作或者强制`Sagaroute: routing`触发路由列表刷新后，才会有开启快捷选择路由路径**
-
-### 支持通过url快速定位文件
-
-可通过`Sagaroute: parse`指令唤出输入框，在输入框中输入要定位的`url`，`sagaroute-vscode`会解析`url`并在编辑窗口中打开该`url`对应的文件，如下效果图所示：
-
-<!-- TODO 添加sagaroute.parse效果图 -->
-
-**_开发者无须关心`url`对应的路由模式是`hash`还是`browser`，`sagaroute-vscode`会自行判断处理_**
-
-**注意: 在`vscode`项目首次打开时，要先做保存操作或者强制`Sagaroute: routing`触发路由列表刷新后，才会有开启快捷选择路由路径**
-
-### 支持批量生成`lazy`路由
+答：是的。`sagaroute-vscode`支持批量生成`lazy`路由
 
 [`lazy`](https://reactrouter.com/en/main/route/lazy#lazy)是`react-router@6.4`新增的路由属性，用于路由文件的懒加载，`lazy`有多种写法，如下所示：
 
@@ -279,7 +238,9 @@ module.exports = {
 
 ![save-with-lazy](./doc/images/save-with-lazy.gif)
 
-### 缓存
+### 每次文件内容的变动都会触发路由列表的更新吗？
+
+答：不一定。
 
 本插件内部实现了路由对象的缓存机制，因此存在以下优点：
 
