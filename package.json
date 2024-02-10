@@ -17,6 +17,8 @@
   "scripts": {
     "lint:eslint": "npx eslint --cache .",
     "lint:prettier": "npx prettier --check . --end-of-line auto",
-    "lint": "yarn lint:eslint && yarn lint:prettier"
+    "lint": "yarn lint:eslint && yarn lint:prettier",
+    "build": "npx lerna run build",
+    "test": "npx lerna run test"
   }
 }
