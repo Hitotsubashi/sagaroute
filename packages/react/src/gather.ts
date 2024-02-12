@@ -5,6 +5,7 @@ import hookCompose from '@/utils/hookCompose';
 import isReactComponent from '@/utils/isReactComponent';
 import parseToAst from '@/utils/parseToAst';
 import { PartialRequired } from './typings';
+import { getRouteFilePath, getRouteFileAstIfExist } from './utils/getRouteFileAst';
 
 export type GatherHookBefore = (dirpath: string, layoutDirPath: string) => void | null;
 export type GatherHookBeforeEach = (fileNodePath: string) => void | FileNode | null;
@@ -97,7 +98,7 @@ function traverse(dirpath: string, option: InnerGatherOption): FileNode[] {
         }
 
         if (itemStats.isFile()) {
-          if (/\.(test|spec|e2e)\.(j|t)sx?$/.test(cur)) fileNode = null;
+          if (/\.(test|spec|e2e|route)\.(j|t)sx?$/.test(cur)) fileNode = null;
           else if (/\.d\.ts$/.test(cur)) fileNode = null;
           else if (!['.tsx', '.jsx'].includes(ext)) fileNode = null;
           else {
@@ -107,15 +108,20 @@ function traverse(dirpath: string, option: InnerGatherOption): FileNode[] {
             if (!isReactComponent(ast)) {
               fileNode = null;
             } else {
-              const { props, dependencies } = getExportProps(
-                ast,
-                ['routeProps', 'routeOptions'],
-                absPath,
-                {
-                  pathRewrite,
-                  relativePath: curRelativeDirPath,
-                },
-              );
+              let props: FileNode['props'], dependencies: FileNode['dependencies'];
+              const routeFilePath = getRouteFilePath(absPath);
+              const routeFileAst = getRouteFileAstIfExist(routeFilePath);
+              if (routeFileAst) {
+                ({ props, dependencies } = getExportProps(
+                  ast,
+                  ['routeProps', 'routeOptions'],
+                  routeFilePath,
+                  {
+                    pathRewrite,
+                    relativePath: curRelativeDirPath,
+                  },
+                ));
+              }
               fileNode = normalize({
                 name: cur,
                 type: 'file',
@@ -142,13 +148,14 @@ function traverse(dirpath: string, option: InnerGatherOption): FileNode[] {
 }
 
 function normalize(fileNode: FileNode): FileNode {
-  if (fileNode.props) {
-    if (Object.keys(fileNode.props).length === 0) {
-      delete fileNode.props;
-    }
+  if (
+    fileNode.props === undefined ||
+    (fileNode.props && Object.keys(fileNode.props).length === 0)
+  ) {
+    delete fileNode.props;
   }
 
-  if (fileNode.dependencies?.length === 0) {
+  if (fileNode.dependencies === undefined || fileNode.dependencies?.length === 0) {
     delete fileNode.dependencies;
   }
 
@@ -177,15 +184,20 @@ export function getLayoutFileNodeIfExist(
       if (!isReactComponent(ast)) {
         layoutFileNode = null;
       } else {
-        const { props, dependencies } = getExportProps(
-          ast,
-          ['routeProps', 'routeOptions'],
-          layoutPath,
-          {
-            pathRewrite: option.pathRewrite,
-            relativePath: option.relativeLayoutDirPath,
-          },
-        );
+        let props: FileNode['props'], dependencies: FileNode['dependencies'];
+        const layoutRouteFilePath = getRouteFilePath(layoutPath);
+        const routeFileAst = getRouteFileAstIfExist(layoutRouteFilePath);
+        if (routeFileAst) {
+          ({ props, dependencies } = getExportProps(
+            ast,
+            ['routeProps', 'routeOptions'],
+            layoutRouteFilePath,
+            {
+              pathRewrite: option.pathRewrite,
+              relativePath: option.relativeLayoutDirPath,
+            },
+          ));
+        }
         layoutFileNode = normalize({
           name,
           type: 'file',
@@ -228,7 +240,7 @@ function gather(option: GatherOption) {
     if (layoutFileNode) {
       fileNodes.push(layoutFileNode);
     }
-    hookCompose(option.hooks?.after, fileNodes, dirpath, layoutDirPath) === null;
+    hookCompose(option.hooks?.after, fileNodes, dirpath, layoutDirPath);
     return fileNodes;
   } else {
     return null;

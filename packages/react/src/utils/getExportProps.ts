@@ -23,66 +23,40 @@ export default function getExportPropsAndDependencies(
 ): { props: Record<string, any>; dependencies: FileNode['dependencies'] } {
   const props: Record<string, any> = {};
   const dependencies: Dependency[] = [];
-  const componentName = findDefaultExportComponentName(ast);
 
-  if (componentName) {
-    propNames.forEach((propName) => {
-      const result = findSpecifiedProp(ast, propName, componentName, filepath, {
-        pathRewrite,
-        relativePath,
-      });
-      if (result) {
-        props[propName] = result.prop;
-        dependencies.push(...result.dependencies);
-      }
+  propNames.forEach((propName) => {
+    const result = findSpecifiedProp(ast, propName, filepath, {
+      pathRewrite,
+      relativePath,
     });
-  }
+    if (result) {
+      props[propName] = result.prop;
+      dependencies.push(...result.dependencies);
+    }
+  });
 
   return { props, dependencies };
-}
-
-function findDefaultExportComponentName(ast: ParseResult<File>): string | undefined {
-  let componentName: string | undefined = undefined;
-  traverse(ast, {
-    ExportDefaultDeclaration(traversePath) {
-      const { node } = traversePath;
-      const { declaration } = node;
-      if (t.isFunctionDeclaration(declaration)) {
-        componentName = declaration.id?.name;
-      } else if (t.isIdentifier(declaration)) {
-        componentName = declaration.name;
-      } else if (t.isClassDeclaration(declaration)) {
-        componentName = declaration.id?.name;
-      }
-    },
-  });
-  return componentName;
 }
 
 function findSpecifiedProp(
   ast: ParseResult<babel.types.File>,
   propName: string,
-  componentName: string,
   filepath: string,
   { pathRewrite, relativePath }: Option,
 ) {
   let propNode;
   traverse(ast, {
-    ExpressionStatement(traversePath) {
+    ExportNamedDeclaration(traversePath) {
       const { node } = traversePath;
-      const { expression } = node;
-      if (
-        t.isAssignmentExpression(expression) &&
-        expression.operator === '=' &&
-        t.isMemberExpression(expression.left) &&
-        t.isIdentifier(expression.left.object) &&
-        expression.left.object.name === componentName &&
-        ((t.isStringLiteral(expression.left.property) &&
-          expression.left.property.value === propName) ||
-          (t.isIdentifier(expression.left.property) && expression.left.property.name === propName))
-      ) {
-        propNode = expression.right;
-        traversePath.stop();
+      const { declaration } = node;
+      if (t.isVariableDeclaration(declaration)) {
+        const { declarations } = declaration;
+        for (let i = 0; i < declarations.length; i++) {
+          const { id, init } = declarations[i];
+          if (t.isIdentifier(id) && id.name === propName) {
+            propNode = init;
+          }
+        }
       }
     },
   });
