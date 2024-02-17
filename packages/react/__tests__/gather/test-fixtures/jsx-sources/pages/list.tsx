@@ -1,5 +1,4 @@
 // @ts-nocheck
-import ErrorBoundary from './components/ErrorBoundary.tsx';
 
 const list = () => {
   return (
@@ -9,10 +8,6 @@ const list = () => {
       <li>3</li>
     </ul>
   );
-};
-
-list.routeProps = {
-  ErrorBoundary,
 };
 
 export default list;
