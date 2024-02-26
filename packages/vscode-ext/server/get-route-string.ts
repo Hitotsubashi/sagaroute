@@ -59,7 +59,10 @@ function isLinkOrNavigate(node: ts.Node, typeChecker: ts.TypeChecker) {
     if (type.includes('LinkProps') || type.includes('NavigateProps')) {
       const toProperty = node.attributes.properties.find(
         (property) =>
-          ts.isJsxAttribute(property) && property.name.escapedText === 'to' && property.initializer,
+          ts.isJsxAttribute(property) &&
+          ts.isIdentifier(property.name) &&
+          property.name.escapedText === 'to' &&
+          property.initializer,
       ) as ts.JsxAttribute | undefined;
       if (toProperty) {
         const { initializer } = toProperty;
