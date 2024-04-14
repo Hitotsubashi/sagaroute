@@ -1,7 +1,7 @@
 import { parse, ParserPlugin } from '@babel/parser';
 
 export default function parseToAst(content: string, isTsx: boolean, filepath: string) {
-  const plugins: ParserPlugin[] = ['jsx'];
+  const plugins: ParserPlugin[] = ['jsx', 'decorators-legacy'];
   if (isTsx) {
     plugins.push('typescript');
   }
