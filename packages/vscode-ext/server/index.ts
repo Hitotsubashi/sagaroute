@@ -15,8 +15,6 @@ import { Position, TextDocument } from 'vscode-languageserver-textdocument';
 import ts from 'typescript';
 import fs from 'fs';
 import { throttle } from 'lodash';
-import getRouteStringLiteral from './get-route-string';
-import getRouteRangeRecorder, { RouteRange } from './RouteRangeRecorder';
 import getRouteFileRelationManager, { ModifedRouteObject } from './RouteFileRelationManager';
 import getPathParseManager from './PathParseManager';
 import getJSDocManager from './JSDocManager';
@@ -25,6 +23,7 @@ import url from 'url';
 import path from 'path';
 import getIgnoreRangeRecorder from './IgnoreRangeRecorder';
 import getIgnoreCommentRanges from './get-ignore-comment';
+import { default as _getRouteRangeParseScheduler } from './RouteRangeParseScheduler';
 
 let service: ts.LanguageService;
 let workspaceRootFolderPath: string;
@@ -108,6 +107,7 @@ function initConnection() {
   connection = createConnection(ProposedFeatures.all);
   documents = new TextDocuments(TextDocument);
   connection.onInitialize((params) => {
+    connection.console.log('Sagaroute Server initialize');
     workspaceRootFolderPath = params.workspaceFolders![0].uri;
     const result: InitializeResult = {
       capabilities: {
@@ -135,6 +135,7 @@ function initConnection() {
   }
 
   connection.onInitialized(() => {
+    connection.console.log('Sagaroute Server initialized');
     connection.sendRequest('activeTextEditor/uri').then((uri) => {
       if (typeof uri === 'string') {
         changeCurrentTextDocument(uri);
@@ -166,13 +167,13 @@ function initConnection() {
     return filepath;
   });
 
-  connection.onCompletion(({ textDocument, position }) => {
+  connection.onCompletion(async ({ textDocument, position }) => {
     if (!enabled) {
       return;
     }
     parseRanges();
     const { uri } = textDocument;
-    const range = findMatchedRange(uri, position);
+    const range = await findMatchedRange(uri, currentTextDocument.version, position);
     if (range) {
       const pathCompletionItemManager = getPathCompletionItemManager();
       if (range.text === '/') {
@@ -186,10 +187,11 @@ function initConnection() {
     }
   });
 
-  function findMatchedRange(uri: string, position: Position) {
-    const routeRangeRecorder = getRouteRangeRecorder();
-    const result = routeRangeRecorder.get(uri);
-    if (result) {
+  async function findMatchedRange(uri: string, version: number, position: Position) {
+    const routeRangeParseScheduler = getRouteRangeParseScheduler();
+    const result = await routeRangeParseScheduler?.getRouteRange(uri, version);
+    console.log('findMatchedRange', result);
+    if (result && !result.expired) {
       const { ranges } = result;
       const { line, character } = position;
       return ranges.find(
@@ -230,7 +232,7 @@ function initConnection() {
       return;
     }
     const { uri } = textDocument;
-    const range = findMatchedRange(uri, position);
+    const range = await findMatchedRange(uri, currentTextDocument.version, position);
     if (range) {
       const pathParseManager = getPathParseManager();
       const routepath = range.text.startsWith('/') ? range.text : generateCurrentRoute(range.text);
@@ -262,12 +264,12 @@ function initConnection() {
     }
   });
 
-  connection.onDefinition(({ textDocument, position }) => {
+  connection.onDefinition(async ({ textDocument, position }) => {
     if (!enabled) {
       return;
     }
     const { uri } = textDocument;
-    const range = findMatchedRange(uri, position);
+    const range = await findMatchedRange(uri, currentTextDocument.version, position);
     if (range) {
       const pathParseManager = getPathParseManager();
       const routepath = range.text.startsWith('/') ? range.text : generateCurrentRoute(range.text);
@@ -321,31 +323,46 @@ function parseRanges() {
   if (!enabled) {
     return;
   }
-  const routeRangeRecorder = getRouteRangeRecorder();
-  const record = routeRangeRecorder.get(currentTextDocument.uri);
-  if (!record || record.version !== currentTextDocument.version) {
-    const program = service.getProgram();
-    if (program) {
-      const typeChecker = program.getTypeChecker();
-      const sourceFile = program.getSourceFile(getCurrentTextDocumentPath());
-      if (sourceFile) {
-        const routeStringLiterals = getRouteStringLiteral(sourceFile, typeChecker);
-        const ranges: RouteRange[] = routeStringLiterals.map(({ pos, end, text }) => {
-          const { line: startLine, character: startCharacter } =
-            currentTextDocument.positionAt(pos);
-          const { line: endLine, character: endCharacter } = currentTextDocument.positionAt(end);
-          return {
-            startLine,
-            startCharacter,
-            endLine,
-            endCharacter,
-            text,
-          };
-        });
-        routeRangeRecorder.set(currentTextDocument.uri, ranges, currentTextDocument.version);
-      }
+  const program = service.getProgram();
+  if (program) {
+    const sourceFile = program.getSourceFile(getCurrentTextDocumentPath());
+    if (sourceFile) {
+      const routeRangeParseScheduler = getRouteRangeParseScheduler();
+      const { uri, version } = currentTextDocument;
+      routeRangeParseScheduler?.insertTask(uri, version, currentTextDocument, sourceFile);
     }
   }
+  // const routeRangeRecorder = getRouteRangeRecorder();
+  // const record = routeRangeRecorder.get(currentTextDocument.uri);
+  // if (!record || record.version !== currentTextDocument.version) {
+  //   console.time('getProgram');
+  //   const program = service.getProgram();
+  //   console.timeEnd('getProgram');
+  //   if (program) {
+  //     const typeChecker = program.getTypeChecker();
+  //     console.time('getSourceFile');
+  //     const sourceFile = program.getSourceFile(getCurrentTextDocumentPath());
+  //     console.timeEnd('getSourceFile');
+  //     if (sourceFile) {
+  //       console.time('getRouteStringLiteral');
+  //       const routeStringLiterals = getRouteStringLiteral(sourceFile, typeChecker);
+  //       console.timeEnd('getRouteStringLiteral');
+  //       const ranges: RouteRange[] = routeStringLiterals.map(({ pos, end, text }) => {
+  //         const { line: startLine, character: startCharacter } =
+  //           currentTextDocument.positionAt(pos);
+  //         const { line: endLine, character: endCharacter } = currentTextDocument.positionAt(end);
+  //         return {
+  //           startLine,
+  //           startCharacter,
+  //           endLine,
+  //           endCharacter,
+  //           text,
+  //         };
+  //       });
+  //       routeRangeRecorder.set(currentTextDocument.uri, ranges, currentTextDocument.version);
+  //     }
+  //   }
+  // }
 }
 
 function generateCurrentRoute(routeText: string) {
@@ -372,7 +389,7 @@ const handleParse = throttle(
   { trailing: true },
 );
 
-function setDiagnostic() {
+async function setDiagnostic() {
   const ignoreRangeRecorder = getIgnoreRangeRecorder();
   const ignoreRecord = ignoreRangeRecorder.get(currentTextDocument.uri);
   if (ignoreRecord?.ignoreWhole) {
@@ -380,11 +397,14 @@ function setDiagnostic() {
     return;
   }
   const ignoreLines = ignoreRecord?.lines;
-  const routeRangeRecorder = getRouteRangeRecorder();
-  const record = routeRangeRecorder.get(currentTextDocument.uri);
-  if (record) {
+  const routeRangeRecorder = getRouteRangeParseScheduler();
+  const result = await routeRangeRecorder?.getRouteRange(
+    currentTextDocument.uri,
+    currentTextDocument.version,
+  );
+  if (result && !result.expired) {
     const pathParseManager = getPathParseManager();
-    const noMatchedRouteRanges = record.ranges.filter(({ text, startLine }) => {
+    const noMatchedRouteRanges = result.ranges.filter(({ text, startLine }) => {
       const routepath = text.startsWith('/') ? text : generateCurrentRoute(text);
       return (
         !ignoreLines?.includes(startLine) && (!routepath || !pathParseManager.parse(routepath))
@@ -401,13 +421,25 @@ function setDiagnostic() {
   }
 }
 
-function setDecoration() {
-  const routeRangeRecorder = getRouteRangeRecorder();
-  const record = routeRangeRecorder.get(currentTextDocument.uri);
-  if (record) {
+function getRouteRangeParseScheduler() {
+  const program = service.getProgram();
+  if (program) {
+    const typeChecker = program.getTypeChecker();
+    return _getRouteRangeParseScheduler(typeChecker);
+  }
+  return undefined;
+}
+
+async function setDecoration() {
+  const routeRangeParseScheduler = getRouteRangeParseScheduler();
+  const result = await routeRangeParseScheduler?.getRouteRange(
+    currentTextDocument.uri,
+    currentTextDocument.version,
+  );
+  if (result && !result.expired) {
     connection.sendNotification('activeTextEditor/decorations', {
       uri: currentTextDocument.uri,
-      ranges: record.ranges,
+      ranges: result.ranges,
     });
   }
 }

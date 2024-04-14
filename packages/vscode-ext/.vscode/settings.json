@@ -1,6 +1,6 @@
 {
   "editor.codeActionsOnSave": {
-    "source.fixAll": true
+    "source.fixAll": "always"
   },
   "typescript.tsc.autoDetect": "off",
   "prettier.printWidth": 100,
