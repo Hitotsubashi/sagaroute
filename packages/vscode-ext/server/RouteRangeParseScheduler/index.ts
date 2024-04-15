@@ -201,7 +201,6 @@ class RouteRangeParseScheduler {
 
   private getSyncRouteRange(uri: string, version: number): RouteRangeResult {
     const record = this.routeRangeRecorder.get(uri);
-    console.log('getSyncRouteRange', version, record);
     if (!record || record.version !== version) {
       return {
         expired: true,

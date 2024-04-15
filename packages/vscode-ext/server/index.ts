@@ -14,7 +14,7 @@ import {
 import { Position, TextDocument } from 'vscode-languageserver-textdocument';
 import ts from 'typescript';
 import fs from 'fs';
-import { throttle } from 'lodash';
+// import { throttle } from 'lodash';
 import getRouteFileRelationManager, { ModifedRouteObject } from './RouteFileRelationManager';
 import getPathParseManager from './PathParseManager';
 import getJSDocManager from './JSDocManager';
@@ -171,9 +171,12 @@ function initConnection() {
     if (!enabled) {
       return;
     }
+    const key = Math.random();
+    console.time('onCompletion'+currentTextDocument.version);
     parseRanges();
     const { uri } = textDocument;
     const range = await findMatchedRange(uri, currentTextDocument.version, position);
+    console.timeEnd('onCompletion'+currentTextDocument.version);
     if (range) {
       const pathCompletionItemManager = getPathCompletionItemManager();
       if (range.text === '/') {
@@ -190,7 +193,6 @@ function initConnection() {
   async function findMatchedRange(uri: string, version: number, position: Position) {
     const routeRangeParseScheduler = getRouteRangeParseScheduler();
     const result = await routeRangeParseScheduler?.getRouteRange(uri, version);
-    console.log('findMatchedRange', result);
     if (result && !result.expired) {
       const { ranges } = result;
       const { line, character } = position;
@@ -378,16 +380,34 @@ function generateCurrentRoute(routeText: string) {
   return null;
 }
 
-const handleParse = throttle(
+const handleParse = 
   () => {
     parseIgnoreRanges();
     parseRanges();
     setDecoration();
     setDiagnostic();
-  },
-  500,
-  { trailing: true },
-);
+  }
+  ;
+
+// const handleParse = throttle(
+//   () => {
+//     parseIgnoreRanges();
+//     parseRanges();
+//     setDecoration();
+//     setDiagnostic();
+//   },
+//   500,
+//   { trailing: true },
+// );
+
+// const setDecorationAndDiagnostic = throttle(
+//   () => {
+//     setDecoration();
+//     setDiagnostic();
+//   },
+//   500,
+//   { trailing: true },
+// );
 
 async function setDiagnostic() {
   const ignoreRangeRecorder = getIgnoreRangeRecorder();
@@ -432,10 +452,13 @@ function getRouteRangeParseScheduler() {
 
 async function setDecoration() {
   const routeRangeParseScheduler = getRouteRangeParseScheduler();
+  console.time('setDecoration'+currentTextDocument.version);
   const result = await routeRangeParseScheduler?.getRouteRange(
     currentTextDocument.uri,
     currentTextDocument.version,
   );
+  console.timeEnd('setDecoration'+currentTextDocument.version);
+  console.log(result?.expired);
   if (result && !result.expired) {
     connection.sendNotification('activeTextEditor/decorations', {
       uri: currentTextDocument.uri,
