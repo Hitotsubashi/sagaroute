@@ -59,10 +59,15 @@ class RouteRangeParseScheduler {
     }
     if (!this.tasks[uri][version]) {
       this.tasks[uri][version] = task;
+      console.log('insertTask', version);
+      console.time('task' + version);
       if (this.parsingTaskKey) {
+        console.log('delete task', this.parsingTaskKey.version);
         delete this.tasks[this.parsingTaskKey.uri][this.parsingTaskKey.version];
+        console.timeEnd('task' + this.parsingTaskKey.version);
       }
       this.parsingTaskKey = { uri, version };
+      this.frameStartTime = performance.now();
       this.traverse(this.parsingTaskKey);
     }
   }
@@ -83,12 +88,19 @@ class RouteRangeParseScheduler {
       const { nodes, matchNodes } = this.tasks[uri][version];
       const parsingNode = nodes.shift();
       if (parsingNode) {
+        const key = Math.random();
+        console.time('traverse-parse' + taskkey.version + '-' + key);
         matchNodes.push(...this.parse(parsingNode));
         ts.forEachChild(parsingNode, (node) => {
           nodes.push(node);
         });
+        console.timeEnd('traverse-parse' + taskkey.version + '-' + key);
         if (this.judgeIfFramePass()) {
-          this.pause(taskkey);
+          // this.pause(taskkey);
+          console.log(`pass-${version} 5ms`);
+          setImmediate(() => {
+            this.traverse(taskkey);
+          });
         } else {
           this.traverse(taskkey);
         }
@@ -108,7 +120,10 @@ class RouteRangeParseScheduler {
         this.routeRangeRecorder.set(uri, ranges, version);
         this.subscribers.forEach((resolve) => resolve(null));
         this.parsingTaskKey = undefined;
+        console.timeEnd('task' + version);
       }
+    } else {
+      console.log('cannnot found task', uri, version);
     }
   }
 
