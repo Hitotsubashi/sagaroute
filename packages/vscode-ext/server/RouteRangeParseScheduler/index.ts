@@ -62,9 +62,9 @@ class RouteRangeParseScheduler {
       console.log('insertTask', version);
       console.time('task' + version);
       if (this.parsingTaskKey) {
+        console.timeEnd('task' + this.parsingTaskKey.version);
         console.log('delete task', this.parsingTaskKey.version);
         delete this.tasks[this.parsingTaskKey.uri][this.parsingTaskKey.version];
-        console.timeEnd('task' + this.parsingTaskKey.version);
       }
       this.parsingTaskKey = { uri, version };
       this.frameStartTime = performance.now();
@@ -97,7 +97,7 @@ class RouteRangeParseScheduler {
         console.timeEnd('traverse-parse' + taskkey.version + '-' + key);
         if (this.judgeIfFramePass()) {
           // this.pause(taskkey);
-          console.log(`pass-${version} 5ms`);
+          console.log(`pass-${version}`);
           setImmediate(() => {
             this.traverse(taskkey);
           });
