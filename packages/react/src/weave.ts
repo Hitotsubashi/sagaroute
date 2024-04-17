@@ -98,8 +98,8 @@ function traverse(
           props?.routeProps?.index !== undefined
             ? props.routeProps.index
             : !layoutNode && (parent.path !== '' || parent.layoutNode) && routePath === 'index'
-            ? true
-            : undefined;
+              ? true
+              : undefined;
         if (index) {
           routePath = undefined;
         } else if (routePath === 'index' && parent.path === '') {
