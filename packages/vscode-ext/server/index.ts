@@ -383,11 +383,11 @@ function generateCurrentRoute(routeText: string) {
 }
 
 const handleParse = () => {
-  // parseIgnoreRanges();
+  parseIgnoreRanges();
   parseRanges();
   // setDecoration();
   // setDiagnostic();
-  // setDecorationAndDiagnostic();
+  setDecorationAndDiagnostic();
 };
 // const handleParse = throttle(
 //   () => {

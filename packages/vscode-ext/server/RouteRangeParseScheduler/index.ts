@@ -19,7 +19,7 @@ interface RouteRangeResult {
 
 class RouteRangeParseScheduler {
   private parsingTaskKey: TaskKey | undefined;
-  private messagechannel = new MessageChannel();
+  // private messagechannel = new MessageChannel();
   // private nodes: (ts.Node | ts.SourceFile)[] = [];
   // private matchNodes: (ts.StringLiteral | ts.NoSubstitutionTemplateLiteral)[] = [];
   private frameStartTime: number;
@@ -29,7 +29,7 @@ class RouteRangeParseScheduler {
   private subscribers: ((value: unknown) => void)[] = [];
 
   constructor(typeChecker: ts.TypeChecker) {
-    this.messagechannel.port2.onmessage = (event) => this.traverse(event.data);
+    // this.messagechannel.port2.onmessage = (event) => this.traverse(event.data);
     this.typeChecker = typeChecker;
   }
 
@@ -200,10 +200,10 @@ class RouteRangeParseScheduler {
     return nodes;
   }
 
-  public pause(taskkey: TaskKey) {
-    const { port1 } = this.messagechannel;
-    port1.postMessage(taskkey);
-  }
+  // public pause(taskkey: TaskKey) {
+  //   const { port1 } = this.messagechannel;
+  //   port1.postMessage(taskkey);
+  // }
 
   public async getRouteRange(uri: string, version: number) {
     if (this.isParsing()) {
